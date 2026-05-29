@@ -207,6 +207,10 @@ img {
 
   const container = document.getElementById("comic-container");
 
+  /* ⭐ UKRYJ REAKCJE I DISQUS NA START ⭐ */
+  document.getElementById("reactions").style.display = "none";
+  document.getElementById("disqus_thread").style.display = "none";
+
   document.getElementById("homeBtn").onclick = () => {
     window.location.href = "https://diligentin.github.io/tlumaczenia/";
   };
@@ -417,6 +421,18 @@ const observerDisqus = new IntersectionObserver(entries => {
 }, { threshold: 0.1 });
 
 observerDisqus.observe(document.getElementById("disqus_thread"));
+
+/* ⭐ POKAŻ REAKCJE I DISQUS PO PRZEWIJANIU ⭐ */
+function revealExtras() {
+  if (window.scrollY > 250) {
+    document.getElementById("reactions").style.display = "block";
+    document.getElementById("disqus_thread").style.display = "block";
+    window.removeEventListener("scroll", revealExtras);
+  }
+}
+
+window.addEventListener("scroll", revealExtras);
+
 </script>
 
 </body>
