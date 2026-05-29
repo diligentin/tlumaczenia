@@ -169,8 +169,15 @@ img.comic-page {
 
   const container = document.getElementById("comic-container");
 
-  document.getElementById("reactions").style.display = "none";
-  document.getElementById("disqus_thread").style.display = "none";
+ const reactionsEl = document.getElementById("reactions");
+const disqusEl = document.getElementById("disqus_thread");
+
+reactionsEl.style.visibility = "hidden";
+reactionsEl.style.opacity = "0";
+
+disqusEl.style.visibility = "hidden";
+disqusEl.style.opacity = "0";
+
 
   document.getElementById("homeBtn").onclick = () => {
     window.location.href = "https://diligentin.github.io/tlumaczenia/";
@@ -462,22 +469,42 @@ function loadDisqus() {
   (d.head || d.body).appendChild(s);
 }
 
+const disqusEl = document.getElementById("disqus_thread");
+const reactionsEl = document.getElementById("reactions");
+
+// ukrycie bez display:none
+reactionsEl.style.visibility = "hidden";
+reactionsEl.style.opacity = "0";
+disqusEl.style.visibility = "hidden";
+disqusEl.style.opacity = "0";
+
 const observerDisqus = new IntersectionObserver(entries => {
   if (entries[0].isIntersecting) loadDisqus();
 }, { threshold: 0.1 });
 
-observerDisqus.observe(document.getElementById("disqus_thread"));
+observerDisqus.observe(disqusEl);
 
 // ===== POKAŻ REAKCJE I DISQUS PO 250 PX =====
-function revealExtras() {
-  if (window.scrollY > 250) {
-    document.getElementById("reactions").style.display = "block";
-    document.getElementById("disqus_thread").style.display = "block";
-    window.removeEventListener("scroll", revealExtras);
+function revealExtras(force = false) {
+  if (force || window.scrollY > 250) {
+    reactionsEl.style.visibility = "visible";
+    reactionsEl.style.opacity = "1";
+
+    disqusEl.style.visibility = "visible";
+    disqusEl.style.opacity = "1";
+
+    window.removeEventListener("scroll", revealExtrasThrottled);
   }
 }
 
-window.addEventListener("scroll", throttledScroll(revealExtras, 150));
+const revealExtrasThrottled = throttledScroll(() => revealExtras(false), 150);
+window.addEventListener("scroll", revealExtrasThrottled);
+
+// jeśli użytkownik od razu przewinie na dół → pokaż natychmiast
+setTimeout(() => {
+  if (window.scrollY > 250) revealExtras(true);
+}, 50);
+
 </script>
 </body>
 </html>
