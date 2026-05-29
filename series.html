@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Seria</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { background:#111; color:#eee; font-family:system-ui,sans-serif; margin:0; padding:1.5rem; }
+    a { color:#ffd36b; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    .meta { color:#aaa; font-size:.9rem; margin:.4rem 0; }
+    .chips { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.8rem; }
+    button { cursor:pointer; border:none; border-radius:999px; padding:.4rem .9rem; font-size:.9rem; }
+    .chip { background:#1b1b1b; color:#eee; border:1px solid #333; }
+    .chip.read { border-color:#4caf50; }
+    .primary { background:#ffd36b; color:#111; margin-top:.6rem; }
+    .reactions { margin-top:1.2rem; display:flex; gap:.5rem; flex-wrap:wrap; }
+    .reaction-btn { background:#1b1b1b; border:1px solid #333; border-radius:999px; padding:.3rem .8rem; font-size:.85rem; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <a href="/tlumaczenia/">← Wszystkie serie</a>
+
+  <h1 id="title">Seria</h1>
+  <p id="desc"></p>
+  <p class="meta" id="history-info"></p>
+  <button id="continue-btn" class="primary" style="display:none;">Kontynuuj czytanie</button>
+
+  <h2>Rozdziały</h2>
+  <div id="chapters" class="chips"></div>
+
+  <div class="reactions" id="reactions"></div>
+
+  <div id="comments" style="margin-top:2rem;">
+    <h3>Komentarze</h3>
+    <div id="disqus_thread"></div>
+  </div>
+
+  <script>
+    function getParam(name) {
+      return new URLSearchParams(location.search).get(name);
+    }
+    const slug = getParam("title");
+    if (!slug) {
+      document.body.innerHTML = "<h2>Brak parametru ?title=</h2>";
+    }
+
+    function loadJSON(path) {
+      return fetch(path).then(r => {
+        if (!r.ok) throw new Error("Błąd ładowania JSON");
+        return r.json();
+      });
+    }
+
+    function getHistory(slug) {
+      try {
+        const raw = localStorage.getItem("history_" + slug);
+        return raw ? JSON.parse(raw) : null;
+      } catch { return null; }
+    }
+
+    function getReactionKey(slug, chapter) {
+      return `reactions_${slug}_${chapter}`;
+    }
+
+    function getReactions(slug, chapter) {
+      try {
+        const raw = localStorage.getItem(getReactionKey(slug, chapter));
+        return raw ? JSON.parse(raw) : { like:0, wow:0, sad:0 };
+      } catch { return { like:0, wow:0, sad:0 }; }
+    }
+
+    function setReactions(slug, chapter, data) {
+      try {
+        localStorage.setItem(getReactionKey(slug, chapter), JSON.stringify(data));
+      } catch {}
+    }
+
+    const titleEl = document.getElementById("title");
+    const descEl = document.getElementById("desc");
+    const histEl = document.getElementById("history-info");
+    const contBtn = document.getElementById("continue-btn");
+    const chaptersEl = document.getElementById("chapters");
+    const reactionsEl = document.getElementById("reactions");
+
+    let currentChapterForReactions = null;
+
+    loadJSON(`/tlumaczenia/${slug}.json`).then(data => {
+      titleEl.textContent = data.title || slug;
+      descEl.textContent = data.description || "";
+
+      const hist = getHistory(slug);
+      if (hist) {
+        histEl.textContent = `Ostatnio czytany rozdział: ${hist.chapter}`;
+        contBtn.style.display = "inline-block";
+        contBtn.onclick = () => {
+          location.href = `/tlumaczenia/reader.html?comic=${encodeURIComponent(slug)}&chapter=${encodeURIComponent(hist.chapter)}`;
+        };
+      } else {
+        histEl.textContent = "Jeszcze nie zaczęto czytać.";
+      }
+
+      const total = (data.chapters || []).length;
+      chaptersEl.innerHTML = "";
+      for (let i = 1; i <= total; i++) {
+        const btn = document.createElement("button");
+        btn.className = "chip";
+        if (hist && Number(hist.chapter) >= i) btn.classList.add("read");
+        btn.textContent = `Rozdział ${i}`;
+        btn.onclick = () => {
+          location.href = `/tlumaczenia/reader.html?comic=${encodeURIComponent(slug)}&chapter=${i}`;
+        };
+        chaptersEl.appendChild(btn);
+      }
+
+      // reakcje – domyślnie dla ostatnio czytanego lub 1
+      currentChapterForReactions = hist ? Number(hist.chapter) : 1;
+      renderReactions();
+      setupDisqusThread();
+    }).catch(err => {
+      document.body.innerHTML = "<h2>Błąd ładowania serii</h2><pre>"+err.message+"</pre>";
+    });
+
+    function renderReactions() {
+      if (!currentChapterForReactions) return;
+      const r = getReactions(slug, currentChapterForReactions);
+      reactionsEl.innerHTML = "";
+      const types = [
+        { key:"like", label:"👍 Lubię to" },
+        { key:"wow",  label:"🤯 Wow" },
+        { key:"sad",  label:"😢 Smutne" }
+      ];
+      types.forEach(t => {
+        const btn = document.createElement("button");
+        btn.className = "reaction-btn";
+        btn.textContent = `${t.label} (${r[t.key] || 0})`;
+        btn.onclick = () => {
+          const cur = getReactions(slug, currentChapterForReactions);
+          cur[t.key] = (cur[t.key] || 0) + 1;
+          setReactions(slug, currentChapterForReactions, cur);
+          renderReactions();
+        };
+        reactionsEl.appendChild(btn);
+      });
+    }
+
+    function setupDisqusThread() {
+      const chapter = currentChapterForReactions || 1;
+      const identifier = `series-${slug}-ch-${chapter}`;
+      const url = `https://diligentin.github.io/tlumaczenia/series.html?title=${encodeURIComponent(slug)}#ch${chapter}`;
+
+      window.disqus_config = function () {
+        this.page.url = url;
+        this.page.identifier = identifier;
+      };
+
+      // tu tylko przygotowanie – skrypt Disqusa możesz dodać później
+      // <script src="https://TWÓJ-SHORTNAME.disqus.com/embed.js" ...>
+    }
+  </script>
+</body>
+</html>
