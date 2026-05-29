@@ -1,25 +1,21 @@
+<!DOCTYPE html>
+<html lang="pl">
 <head>
-<link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
-<title>...</title>
+<title>Reader</title>
 
 <style>
 @font-face {
   font-family: "figtree";
-  src: url("https://tajnachalupka.github.io/main/Figtree.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "piekos";
-  src: url("https://tajnachalupka.github.io/main/Piekos.otf") format("opentype");
-  font-weight: 300;
+  src: url("https://tajnachalupka.github.io/main/Figtree.ttf");
 }
 
 body {
   margin: 0;
-  background: #191818ff;
+  background: #191818;
 }
 
 #comic-container {
@@ -31,15 +27,8 @@ img.comic-page {
   width: 100%;
   height: auto;
   display: block;
-  max-width: 720px;
-  image-rendering: -webkit-optimize-contrast;
-  object-fit: contain;
-}
-
-@media (max-width: 800px) {
-  img.comic-page {
-    max-width: 100% !important;
-  }
+  opacity: 0;
+  transition: opacity .35s ease;
 }
 
 /* ===== FLOATING BUTTONS ===== */
@@ -50,13 +39,7 @@ img.comic-page {
   display: flex;
   flex-direction: column;
   gap: 0px;
-  transition: opacity 0.2s ease;
-  opacity: 1;
-}
-
-.nav-buttons.hidden {
-  opacity: 0;
-  pointer-events: none;
+  transition: opacity .2s;
 }
 
 .nav-btn {
@@ -80,6 +63,9 @@ img.comic-page {
   padding: 25px 10px 15px;
   text-align: center;
   color: white;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .3s ease;
 }
 
 .reaction-row {
@@ -92,10 +78,6 @@ img.comic-page {
   width: 80px;
   height: 80px;
   object-fit: contain;
-  border-radius: 2px;
-  flex-shrink: 0;
-  max-width: 16vw;
-  max-height: 16vw;
 }
 
 .react {
@@ -111,40 +93,37 @@ img.comic-page {
   color: #ddd;
 }
 
-.react.clicked {
-  animation: pulse 0.35s ease;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.08); }
-  100% { transform: scale(1); }
-}
-
 /* ===== DISQUS ===== */
 #disqus_thread {
   padding: 20px;
   background: #111;
   margin-top: 40px;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+
+#disqus_loading {
+  color: white;
+  text-align: center;
+  font-family: figtree;
+  padding: 20px;
 }
 </style>
 </head>
+
 <body>
 
 <div id="comic-container"></div>
 
+<!-- BUTTONS -->
 <div class="nav-buttons" id="nav">
-  <div class="nav-btn" id="nextBtn">
-    <img src="https://tajnachalupka.github.io/main/szczala-next.png" class="btn-icon">
-  </div>
-  <div class="nav-btn" id="prevBtn">
-    <img src="https://tajnachalupka.github.io/main/szczala-prev.png" class="btn-icon">
-  </div>
-  <div class="nav-btn" id="homeBtn">
-    <img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon">
-  </div>
+  <div class="nav-btn" id="nextBtn"><img src="https://tajnachalupka.github.io/main/szczala-next.png" class="btn-icon"></div>
+  <div class="nav-btn" id="prevBtn"><img src="https://tajnachalupka.github.io/main/szczala-prev.png" class="btn-icon"></div>
+  <div class="nav-btn" id="homeBtn"><img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon"></div>
 </div>
 
+<!-- REACTIONS -->
 <div id="reactions">
   <div class="reaction-row">
     <div class="react" data-id="1"><img src="https://tajnachalupka.github.io/main/guziki-reakcji/r1.jpg"><div class="count">0</div></div>
@@ -155,214 +134,128 @@ img.comic-page {
   </div>
 </div>
 
-<p id="disqus_loading" style="color:white;text-align:center;font-family:figtree;padding:20px;">
-  Ładuję komentarze...
-</p>
-
+<p id="disqus_loading">Ładuję komentarze...</p>
 <div id="disqus_thread"></div>
+
 <script>
 (async function () {
 
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(location.search);
   const comicKey = params.get("comic");
   const chapter = params.get("chapter");
-
   const container = document.getElementById("comic-container");
 
- const reactionsEl = document.getElementById("reactions");
-const disqusEl = document.getElementById("disqus_thread");
+  if (!comicKey || !chapter) return;
 
-reactionsEl.style.visibility = "hidden";
-reactionsEl.style.opacity = "0";
-
-disqusEl.style.visibility = "hidden";
-disqusEl.style.opacity = "0";
-
-
-  document.getElementById("homeBtn").onclick = () => {
-    window.location.href = "https://diligentin.github.io/tlumaczenia/";
-  };
-
-  if (!comicKey || !chapter) {
-    container.innerHTML =
-      "<p style='color:white;text-align:center;padding:50px;'>Brak parametru comic lub chapter.</p>";
-    return;
-  }
-
-  // ===== AGRESYWNY FALLBACK (Android 4–8 + słabe urządzenia) =====
+  /* ===== FALLBACK ===== */
   function isOldDevice() {
     const ua = navigator.userAgent || "";
     const oldAndroid = /Android [0-8]\./i.test(ua);
 
     let slowCPU = false;
     const t0 = performance.now();
-    for (let i = 0; i < 50000; i++) {}
-    const t1 = performance.now();
-    if (t1 - t0 > 12) slowCPU = true;
+    for (let i = 0; i < 40000; i++) {}
+    if (performance.now() - t0 > 10) slowCPU = true;
 
     let badCanvas = false;
     try {
       const c = document.createElement("canvas");
-      c.width = 1;
-      c.height = 1;
-      const ctx = c.getContext("2d");
-      if (!ctx) badCanvas = true;
-    } catch {
-      badCanvas = true;
-    }
+      if (!c.getContext("2d")) badCanvas = true;
+    } catch { badCanvas = true; }
 
-    let slowGPU = false;
-    try {
-      const c = document.createElement("canvas");
-      const ctx = c.getContext("2d");
-      const t2 = performance.now();
-      for (let i = 0; i < 200; i++) ctx.fillRect(0, 0, 1, 1);
-      const t3 = performance.now();
-      if (t3 - t2 > 8) slowGPU = true;
-    } catch {
-      slowGPU = true;
-    }
-
-    return oldAndroid || slowCPU || badCanvas || slowGPU;
+    return oldAndroid || slowCPU || badCanvas;
   }
 
   const USE_SLICER = !isOldDevice();
 
-  // ===== SLICER (tylko dla nowych urządzeń) =====
-  async function sliceImage(src, sliceHeight = 2000) {
+  /* ===== SLICER ===== */
+  async function sliceImage(src, sliceHeight = 1800) {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = "anonymous";
       img.src = src;
 
       img.onload = () => {
-        try {
-          const slices = [];
-          const scale = 720 / img.width;
+        const slices = [];
+        const scale = 720 / img.width;
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
 
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
-
-          for (let y = 0; y < img.height; y += sliceHeight) {
-            const h = Math.min(sliceHeight, img.height - y);
-
-            canvas.width = 720;
-            canvas.height = h * scale;
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            ctx.drawImage(
-              img,
-              0, y, img.width, h,
-              0, 0, canvas.width, canvas.height
-            );
-
-            slices.push({ url: canvas.toDataURL("image/jpeg", 0.9) });
-          }
-
-          resolve(slices);
-        } catch (e) {
-          reject(e);
+        for (let y = 0; y < img.height; y += sliceHeight) {
+          const h = Math.min(sliceHeight, img.height - y);
+          canvas.width = 720;
+          canvas.height = h * scale;
+          ctx.drawImage(img, 0, y, img.width, h, 0, 0, canvas.width, canvas.height);
+          slices.push(canvas.toDataURL("image/jpeg", 0.9));
         }
+        resolve(slices);
       };
 
-      img.onerror = () => reject();
+      img.onerror = reject;
     });
   }
 
-  // ===== ŁADOWANIE JSON =====
+  /* ===== JSON ===== */
   let data;
   try {
-    const res = await fetch(`${comicKey}.json`);
-    data = await res.json();
+    data = await fetch(`${comicKey}.json`).then(r => r.json());
   } catch {
-    container.innerHTML =
-      "<p style='color:white;text-align:center;padding:50px;'>Błąd wczytywania pliku JSON.</p>";
+    container.innerHTML = "<p style='color:white;text-align:center;padding:50px;'>Błąd JSON.</p>";
     return;
   }
 
   const pages = data.chapters[chapter];
+  if (!pages) return;
 
-  if (!pages) {
-    container.innerHTML =
-      "<p style='color:white;text-align:center;padding:50px;'>Ten rozdział nie istnieje.</p>";
-    return;
-  }
-
-  // ===== ZAPIS HISTORII =====
   localStorage.setItem(`read_${comicKey}_${chapter}`, "1");
 
-  // ===== ŁADOWANIE =====
-  const loadingInfo = document.createElement("p");
-  loadingInfo.style.color = "white";
-  loadingInfo.style.textAlign = "center";
-  loadingInfo.style.padding = "24px";
-  loadingInfo.style.fontFamily = "figtree, sans-serif";
-  loadingInfo.textContent = "Ładowanie rozdziału...";
-  container.appendChild(loadingInfo);
-
-  // ===== OBSERWATOR RAM (umiarkowane oszczędzanie) =====
-  const offscreenObserver = new IntersectionObserver(entries => {
+  /* ===== LAZY + FADE-IN ===== */
+  const lazyObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       const img = entry.target;
-      if (!entry.isIntersecting && entry.boundingClientRect.bottom < 0) {
-        img.style.visibility = "hidden";
-      } else {
-        img.style.visibility = "visible";
+      if (entry.isIntersecting) {
+        if (img.dataset.src) {
+          img.src = img.dataset.src;
+          img.dataset.src = "";
+        }
+        img.style.opacity = "1";
       }
     });
-  }, { rootMargin: "500px 0px" });
+  }, { rootMargin: "1200px 0px" });
 
-  // ===== WYCINANIE / WSTAWIANIE =====
-  let pageIndex = 0;
+  /* ===== WSTAWIANIE OBRAZÓW ===== */
   for (const src of pages) {
     try {
       if (USE_SLICER) {
-        const slices = await sliceImage(src, 2000);
-        slices.forEach((slice, idx) => {
+        const slices = await sliceImage(src);
+        for (const s of slices) {
           const img = document.createElement("img");
           img.className = "comic-page";
-          img.src = slice.url;
+          img.dataset.src = s;
           img.loading = "lazy";
           img.decoding = "async";
-          if (!(pageIndex === 0 && idx === 0)) img.fetchPriority = "low";
           container.appendChild(img);
-          offscreenObserver.observe(img);
-        });
+          lazyObserver.observe(img);
+        }
       } else {
         const img = document.createElement("img");
         img.className = "comic-page";
-        img.src = src;
+        img.dataset.src = src;
         img.loading = "lazy";
         img.decoding = "async";
-        if (pageIndex > 0) img.fetchPriority = "low";
         container.appendChild(img);
-        offscreenObserver.observe(img);
+        lazyObserver.observe(img);
       }
-      pageIndex++;
     } catch {
-      const errP = document.createElement("p");
-      errP.style.color = "red";
-      errP.style.textAlign = "center";
-      errP.style.padding = "10px";
-      errP.textContent = "Błąd ładowania strony.";
-      container.appendChild(errP);
+      container.innerHTML += "<p style='color:red;text-align:center;'>Błąd obrazu.</p>";
     }
   }
 
-  loadingInfo.remove();
-
-  // ===== SORTOWANIE KLUCZY =====
+  /* ===== SORTOWANIE ===== */
   const keys = Object.keys(data.chapters).sort((a, b) => {
-    const na = parseInt(a);
-    const nb = parseInt(b);
-    const ha = !isNaN(na);
-    const hb = !isNaN(nb);
-
-    if (ha && hb) {
-      if (na !== nb) return na - nb;
-      return a.localeCompare(b);
-    }
+    const na = parseInt(a), nb = parseInt(b);
+    const ha = !isNaN(na), hb = !isNaN(nb);
+    if (ha && hb) return na - nb || a.localeCompare(b);
     if (ha) return -1;
     if (hb) return 1;
     return a.localeCompare(b);
@@ -370,141 +263,87 @@ disqusEl.style.opacity = "0";
 
   const index = keys.indexOf(chapter);
 
-  // ===== NEXT =====
-  document.getElementById("nextBtn").onclick = () => {
-    if (index !== -1 && index < keys.length - 1) {
-      window.location.href =
-        `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index + 1])}`;
-    } else {
-      window.location.href = "https://diligentin.github.io/tlumaczenia/";
-    }
+  /* ===== BUTTONS ===== */
+  nextBtn.onclick = () => {
+    if (index < keys.length - 1)
+      location.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index + 1])}`;
+    else location.href = "https://diligentin.github.io/tlumaczenia/";
   };
 
-  // ===== PREV =====
-  document.getElementById("prevBtn").onclick = () => {
-    if (index > 0) {
-      window.location.href =
-        `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index - 1])}`;
-    } else {
-      window.location.href = "https://diligentin.github.io/tlumaczenia/";
-    }
+  prevBtn.onclick = () => {
+    if (index > 0)
+      location.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index - 1])}`;
+    else location.href = "https://diligentin.github.io/tlumaczenia/";
   };
+
+  homeBtn.onclick = () => location.href = "https://diligentin.github.io/tlumaczenia/";
+
+  /* ===== REACTIONS ===== */
+  document.querySelectorAll(".react").forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.id;
+      const key = `react_${comicKey}_${chapter}_${id}`;
+      if (localStorage.getItem(key)) return;
+      localStorage.setItem(key, "1");
+      const count = btn.querySelector(".count");
+      count.textContent = parseInt(count.textContent) + 1;
+    };
+  });
+
+  /* ===== DISQUS ===== */
+  const disqusMap = {
+    "afos:2": "https://tajnachalupka.wixsite.com/ub-1/ub25",
+    "afos:2♡": "https://tajnachalupka.wixsite.com/ub-1/ub24"
+  };
+
+  var disqus_config = function () {
+    const key = `${comicKey}:${chapter}`;
+    this.page.url = location.href;
+    this.page.identifier = disqusMap[key] || `${comicKey}-${chapter}`;
+  };
+
+  let disqusLoaded = false;
+
+  function loadDisqus() {
+    if (disqusLoaded) return;
+    disqusLoaded = true;
+
+    const loadingMsg = document.getElementById("disqus_loading");
+    if (loadingMsg) loadingMsg.remove();
+
+    var d = document, s = d.createElement('script');
+    s.src = 'https://chalupka-ruoye-chan-wix.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  }
+
+  const disqusEl = document.getElementById("disqus_thread");
+  const reactionsEl = document.getElementById("reactions");
+
+  const observerDisqus = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) loadDisqus();
+  });
+  observerDisqus.observe(disqusEl);
+
+  /* ===== POKAŻ REAKCJE + DISQUS PO 250 PX ===== */
+  function revealExtras() {
+    if (window.scrollY > 250) {
+      reactionsEl.style.visibility = "visible";
+      reactionsEl.style.opacity = "1";
+      disqusEl.style.visibility = "visible";
+      disqusEl.style.opacity = "1";
+      window.removeEventListener("scroll", revealExtras);
+    }
+  }
+
+  window.addEventListener("scroll", revealExtras);
+
+  setTimeout(() => {
+    if (window.scrollY > 250) revealExtras();
+  }, 50);
 
 })();
-  
-// ===== THROTTLE SCROLL =====
-let lastScrollTs = 0;
-function throttledScroll(handler, delay = 150) {
-  return function () {
-    const now = Date.now();
-    if (now - lastScrollTs < delay) return;
-    lastScrollTs = now;
-    handler();
-  };
-}
-
-// ===== AUTO-HIDE BUTTONS =====
-const nav = document.getElementById("nav");
-
-window.addEventListener("scroll", throttledScroll(() => {
-  const current = window.scrollY;
-  if (typeof window._lastScrollY === "undefined") window._lastScrollY = current;
-  if (current > window._lastScrollY) nav.classList.add("hidden");
-  else nav.classList.remove("hidden");
-  window._lastScrollY = current;
-}));
-
-// ===== REACTIONS =====
-document.querySelectorAll(".react").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const params = new URLSearchParams(window.location.search);
-    const comicKey = params.get("comic");
-    const chapter = params.get("chapter");
-
-    const id = btn.dataset.id;
-    const key = `react_${comicKey}_${chapter}_${id}`;
-    if (localStorage.getItem(key)) return;
-
-    localStorage.setItem(key, "1");
-
-    btn.classList.add("clicked");
-
-    const count = btn.querySelector(".count");
-    count.textContent = parseInt(count.textContent) + 1;
-
-    setTimeout(() => btn.classList.remove("clicked"), 250);
-  });
-});
-
-// ===== DISQUS MAPA =====
-const disqusMap = {
-  "afos:2": "https://tajnachalupka.wixsite.com/ub-1/ub25",
-  "afos:2♡": "https://tajnachalupka.wixsite.com/ub-1/ub24"
-};
-
-var disqus_config = function () {
-  const params = new URLSearchParams(window.location.search);
-  const comicKey = params.get("comic");
-  const chapter = params.get("chapter");
-  const key = `${comicKey}:${chapter}`;
-  const mapped = disqusMap[key];
-
-  this.page.url = window.location.href;
-  this.page.identifier = mapped || `${comicKey}-${chapter}`;
-};
-
-// ===== DISQUS LAZY LOAD =====
-let disqusLoaded = false;
-
-function loadDisqus() {
-  if (disqusLoaded) return;
-  disqusLoaded = true;
-
-  const loadingMsg = document.getElementById("disqus_loading");
-  if (loadingMsg) loadingMsg.remove();
-
-  var d = document, s = d.createElement('script');
-  s.src = 'https://chalupka-ruoye-chan-wix.disqus.com/embed.js';
-  s.setAttribute('data-timestamp', +new Date());
-  (d.head || d.body).appendChild(s);
-}
-
-const disqusEl = document.getElementById("disqus_thread");
-const reactionsEl = document.getElementById("reactions");
-
-// ukrycie bez display:none
-reactionsEl.style.visibility = "hidden";
-reactionsEl.style.opacity = "0";
-disqusEl.style.visibility = "hidden";
-disqusEl.style.opacity = "0";
-
-const observerDisqus = new IntersectionObserver(entries => {
-  if (entries[0].isIntersecting) loadDisqus();
-}, { threshold: 0.1 });
-
-observerDisqus.observe(disqusEl);
-
-// ===== POKAŻ REAKCJE I DISQUS PO 250 PX =====
-function revealExtras(force = false) {
-  if (force || window.scrollY > 250) {
-    reactionsEl.style.visibility = "visible";
-    reactionsEl.style.opacity = "1";
-
-    disqusEl.style.visibility = "visible";
-    disqusEl.style.opacity = "1";
-
-    window.removeEventListener("scroll", revealExtrasThrottled);
-  }
-}
-
-const revealExtrasThrottled = throttledScroll(() => revealExtras(false), 150);
-window.addEventListener("scroll", revealExtrasThrottled);
-
-// jeśli użytkownik od razu przewinie na dół → pokaż natychmiast
-setTimeout(() => {
-  if (window.scrollY > 250) revealExtras(true);
-}, 50);
-
 </script>
+
 </body>
 </html>
