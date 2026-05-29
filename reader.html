@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html lang="pl">
 <head>
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 <meta charset="UTF-8">
@@ -18,7 +16,7 @@
   src: url("https://tajnachalupka.github.io/main/Piekos.otf") format("opentype");
   font-weight: 300;
 }
-  
+
 body {
   margin: 0;
   background: #191818ff;
@@ -29,13 +27,11 @@ body {
   margin: 0 auto;
 }
 
-/* obrazki */
 img.comic-page {
   width: 100%;
   height: auto;
   display: block;
   max-width: 720px;
-  aspect-ratio: auto;
   image-rendering: -webkit-optimize-contrast;
   object-fit: contain;
 }
@@ -43,7 +39,6 @@ img.comic-page {
 @media (max-width: 800px) {
   img.comic-page {
     max-width: 100% !important;
-    margin: 0;
   }
 }
 
@@ -72,14 +67,11 @@ img.comic-page {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  user-select: none;
-  transition: 0.2s;
 }
 
 .btn-icon {
   width: 42px;
   height: 42px;
-  pointer-events: none;
   filter: invert(1);
 }
 
@@ -94,7 +86,6 @@ img.comic-page {
   display: flex;
   justify-content: center;
   gap: 2px;
-  flex-wrap: nowrap;
 }
 
 .react img {
@@ -103,8 +94,6 @@ img.comic-page {
   object-fit: contain;
   border-radius: 2px;
   flex-shrink: 0;
-  min-width: 60px;
-  min-height: 60px;
   max-width: 16vw;
   max-height: 16vw;
 }
@@ -114,8 +103,6 @@ img.comic-page {
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  transition: transform 0.15s ease;
-  border-radius: 2px;
 }
 
 .react .count {
@@ -142,68 +129,37 @@ img.comic-page {
 }
 </style>
 </head>
-
 <body>
 
 <div id="comic-container"></div>
 
-<!-- ===== FLOATING BUTTONS ===== -->
 <div class="nav-buttons" id="nav">
-
   <div class="nav-btn" id="nextBtn">
     <img src="https://tajnachalupka.github.io/main/szczala-next.png" class="btn-icon">
   </div>
-  
   <div class="nav-btn" id="prevBtn">
     <img src="https://tajnachalupka.github.io/main/szczala-prev.png" class="btn-icon">
   </div>
-
   <div class="nav-btn" id="homeBtn">
     <img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon">
   </div>
 </div>
 
-<!-- ===== REACTIONS ===== -->
 <div id="reactions">
   <div class="reaction-row">
-
-    <div class="react" data-id="1">
-      <img src="https://tajnachalupka.github.io/main/guziki-reakcji/r1.jpg">
-      <div class="count">0</div>
-    </div>
-
-    <div class="react" data-id="2">
-      <img src="https://tajnachalupka.github.io/main/guziki-reakcji/r2.jpg">
-      <div class="count">0</div>
-    </div>
-
-    <div class="react" data-id="3">
-      <img src="https://tajnachalupka.github.io/main/guziki-reakcji/r3.jpg">
-      <div class="count">0</div>
-    </div>
-
-    <div class="react" data-id="4">
-      <img src="https://tajnachalupka.github.io/main/guziki-reakcji/r4.jpg">
-      <div class="count">0</div>
-    </div>
-
-    <div class="react" data-id="5">
-      <img src="https://tajnachalupka.github.io/main/guziki-reakcji/r5.jpg">
-      <div class="count">0</div>
-    </div>
-
+    <div class="react" data-id="1"><img src="https://tajnachalupka.github.io/main/guziki-reakcji/r1.jpg"><div class="count">0</div></div>
+    <div class="react" data-id="2"><img src="https://tajnachalupka.github.io/main/guziki-reakcji/r2.jpg"><div class="count">0</div></div>
+    <div class="react" data-id="3"><img src="https://tajnachalupka.github.io/main/guziki-reakcji/r3.jpg"><div class="count">0</div></div>
+    <div class="react" data-id="4"><img src="https://tajnachalupka.github.io/main/guziki-reakcji/r4.jpg"><div class="count">0</div></div>
+    <div class="react" data-id="5"><img src="https://tajnachalupka.github.io/main/guziki-reakcji/r5.jpg"><div class="count">0</div></div>
   </div>
 </div>
 
-<!-- INFO O KOMENTARZACH -->
-<p id="disqus_loading" 
-   style="color:white;text-align:center;font-family:figtree;padding:20px;">
-   Ładuję komentarze...
+<p id="disqus_loading" style="color:white;text-align:center;font-family:figtree;padding:20px;">
+  Ładuję komentarze...
 </p>
 
-<!-- ===== DISQUS ===== -->
 <div id="disqus_thread"></div>
-
 <script>
 (async function () {
 
@@ -213,7 +169,6 @@ img.comic-page {
 
   const container = document.getElementById("comic-container");
 
-  // ukryj reakcje i disqus na start
   document.getElementById("reactions").style.display = "none";
   document.getElementById("disqus_thread").style.display = "none";
 
@@ -227,26 +182,46 @@ img.comic-page {
     return;
   }
 
-  // proste wykrywanie starego urządzenia (fallback)
+  // ===== AGRESYWNY FALLBACK (Android 4–8 + słabe urządzenia) =====
   function isOldDevice() {
     const ua = navigator.userAgent || "";
-    const oldAndroid = /Android [0-6]\./i.test(ua);
-    let canvasOK = true;
+    const oldAndroid = /Android [0-8]\./i.test(ua);
+
+    let slowCPU = false;
+    const t0 = performance.now();
+    for (let i = 0; i < 50000; i++) {}
+    const t1 = performance.now();
+    if (t1 - t0 > 12) slowCPU = true;
+
+    let badCanvas = false;
     try {
       const c = document.createElement("canvas");
       c.width = 1;
       c.height = 1;
       const ctx = c.getContext("2d");
-      if (!ctx) canvasOK = false;
+      if (!ctx) badCanvas = true;
     } catch {
-      canvasOK = false;
+      badCanvas = true;
     }
-    return oldAndroid || !canvasOK;
+
+    let slowGPU = false;
+    try {
+      const c = document.createElement("canvas");
+      const ctx = c.getContext("2d");
+      const t2 = performance.now();
+      for (let i = 0; i < 200; i++) ctx.fillRect(0, 0, 1, 1);
+      const t3 = performance.now();
+      if (t3 - t2 > 8) slowGPU = true;
+    } catch {
+      slowGPU = true;
+    }
+
+    return oldAndroid || slowCPU || badCanvas || slowGPU;
   }
 
   const USE_SLICER = !isOldDevice();
 
-  /* ===== CIĘCIE OBRAZÓW (NAPRAWIONE, WYMUSZONE 720) ===== */
+  // ===== SLICER (tylko dla nowych urządzeń) =====
   async function sliceImage(src, sliceHeight = 2000) {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -256,7 +231,7 @@ img.comic-page {
       img.onload = () => {
         try {
           const slices = [];
-          const scale = 720 / img.width; // zawsze do 720
+          const scale = 720 / img.width;
 
           const canvas = document.createElement("canvas");
           const ctx = canvas.getContext("2d");
@@ -275,9 +250,7 @@ img.comic-page {
               0, 0, canvas.width, canvas.height
             );
 
-            slices.push({
-              url: canvas.toDataURL("image/jpeg", 0.9)
-            });
+            slices.push({ url: canvas.toDataURL("image/jpeg", 0.9) });
           }
 
           resolve(slices);
@@ -290,7 +263,7 @@ img.comic-page {
     });
   }
 
-  /* ===== ŁADOWANIE JSON ===== */
+  // ===== ŁADOWANIE JSON =====
   let data;
   try {
     const res = await fetch(`${comicKey}.json`);
@@ -309,10 +282,10 @@ img.comic-page {
     return;
   }
 
-  /* ===== ZAPIS HISTORII ===== */
+  // ===== ZAPIS HISTORII =====
   localStorage.setItem(`read_${comicKey}_${chapter}`, "1");
 
-  /* ===== ŁADOWANIE ===== */
+  // ===== ŁADOWANIE =====
   const loadingInfo = document.createElement("p");
   loadingInfo.style.color = "white";
   loadingInfo.style.textAlign = "center";
@@ -321,24 +294,19 @@ img.comic-page {
   loadingInfo.textContent = "Ładowanie rozdziału...";
   container.appendChild(loadingInfo);
 
-  /* ===== OBSERWATOR DO USUWANIA OBRAZÓW POZA EKRANEM ===== */
+  // ===== OBSERWATOR RAM (umiarkowane oszczędzanie) =====
   const offscreenObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       const img = entry.target;
       if (!entry.isIntersecting && entry.boundingClientRect.bottom < 0) {
-        // daleko nad ekranem – usuń src, zostaw data-src
-        if (!img.dataset.src) {
-          img.dataset.src = img.src;
-        }
-        img.src = "";
-      } else if (entry.isIntersecting && img.dataset.src && !img.src) {
-        // wrócił w zasięg – przywróć
-        img.src = img.dataset.src;
+        img.style.visibility = "hidden";
+      } else {
+        img.style.visibility = "visible";
       }
     });
   }, { rootMargin: "500px 0px" });
 
-  /* ===== WYCINANIE / WSTAWIANIE (Z FALLBACKIEM) ===== */
+  // ===== WYCINANIE / WSTAWIANIE =====
   let pageIndex = 0;
   for (const src of pages) {
     try {
@@ -350,9 +318,7 @@ img.comic-page {
           img.src = slice.url;
           img.loading = "lazy";
           img.decoding = "async";
-          if (!(pageIndex === 0 && idx === 0)) {
-            img.fetchPriority = "low";
-          }
+          if (!(pageIndex === 0 && idx === 0)) img.fetchPriority = "low";
           container.appendChild(img);
           offscreenObserver.observe(img);
         });
@@ -362,9 +328,7 @@ img.comic-page {
         img.src = src;
         img.loading = "lazy";
         img.decoding = "async";
-        if (pageIndex > 0) {
-          img.fetchPriority = "low";
-        }
+        if (pageIndex > 0) img.fetchPriority = "low";
         container.appendChild(img);
         offscreenObserver.observe(img);
       }
@@ -381,7 +345,7 @@ img.comic-page {
 
   loadingInfo.remove();
 
-  /* ===== SORTOWANIE KLUCZY ===== */
+  // ===== SORTOWANIE KLUCZY =====
   const keys = Object.keys(data.chapters).sort((a, b) => {
     const na = parseInt(a);
     const nb = parseInt(b);
@@ -399,7 +363,7 @@ img.comic-page {
 
   const index = keys.indexOf(chapter);
 
-  /* ===== NEXT ===== */
+  // ===== NEXT =====
   document.getElementById("nextBtn").onclick = () => {
     if (index !== -1 && index < keys.length - 1) {
       window.location.href =
@@ -409,7 +373,7 @@ img.comic-page {
     }
   };
 
-  /* ===== PREV ===== */
+  // ===== PREV =====
   document.getElementById("prevBtn").onclick = () => {
     if (index > 0) {
       window.location.href =
@@ -421,7 +385,7 @@ img.comic-page {
 
 })();
   
-/* ===== THROTTLE SCROLL ===== */
+// ===== THROTTLE SCROLL =====
 let lastScrollTs = 0;
 function throttledScroll(handler, delay = 150) {
   return function () {
@@ -432,7 +396,7 @@ function throttledScroll(handler, delay = 150) {
   };
 }
 
-/* ===== AUTO-HIDE BUTTONS ===== */
+// ===== AUTO-HIDE BUTTONS =====
 const nav = document.getElementById("nav");
 
 window.addEventListener("scroll", throttledScroll(() => {
@@ -443,7 +407,7 @@ window.addEventListener("scroll", throttledScroll(() => {
   window._lastScrollY = current;
 }));
 
-/* ===== REACTIONS ===== */
+// ===== REACTIONS =====
 document.querySelectorAll(".react").forEach(btn => {
   btn.addEventListener("click", () => {
     const params = new URLSearchParams(window.location.search);
@@ -465,7 +429,7 @@ document.querySelectorAll(".react").forEach(btn => {
   });
 });
 
-/* ===== DISQUS MAPA ===== */
+// ===== DISQUS MAPA =====
 const disqusMap = {
   "afos:2": "https://tajnachalupka.wixsite.com/ub-1/ub25",
   "afos:2♡": "https://tajnachalupka.wixsite.com/ub-1/ub24"
@@ -482,7 +446,7 @@ var disqus_config = function () {
   this.page.identifier = mapped || `${comicKey}-${chapter}`;
 };
 
-/* ===== DISQUS LAZY LOAD ===== */
+// ===== DISQUS LAZY LOAD =====
 let disqusLoaded = false;
 
 function loadDisqus() {
@@ -504,7 +468,7 @@ const observerDisqus = new IntersectionObserver(entries => {
 
 observerDisqus.observe(document.getElementById("disqus_thread"));
 
-/* POKAŻ REAKCJE I DISQUS PO PRZEWIJANIU TROCHĘ W DÓŁ */
+// ===== POKAŻ REAKCJE I DISQUS PO 250 PX =====
 function revealExtras() {
   if (window.scrollY > 250) {
     document.getElementById("reactions").style.display = "block";
@@ -514,8 +478,6 @@ function revealExtras() {
 }
 
 window.addEventListener("scroll", throttledScroll(revealExtras, 150));
-
 </script>
-
 </body>
 </html>
