@@ -36,12 +36,12 @@ a { color: white; text-decoration: none; }
   top: 12px;
   left: 12px;
   z-index: 20;
-  opacity: 0.7; /* lekka przezroczystość */
+  opacity: 0.7;
   transition: opacity .2s ease;
 }
 
 .back:hover {
-  opacity: 1; /* pełna widoczność po najechaniu */
+  opacity: 1;
 }
 .back img {
   width: 40px;
@@ -95,14 +95,14 @@ a { color: white; text-decoration: none; }
 /* ===== SIATKA ROZDZIAŁÓW ===== */
 .chapter-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, 45px); /* stała szerokość */
+  grid-template-columns: repeat(auto-fit, 45px);
   gap: 11px;
   align-items: center;
-  justify-content: center; /* CENTROWANIE ostatniego rzędu */
+  justify-content: center;
   padding-bottom: 40px;
   margin-bottom: 33px;
   max-width: 600px;
-  margin: 0 auto; /* <<< TO CENTRUJE GRID */
+  margin: 0 auto;
 }
 
 @media (max-width: 600px) {
@@ -166,8 +166,7 @@ a { color: white; text-decoration: none; }
   <div class="chapter-grid" id="chapters"></div>
 </div>
 
-<!-- PADLET -->
-<div id="padlet-box"></div>
+<!-- PADLET USUNIĘTY -->
 
 <script>
 (async function() {
@@ -191,25 +190,6 @@ a { color: white; text-decoration: none; }
   document.getElementById("cover").src = data.cover;
   document.getElementById("header-img").src = data.header_img;
   document.getElementById("desc").innerHTML = data.desc.replace(/\n/g, "<br>");
-
-  /* ===== PADLET ===== */
-  if (data.padlet) {
-    document.getElementById("padlet-box").innerHTML = `
-      <div style="
-        border:1px solid rgba(0,0,0,0.1);
-        border-radius:2px;
-        overflow:hidden;
-        width:100%;
-        max-width:900px;
-        margin:0 auto;
-        background:#191818ff;
-      ">
-        <iframe src="${data.padlet}" frameborder="0"
-          style="width:100%;height:720px;display:block;">
-        </iframe>
-      </div>
-    `;
-  }
 
   /* ===== ROZDZIAŁY ===== */
   const chaptersBox = document.getElementById("chapters");
