@@ -290,8 +290,6 @@ img {
         const img = document.createElement("img");
         img.src = slice.url;
         img.loading = "lazy";
-        img.width = slice.w;
-        img.height = slice.h;
         container.appendChild(img);
       });
     } catch {
