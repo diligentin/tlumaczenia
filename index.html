@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Tłumaczenia komiksów</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { background:#111; color:#eee; font-family:system-ui,sans-serif; margin:0; padding:1.5rem; }
+    a { color:#ffd36b; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    .grid { display:flex; flex-wrap:wrap; gap:1rem; }
+    .card { background:#1b1b1b; border-radius:10px; padding:1rem 1.2rem; max-width:320px; }
+    .title { font-size:1.2rem; margin-bottom:.3rem; }
+    .meta { font-size:.9rem; color:#aaa; margin-bottom:.4rem; }
+    button { cursor:pointer; border:none; border-radius:999px; padding:.45rem 1rem; font-size:.9rem; }
+    .primary { background:#ffd36b; color:#111; }
+    .ghost { background:transparent; color:#ffd36b; border:1px solid #ffd36b; margin-left:.4rem; }
+  </style>
+</head>
+<body>
+  <h1>Tłumaczenia komiksów</h1>
+  <p>Wybierz serię:</p>
+  <div class="grid" id="series-list"></div>
+
+  <script>
+    // tu dopisujesz kolejne serie
+    const series = [
+      { slug: "afos", title: "AFOS", desc: "AFOS – główna seria." },
+      { slug: "ub",   title: "UB",   desc: "UB – druga seria." }
+    ];
+
+    function getHistory(slug) {
+      try {
+        const raw = localStorage.getItem("history_" + slug);
+        return raw ? JSON.parse(raw) : null;
+      } catch { return null; }
+    }
+
+    const container = document.getElementById("series-list");
+    series.forEach(s => {
+      const hist = getHistory(s.slug);
+      const div = document.createElement("div");
+      div.className = "card";
+      const last = hist ? `Ostatnio czytany rozdział: ${hist.chapter}` : "Jeszcze nie zaczęto.";
+      div.innerHTML = `
+        <div class="title">${s.title}</div>
+        <div class="meta">${s.desc}</div>
+        <div class="meta">${last}</div>
+        <div>
+          <button class="primary" data-slug="${s.slug}" data-action="open">Otwórz serię</button>
+          ${hist ? `<button class="ghost" data-slug="${s.slug}" data-action="continue">Kontynuuj</button>` : ""}
+        </div>
+      `;
+      container.appendChild(div);
+    });
+
+    container.addEventListener("click", e => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+      const slug = btn.dataset.slug;
+      const action = btn.dataset.action;
+      if (action === "open") {
+        location.href = `/tlumaczenia/series.html?title=${encodeURIComponent(slug)}`;
+      } else if (action === "continue") {
+        const hist = getHistory(slug);
+        if (hist) {
+          location.href = `/tlumaczenia/reader.html?comic=${encodeURIComponent(slug)}&chapter=${encodeURIComponent(hist.chapter)}`;
+        } else {
+          location.href = `/tlumaczenia/series.html?title=${encodeURIComponent(slug)}`;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
