@@ -89,15 +89,16 @@ a { color: white; text-decoration: none; }
 /* ===== SIATKA ROZDZIAŁÓW ===== */
 .chapter-grid {
   display: grid;
-  grid-template-columns: repeat(10, 45px); /* ZAWSZE 10 kolumn */
+  grid-template-columns: repeat(auto-fit, 45px); /* stała szerokość */
   gap: 11px;
-  justify-content: center;
+  justify-content: center; /* CENTROWANIE ostatniego rzędu */
   padding-bottom: 40px;
   margin-bottom: 33px;
 }
+
 @media (max-width: 600px) {
   .chapter-grid {
-    grid-template-columns: repeat(5, 45px); /* na telefonie 5 kolumn */
+    grid-template-columns: repeat(auto-fit, 45px);
   }
 }
 
