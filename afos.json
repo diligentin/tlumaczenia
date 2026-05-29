@@ -1,0 +1,20 @@
+{
+  "title": "AFOS",
+  "description": "AFOS – opis serii.",
+  "chapters": [
+    {
+      "name": "Rozdział 1",
+      "pages": [
+        "/tlumaczenia/afos/1/1.jpg",
+        "/tlumaczenia/afos/1/2.jpg"
+      ]
+    },
+    {
+      "name": "Rozdział 2",
+      "pages": [
+        "/tlumaczenia/afos/2/1.jpg",
+        "/tlumaczenia/afos/2/2.jpg"
+      ]
+    }
+  ]
+}
