@@ -93,8 +93,8 @@ img.comic-page {
   color: #ddd;
 }
 
-/* ===== DISQUS ===== */
-#disqus_thread {
+/* ===== PADLET ===== */
+#padlet_box {
   padding: 20px;
   background: #111;
   margin-top: 40px;
@@ -103,7 +103,7 @@ img.comic-page {
   transition: opacity .3s ease;
 }
 
-#disqus_loading {
+#padlet_loading {
   color: white;
   text-align: center;
   font-family: figtree;
@@ -134,8 +134,8 @@ img.comic-page {
   </div>
 </div>
 
-<p id="disqus_loading">Ładuję komentarze...</p>
-<div id="disqus_thread"></div>
+<p id="padlet_loading">Ładuję komentarze...</p>
+<div id="padlet_box"></div>
 
 <script>
 (async function () {
@@ -290,48 +290,63 @@ img.comic-page {
     };
   });
 
-  /* ===== DISQUS ===== */
-  const disqusMap = {
-    "afos:2": "https://tajnachalupka.wixsite.com/ub-1/ub25",
-    "afos:2♡": "https://tajnachalupka.wixsite.com/ub-1/ub24"
+  /* ===== PADLET MAPA ===== */
+  const padletMap = {
+    "afos": "https://padlet.com/embed/your_padlet_here",
+    "at":   "https://padlet.com/embed/your_other_padlet_here"
   };
 
-  var disqus_config = function () {
-    const key = `${comicKey}:${chapter}`;
-    this.page.url = location.href;
-    this.page.identifier = disqusMap[key] || `${comicKey}-${chapter}`;
-  };
+  /* ===== PADLET LAZY LOAD ===== */
+  let padletLoaded = false;
 
-  let disqusLoaded = false;
+  function loadPadlet() {
+    if (padletLoaded) return;
+    padletLoaded = true;
 
-  function loadDisqus() {
-    if (disqusLoaded) return;
-    disqusLoaded = true;
-
-    const loadingMsg = document.getElementById("disqus_loading");
+    const loadingMsg = document.getElementById("padlet_loading");
     if (loadingMsg) loadingMsg.remove();
 
-    var d = document, s = d.createElement('script');
-    s.src = 'https://chalupka-ruoye-chan-wix.disqus.com/embed.js';
-    s.setAttribute('data-timestamp', +new Date());
-    (d.head || d.body).appendChild(s);
+    const padletBox = document.getElementById("padlet_box");
+    const url = padletMap[comicKey];
+
+    padletBox.innerHTML = `
+      <div style="
+        border:1px solid rgba(0,0,0,0.1);
+        border-radius:2px;
+        overflow:hidden;
+        width:100%;
+        max-width:900px;
+        margin:0 auto;
+        background:#191818;
+      ">
+        <iframe src="${url}" frameborder="0"
+          style="width:100%;height:720px;display:block;">
+        </iframe>
+      </div>
+    `;
+
+    padletBox.style.visibility = "visible";
+    padletBox.style.opacity = "1";
   }
 
-  const disqusEl = document.getElementById("disqus_thread");
-  const reactionsEl = document.getElementById("reactions");
+  /* ===== OBSERWATOR PADLETU ===== */
+  const padletEl = document.getElementById("padlet_box");
 
-  const observerDisqus = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) loadDisqus();
-  });
-  observerDisqus.observe(disqusEl);
+  const observerPadlet = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) loadPadlet();
+  }, { threshold: 0.1 });
 
-  /* ===== POKAŻ REAKCJE + DISQUS PO 250 PX ===== */
+  observerPadlet.observe(padletEl);
+
+  /* ===== POKAŻ REAKCJE + PADLET PO 250 PX ===== */
   function revealExtras() {
     if (window.scrollY > 250) {
       reactionsEl.style.visibility = "visible";
       reactionsEl.style.opacity = "1";
-      disqusEl.style.visibility = "visible";
-      disqusEl.style.opacity = "1";
+
+      padletEl.style.visibility = "visible";
+      padletEl.style.opacity = "1";
+
       window.removeEventListener("scroll", revealExtras);
     }
   }
