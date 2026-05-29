@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
-<title>Reader</title>
+<title>...</title>
 
 <style>
 @font-face {
@@ -103,7 +103,7 @@ img.comic-page {
   transition: opacity .3s ease;
 }
 
-#padlet_loading {
+#padlet_loading, #chapter_loading {
   color: white;
   text-align: center;
   font-family: figtree;
@@ -115,16 +115,8 @@ img.comic-page {
 <body>
 
 <div id="comic-container"></div>
-  
-  <p id="chapter_loading" style="
-  color:white;
-  text-align:center;
-  font-family:figtree;
-  padding:20px;
-">
-  Ładuję rozdział...
-</p>
 
+<p id="chapter_loading">Ładuję rozdział...</p>
 
 <!-- BUTTONS -->
 <div class="nav-buttons" id="nav">
@@ -229,6 +221,9 @@ img.comic-page {
           img.dataset.src = "";
         }
         img.style.opacity = "1";
+
+        const loadingChapter = document.getElementById("chapter_loading");
+        if (loadingChapter) loadingChapter.remove();
       }
     });
   }, { rootMargin: "1200px 0px" });
