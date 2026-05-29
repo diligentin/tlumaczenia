@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Czytnik</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { background:#000; color:#eee; font-family:system-ui,sans-serif; margin:0; padding:1rem; }
+    a { color:#ffd36b; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    .top { display:flex; justify-content:space-between; align-items:center; gap:.5rem; margin-bottom:.8rem; flex-wrap:wrap; }
+    .nav { margin:.8rem 0; display:flex; gap:.5rem; flex-wrap:wrap; }
+    button { cursor:pointer; border:none; border-radius:999px; padding:.4rem .9rem; font-size:.9rem; }
+    .ghost { background:#111; color:#eee; border:1px solid #444; }
+    .primary { background:#ffd36b; color:#111; }
+    .page { margin-bottom:1rem; }
+    img { width:100%; height:auto; display:block; object-fit:contain; }
+    .reactions { margin-top:1rem; display:flex; gap:.5rem; flex-wrap:wrap; }
+    .reaction-btn { background:#111; border:1px solid #444; border-radius:999px; padding:.3rem .8rem; font-size:.85rem; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <div class="top">
+    <a id="back-link" href="/tlumaczenia/">← Spis serii</a>
+    <div id="header-info"></div>
+  </div>
+
+  <div class="nav" id="nav-top"></div>
+
+  <div id="pages"></div>
+
+  <div class="nav" id="nav-bottom"></div>
+
+  <div class="reactions" id="reactions"></div>
+
+  <div id="comments" style="margin-top:2rem;">
+    <h3>Komentarze</h3>
+    <div id="disqus_thread"></div>
+  </div>
+
+  <script>
+    function getParam(name) {
+      return new URLSearchParams(location.search).get(name);
+    }
+    const slug = getParam("comic");
+    const chapter = Number(getParam("chapter") || "1") || 1;
+
+    if (!slug) {
+      document.body.innerHTML = "<h2>Brak parametru ?comic=</h2>";
+    }
+
+    function loadJSON(path) {
+      return fetch(path).then(r => {
+        if (!r.ok) throw new Error("Błąd ładowania JSON");
+        return r.json();
+      });
+    }
+
+    function saveHistory(slug, chapter) {
+      try {
+        localStorage.setItem("history_" + slug, JSON.stringify({ chapter }));
+      } catch {}
+    }
+
+    function getReactionKey(slug, chapter) {
+      return `reactions_${slug}_${chapter}`;
+    }
+
+    function getReactions(slug, chapter) {
+      try {
+        const raw = localStorage.getItem(getReactionKey(slug, chapter));
+        return raw ? JSON.parse(raw) : { like:0, wow:0, sad:0 };
+      } catch { return { like:0, wow:0, sad:0 }; }
+    }
+
+    function setReactions(slug, chapter, data) {
+      try {
+        localStorage.setItem(getReactionKey(slug, chapter), JSON.stringify(data));
+      } catch {}
+    }
+
+    const backLink = document.getElementById("back-link");
+    const headerInfo = document.getElementById("header-info");
+    const pagesEl = document.getElementById("pages");
+    const navTop = document.getElementById("nav-top");
+    const navBottom = document.getElementById("nav-bottom");
+    const reactionsEl = document.getElementById("reactions");
+
+    backLink.href = `/tlumaczenia/series.html?title=${encodeURIComponent(slug)}`;
+
+    loadJSON(`/tlumaczenia/${slug}.json`).then(data => {
+      const totalCh = (data.chapters || []).length;
+      const safeChapter = Math.min(Math.max(chapter, 1), totalCh);
+      const ch = data.chapters[safeChapter - 1];
+
+      headerInfo.textContent = `${data.title || slug} – rozdział ${safeChapter}`;
+      saveHistory(slug, safeChapter);
+
+      pagesEl.innerHTML = "";
+      if (!ch || !ch.pages || !ch.pages.length) {
+        pagesEl.innerHTML = "<p>Brak stron w tym rozdziale.</p>";
+      } else {
+        ch.pages.forEach(url => {
+          const wrap = document.createElement("div");
+          wrap.className = "page";
+          const img = document.createElement("img");
+          img.src = url;
+          img.loading = "lazy";
+          wrap.appendChild(img);
+          pagesEl.appendChild(wrap);
+        });
+      }
+
+      function buildNav(container) {
+        container.innerHTML = "";
+
+        const prev = document.createElement("button");
+        prev.className = "ghost";
+        prev.textContent = "← Poprzedni";
+        prev.disabled = safeChapter <= 1;
+        prev.onclick = () => {
+          if (safeChapter > 1) {
+            location.href = `/tlumaczenia/reader.html?comic=${encodeURIComponent(slug)}&chapter=${safeChapter-1}`;
+          }
+        };
+        container.appendChild(prev);
+
+        const list = document.createElement("button");
+        list.className = "ghost";
+        list.textContent = "Spis rozdziałów";
+        list.onclick = () => {
+          location.href = `/tlumaczenia/series.html?title=${encodeURIComponent(slug)}`;
+        };
+        container.appendChild(list);
+
+        const next = document.createElement("button");
+        next.className = "ghost";
+        next.textContent = "Następny →";
+        next.disabled = safeChapter >= totalCh;
+        next.onclick = () => {
+          if (safeChapter < totalCh) {
+            location.href = `/tlumaczenia/reader.html?comic=${encodeURIComponent(slug)}&chapter=${safeChapter+1}`;
+          }
+        };
+        container.appendChild(next);
+      }
+
+      buildNav(navTop);
+      buildNav(navBottom);
+      renderReactions(slug, safeChapter);
+      setupDisqus(slug, safeChapter);
+    }).catch(err => {
+      document.body.innerHTML = "<h2>Błąd ładowania komiksu</h2><pre>"+err.message+"</pre>";
+    });
+
+    function renderReactions(slug, chapter) {
+      const r = getReactions(slug, chapter);
+      reactionsEl.innerHTML = "";
+      const types = [
+        { key:"like", label:"👍 Lubię to" },
+        { key:"wow",  label:"🤯 Wow" },
+        { key:"sad",  label:"😢 Smutne" }
+      ];
+      types.forEach(t => {
+        const btn = document.createElement("button");
+        btn.className = "reaction-btn";
+        btn.textContent = `${t.label} (${r[t.key] || 0})`;
+        btn.onclick = () => {
+          const cur = getReactions(slug, chapter);
+          cur[t.key] = (cur[t.key] || 0) + 1;
+          setReactions(slug, chapter, cur);
+          renderReactions(slug, chapter);
+        };
+        reactionsEl.appendChild(btn);
+      });
+    }
+
+    function setupDisqus(slug, chapter) {
+      const identifier = `reader-${slug}-ch-${chapter}`;
+      const url = `https://diligentin.github.io/tlumaczenia/reader.html?comic=${encodeURIComponent(slug)}&chapter=${chapter}`;
+
+      window.disqus_config = function () {
+        this.page.url = url;
+        this.page.identifier = identifier;
+      };
+
+      // tu tylko przygotowanie – skrypt Disqusa dodasz później, np.:
+      // var d = document, s = d.createElement('script');
+      // s.src = 'https://TWÓJ-SHORTNAME.disqus.com/embed.js';
+      // s.setAttribute('data-timestamp', +new Date());
+      // (d.head || d.body).appendChild(s);
+    }
+  </script>
+</body>
+</html>
