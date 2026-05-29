@@ -58,46 +58,11 @@ img.comic-page {
   filter: invert(1);
 }
 
-/* ===== REACTIONS ===== */
-#reactions {
-  padding: 25px 10px 15px;
-  text-align: center;
-  color: white;
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity .3s ease;
-}
-
-.reaction-row {
-  display: flex;
-  justify-content: center;
-  gap: 2px;
-}
-
-.react img {
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
-}
-
-.react {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-}
-
-.react .count {
-  margin-top: 4px;
-  font-size: 14px;
-  color: #ddd;
-}
-
 /* ===== PADLET ===== */
 #padlet_box {
   padding: 20px;
   background: #191818;
-  margin-top: 40px;
+  margin-top: 58px; /* odstęp pod rozdziałem */
   visibility: hidden;
   opacity: 0;
   transition: opacity .3s ease;
@@ -123,17 +88,6 @@ img.comic-page {
   <div class="nav-btn" id="nextBtn"><img src="https://tajnachalupka.github.io/main/szczala-next.png" class="btn-icon"></div>
   <div class="nav-btn" id="prevBtn"><img src="https://tajnachalupka.github.io/main/szczala-prev.png" class="btn-icon"></div>
   <div class="nav-btn" id="homeBtn"><img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon"></div>
-</div>
-
-<!-- REACTIONS -->
-<div id="reactions">
-  <div class="reaction-row">
-    <div class="react" data-id="1"><img src="https://tajnachalupka.github.io/main/guziki-reakcji/r1.jpg"><div class="count">0</div></div>
-    <div class="react" data-id="2"><img src="https://tajnachalupka.github.io/main/guziki-reakcji/r2.jpg"><div class="count">0</div></div>
-    <div class="react" data-id="3"><img src="https://tajnachalupka.github.io/main/guziki-reakcji/r3.jpg"><div class="count">0</div></div>
-    <div class="react" data-id="4"><img src="https://tajnachalupka.github.io/main/guziki-reakcji/r4.jpg"><div class="count">0</div></div>
-    <div class="react" data-id="5"><img src="https://tajnachalupka.github.io/main/guziki-reakcji/r5.jpg"><div class="count">0</div></div>
-  </div>
 </div>
 
 <p id="padlet_loading">Ładuję komentarze...</p>
@@ -283,18 +237,6 @@ img.comic-page {
 
   homeBtn.onclick = () => location.href = "https://diligentin.github.io/tlumaczenia/";
 
-  /* ===== REACTIONS ===== */
-  document.querySelectorAll(".react").forEach(btn => {
-    btn.onclick = () => {
-      const id = btn.dataset.id;
-      const key = `react_${comicKey}_${chapter}_${id}`;
-      if (localStorage.getItem(key)) return;
-      localStorage.setItem(key, "1");
-      const count = btn.querySelector(".count");
-      count.textContent = parseInt(count.textContent) + 1;
-    };
-  });
-
   /* ===== PADLET MAPA ===== */
   const padletMap = {
     "afos": "https://padlet.com/zzzruoye/padlet-ml339n7v5mkqpdpg",
@@ -343,15 +285,11 @@ img.comic-page {
 
   observerPadlet.observe(padletEl);
 
-  /* ===== POKAŻ REAKCJE + PADLET PO 250 PX ===== */
+  /* ===== POKAŻ PADLET PO 250 PX ===== */
   function revealExtras() {
     if (window.scrollY > 250) {
-      reactionsEl.style.visibility = "visible";
-      reactionsEl.style.opacity = "1";
-
       padletEl.style.visibility = "visible";
       padletEl.style.opacity = "1";
-
       window.removeEventListener("scroll", revealExtras);
     }
   }
