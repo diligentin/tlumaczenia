@@ -8,12 +8,16 @@
   "disqus_base": "at",
   "chapters": {
     "1": [
-      "https://tajnachalupka.github.io/afos/01/1.jpg",
-      "https://tajnachalupka.github.io/afos/01/2.jpg"
+      "https://tajnachalupka.github.io/at/01/1.jpg",
+      "https://tajnachalupka.github.io/at/01/2.jpg",
+       "https://tajnachalupka.github.io/at/01/3.jpg",
+       "https://tajnachalupka.github.io/at/01/4.jpg"
     ],
     "2": [
-      "https://tajnachalupka.github.io/afos/02/1.jpg",
-      "https://tajnachalupka.github.io/afos/02/2.jpg"
+       "https://tajnachalupka.github.io/at/02/1.jpg",
+      "https://tajnachalupka.github.io/at/02/2.jpg",
+       "https://tajnachalupka.github.io/at/02/3.jpg",
+       "https://tajnachalupka.github.io/at/02/4.jpg"
     ],
     "2♡": [
       "https://tajnachalupka.github.io/afos/02/1.jpg",
