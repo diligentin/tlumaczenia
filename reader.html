@@ -39,7 +39,7 @@ img.comic-page {
   display: flex;
   flex-direction: column;
   gap: 0px;
-  transition: opacity .2s ease;
+  transition: opacity .25s ease;
   opacity: 1;
 }
 
@@ -68,7 +68,7 @@ img.comic-page {
 #padlet_box {
   padding: 20px;
   background: #191818;
-  margin-top: 58px; /* odstęp pod rozdziałem */
+  margin-top: 58px;
   visibility: hidden;
   opacity: 0;
   transition: opacity .3s ease;
@@ -268,7 +268,7 @@ img.comic-page {
         border-radius:2px;
         overflow:hidden;
         width:100%;
-        max-width:720px;
+        max-width:900px;
         margin:0 auto;
         background:#191818;
       ">
@@ -306,23 +306,21 @@ img.comic-page {
     if (window.scrollY > 250) revealExtras();
   }, 50);
 
-  /* ===== ZNIKANIE NAWIGACJI ===== */
+  /* ===== ZNIKANIE NAWIGACJI — WERSJA POPRZEDNIA ===== */
   const nav = document.getElementById("nav");
-  let hideTimeout;
+  let lastScroll = window.scrollY;
 
-  function showNav() {
-    nav.classList.remove("hidden");
-    clearTimeout(hideTimeout);
-    hideTimeout = setTimeout(() => {
-      nav.classList.add("hidden");
-    }, 600);
-  }
+  window.addEventListener("scroll", () => {
+    const current = window.scrollY;
 
-  window.addEventListener("scroll", showNav);
-  window.addEventListener("mousemove", showNav);
-  window.addEventListener("touchstart", showNav);
+    if (current > lastScroll) {
+      nav.classList.add("hidden");   // scroll w dół → ukryj
+    } else {
+      nav.classList.remove("hidden"); // scroll w górę → pokaż
+    }
 
-  showNav(); // start
+    lastScroll = current;
+  });
 
 })();
 </script>
