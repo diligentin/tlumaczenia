@@ -64,11 +64,22 @@ img.comic-page {
   filter: invert(1);
 }
 
+/* ===== KOMENTARZE — NAGŁÓWEK ===== */
+#comments_title {
+  color: white;
+  font-family: figtree;
+  font-size: 20px;
+  text-align: center;
+  margin-top: 15px;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+
 /* ===== PADLET ===== */
 #padlet_box {
   padding: 20px;
   background: #191818;
-  margin-top: 58px;
+  margin-top: 10px;
   visibility: hidden;
   opacity: 0;
   transition: opacity .3s ease;
@@ -95,6 +106,8 @@ img.comic-page {
   <div class="nav-btn" id="prevBtn"><img src="https://tajnachalupka.github.io/main/szczala-prev.png" class="btn-icon"></div>
   <div class="nav-btn" id="homeBtn"><img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon"></div>
 </div>
+
+<p id="comments_title">Komentarze</p>
 
 <p id="padlet_loading">Ładuję komentarze...</p>
 <div id="padlet_box"></div>
@@ -259,6 +272,9 @@ img.comic-page {
     const loadingMsg = document.getElementById("padlet_loading");
     if (loadingMsg) loadingMsg.remove();
 
+    const title = document.getElementById("comments_title");
+    title.style.opacity = "1";
+
     const padletBox = document.getElementById("padlet_box");
     const url = padletMap[comicKey];
 
@@ -268,7 +284,7 @@ img.comic-page {
         border-radius:2px;
         overflow:hidden;
         width:100%;
-        max-width:720px;
+        max-width:900px;
         margin:0 auto;
         background:#191818;
       ">
@@ -306,7 +322,7 @@ img.comic-page {
     if (window.scrollY > 250) revealExtras();
   }, 50);
 
-  /* ===== ZNIKANIE NAWIGACJI — WERSJA POPRZEDNIA ===== */
+  /* ===== ZNIKANIE NAWIGACJI — SCROLL DOWN/UP ===== */
   const nav = document.getElementById("nav");
   let lastScroll = window.scrollY;
 
