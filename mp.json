@@ -1,0 +1,35 @@
+{
+  "slug": "mp",
+  "title": "melting point",
+  "header_img": "https://tajnachalupka.github.io/main/tagi/mp.png",
+  "cover": "https://tajnachalupka.github.io/main/covers/mp.png",
+  "desc": "turu ruru",
+  "padlet": "https://padlet.com/embed/ml339n7v5mkqpdpg",
+  "disqus_base": "mp",
+  "chapters": {
+    "1": [
+      "https://tajnachalupka.github.io/mp/01/1.jpg",
+      "https://tajnachalupka.github.io/mp/01/2.jpg",
+      "https://tajnachalupka.github.io/mp/01/3.jpg",
+      "https://tajnachalupka.github.io/mp/01/4.jpg",
+      "https://tajnachalupka.github.io/mp/01/5.jpg",
+      "https://tajnachalupka.github.io/mp/mp-coins.jpg"
+    ],
+    "2": [
+      "https://tajnachalupka.github.io/mp/02/1.jpg",
+      "https://tajnachalupka.github.io/mp/02/2.jpg",
+      "https://tajnachalupka.github.io/mp/02/3.jpg",
+      "https://tajnachalupka.github.io/mp/02/4.jpg",
+      "https://tajnachalupka.github.io/mp/02/5.jpg",
+      "https://tajnachalupka.github.io/mp/mp-coins.jpg"
+    ],
+    "3": [
+      "https://tajnachalupka.github.io/mp/03/1.jpg",
+      "https://tajnachalupka.github.io/mp/03/2.jpg",
+      "https://tajnachalupka.github.io/mp/03/3.jpg",
+      "https://tajnachalupka.github.io/mp/03/4.jpg",
+      "https://tajnachalupka.github.io/mp/03/5.jpg",
+      "https://tajnachalupka.github.io/mp/mp-coins.jpg"
+    ]
+  }
+}
