@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
-<title>tajna chałupka</title>
+<title>...</title>
 
 <style>
 @font-face {
@@ -39,7 +39,13 @@ img.comic-page {
   display: flex;
   flex-direction: column;
   gap: 0px;
-  transition: opacity .2s;
+  transition: opacity .25s ease;
+  opacity: 1;
+}
+
+.nav-buttons.hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .nav-btn {
@@ -262,7 +268,7 @@ img.comic-page {
         border-radius:2px;
         overflow:hidden;
         width:100%;
-        max-width:900px;
+        max-width:720px;
         margin:0 auto;
         background:#191818;
       ">
@@ -299,6 +305,24 @@ img.comic-page {
   setTimeout(() => {
     if (window.scrollY > 250) revealExtras();
   }, 50);
+
+  /* ===== ZNIKANIE NAWIGACJI ===== */
+  const nav = document.getElementById("nav");
+  let hideTimeout;
+
+  function showNav() {
+    nav.classList.remove("hidden");
+    clearTimeout(hideTimeout);
+    hideTimeout = setTimeout(() => {
+      nav.classList.add("hidden");
+    }, 600);
+  }
+
+  window.addEventListener("scroll", showNav);
+  window.addEventListener("mousemove", showNav);
+  window.addEventListener("touchstart", showNav);
+
+  showNav(); // start
 
 })();
 </script>
