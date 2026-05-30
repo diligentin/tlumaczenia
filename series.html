@@ -163,10 +163,8 @@ a { color: white; text-decoration: none; }
 <!-- ROZDZIAŁY -->
 <div class="section">
   <h2>Rozdziały</h2>
-  <div class="chapter-grid" id="chapters"></div>
+  <div id="chapters-container"></div>
 </div>
-
-<!-- PADLET USUNIĘTY -->
 
 <script>
 (async function() {
@@ -192,13 +190,14 @@ a { color: white; text-decoration: none; }
   document.getElementById("desc").innerHTML = data.desc.replace(/\n/g, "<br>");
 
   /* ===== ROZDZIAŁY ===== */
-  const chaptersBox = document.getElementById("chapters");
-  const chapterNumbers = Object.keys(data.chapters)
-    .sort((a,b)=>{
+  const container = document.getElementById("chapters-container");
 
+  const allChapters = Object.keys(data.chapters);
+
+  /* sortowanie naturalne jak wcześniej */
+  const sorted = allChapters.sort((a,b)=>{
       const na = parseInt(a);
       const nb = parseInt(b);
-
       const ha = !isNaN(na);
       const hb = !isNaN(nb);
 
@@ -209,23 +208,74 @@ a { color: white; text-decoration: none; }
       if (ha) return -1;
       if (hb) return 1;
       return a.localeCompare(b);
+  });
+
+  /* ===== TRYB BEZ SEZONÓW ===== */
+  if (!data.seasons) {
+    const grid = document.createElement("div");
+    grid.className = "chapter-grid";
+
+    sorted.forEach(num => {
+      const a = document.createElement("a");
+      a.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(num)}`;
+
+      const btn = document.createElement("div");
+      btn.className = "chapter-btn";
+      btn.innerText = num;
+
+      if (localStorage.getItem(`read_${comicKey}_${num}`) === "1") {
+        btn.classList.add("visited");
+      }
+
+      a.appendChild(btn);
+      grid.appendChild(a);
     });
 
-  chapterNumbers.forEach(num => {
-    const a = document.createElement("a");
-    a.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(num)}`;
+    container.appendChild(grid);
+    return;
+  }
 
-    const btn = document.createElement("div");
-    btn.className = "chapter-btn";
-    btn.innerText = num;
+  /* ===== TRYB Z SEZONAMI (ZAKRESY) ===== */
+  for (const seasonName of Object.keys(data.seasons)) {
 
-    if (localStorage.getItem(`read_${comicKey}_${num}`) === "1") {
-      btn.classList.add("visited");
-    }
+    const range = data.seasons[seasonName];
+    const from = parseInt(range.from);
+    const to = parseInt(range.to);
 
-    a.appendChild(btn);
-    chaptersBox.appendChild(a);
-  });
+    const header = document.createElement("h3");
+    header.style.textAlign = "center";
+    header.style.fontWeight = "200";
+    header.style.fontSize = "26px";
+    header.style.marginTop = "40px";
+    header.textContent = seasonName;
+    container.appendChild(header);
+
+    const grid = document.createElement("div");
+    grid.className = "chapter-grid";
+
+    sorted.forEach(num => {
+      const n = parseInt(num);
+      if (isNaN(n)) return;
+
+      if (n >= from && n <= to) {
+        const a = document.createElement("a");
+        a.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(num)}`;
+
+        const btn = document.createElement("div");
+        btn.className = "chapter-btn";
+        btn.innerText = num;
+
+        if (localStorage.getItem(`read_${comicKey}_${num}`) === "1") {
+          btn.classList.add("visited");
+        }
+
+        a.appendChild(btn);
+        grid.appendChild(a);
+      }
+    });
+
+    container.appendChild(grid);
+  }
 
 })();
 </script>
