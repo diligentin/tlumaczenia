@@ -113,12 +113,16 @@ img.comic-page {
 
 <!-- ⭐ NOWY HEADER PNG (poprawne miejsce!) -->
 <div id="series-header" style="
-  text-align:center;
-  margin:20px 0 10px 0;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  opacity: 1;
   transition: opacity .15s ease;
 ">
   <a id="series-link" href="#">
-    <img id="series-img" src="" style="max-height:30px; width:auto; opacity:0; transition:opacity .3s ease;">
+    <img id="series-img" src="" style="max-height:30px; width:auto; opacity:1; transition:opacity .3s ease;">
   </a>
 </div>
 
