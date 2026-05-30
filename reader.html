@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
-<title>0✦⏖✦</title>
+<title>✦⏖✦</title>
 
 <style>
 @font-face {
@@ -141,44 +141,46 @@ img.comic-page {
     return oldAndroid || slowCPU || badCanvas;
   }
 
-  const USE_R = !isOldDevice();
+  const USE_SLICER = !isOldDevice();
 
-  /* ===== SLICER — TYLKO CIĘCIE, ZERO SKALOWANIA ===== */
-  async function sliceImage(src, sliceHeight = 1800) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.src = src;
+ /* ===== SLICER ===== */
+async function sliceImage(src, sliceHeight = 1800) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = src;
 
-      img.onload = () => {
+    img.onload = () => {
 
-        // zabezpieczenie przed błędem (czasem width=0 na starych urządzeniach)
-        if (img.width === 0 || img.height === 0) {
-          reject("Broken image");
-          return;
-        }
+      // zabezpieczenie przed błędem width=0 na starych urządzeniach
+      if (img.width === 0 || img.height === 0) {
+        reject("Broken image");
+        return;
+      }
 
-        const slices = [];
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
+      const slices = [];
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
 
-        for (let y = 0; y < img.height; y += sliceHeight) {
-          const h = Math.min(sliceHeight, img.height - y);
+      for (let y = 0; y < img.height; y += sliceHeight) {
+        const h = Math.min(sliceHeight, img.height - y);
 
-          canvas.width = img.width;   // NIE SKALUJEMY
-          canvas.height = h;
+        // TYLKO CIĘCIE — ZERO SKALOWANIA
+        canvas.width = img.width;
+        canvas.height = h;
 
-          ctx.drawImage(img, 0, y, img.width, h, 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, y, img.width, h, 0, 0, canvas.width, canvas.height);
 
-          slices.push(canvas.toDataURL("image/jpeg", 0.95));
-        }
+        slices.push(canvas.toDataURL("image/jpeg", 0.95));
+      }
 
-        resolve(slices);
-      };
+      resolve(slices);
+    };
 
-      img.onerror = reject;
-    });
-  }
+    img.onerror = reject;
+  });
+}
+
 
   /* ===== JSON ===== */
   let data;
@@ -342,7 +344,7 @@ img.comic-page {
     if (window.scrollY > 250) revealExtras();
   }, 50);
 
-  /* ===== ZNIKANIE NAWIGACJI ===== */
+  /* ===== ZNIKANIE NAWIGACJI — SCROLL DOWN/UP ===== */
   const nav = document.getElementById("nav");
   let lastScroll = window.scrollY;
 
@@ -350,9 +352,9 @@ img.comic-page {
     const current = window.scrollY;
 
     if (current > lastScroll) {
-      nav.classList.add("hidden");
+      nav.classList.add("hidden");   // scroll w dół → ukryj
     } else {
-      nav.classList.remove("hidden");
+      nav.classList.remove("hidden"); // scroll w górę → pokaż
     }
 
     lastScroll = current;
