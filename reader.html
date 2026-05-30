@@ -408,13 +408,14 @@ const seriesHeader = document.getElementById("series-header");
 window.addEventListener("scroll", () => {
   const current = window.scrollY;
 
-  if (current > lastScroll) {
+if (current - lastScroll > 1) {
     nav.classList.add("hidden");
     seriesHeader.style.opacity = "0";
-  } else {
+} else if (lastScroll - current > 1) {
     nav.classList.remove("hidden");
     seriesHeader.style.opacity = "1";
-  }
+}
+
 
   lastScroll = current;
 });
