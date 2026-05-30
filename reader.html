@@ -91,7 +91,8 @@ img.comic-page {
   font-family: figtree;
   padding: 20px;
 }
-  /* Wyższy Padlet na telefonach */
+
+/* Wyższy Padlet na telefonach */
 @media (max-width: 600px) {
   #padlet_box iframe {
     height: 700px !important;
@@ -166,7 +167,6 @@ async function sliceImage(src, sliceHeight = 1800) {
 
     img.onload = () => {
 
-      // zabezpieczenie przed błędem width=0 na starych urządzeniach
       if (img.width === 0 || img.height === 0) {
         reject("Broken image");
         return;
@@ -179,7 +179,6 @@ async function sliceImage(src, sliceHeight = 1800) {
       for (let y = 0; y < img.height; y += sliceHeight) {
         const h = Math.min(sliceHeight, img.height - y);
 
-        // TYLKO CIĘCIE — ZERO SKALOWANIA
         canvas.width = img.width;
         canvas.height = h;
 
@@ -282,104 +281,96 @@ async function sliceImage(src, sliceHeight = 1800) {
 
   homeBtn.onclick = () => location.href = "https://diligentin.github.io/tlumaczenia/";
 
-  /* ===== PADLET MAPA ===== */
-  const padletMap = {
-    "afos": "https://padlet.com/vvvvvvvvvvvvvvvv/padlet-xvfowvg6hnywhy1s",
-    "at":   "https://padlet.com/vvvvvvvvvvvvvvvv/padlet-m2x098yvh45m5ggj",
-    "bn":   "https://padlet.com/vvvvvvvvvvvvvvvv/padlet-wuvnm169lfl7o6eq",
-    "mp": "https://padlet.com/vvvvvvvvvvvvvvvvv/melting-point-o5kcvpcptb5itui1",
-    "mo":   "https://padlet.com/vvvvvvvvvvvvvvvvv/moze-ognia-cx6d1o9objsqbrey",
-    "mnbig":   "https://padlet.com/vvvvvvvvvvvvvvvvv/my-new-boss-is-goofy-6hpej4ulkkn1qhiv",
-    "1rta": "https://padlet.com/vvvvvvvvvvvvvvvvvv/one-room-ta-i4dpk9rl9n62kku4",
-    "osd":   "https://padlet.com/vvvvvvvvvvvvvvvvvv/our-sunny-days-a3k90ueey9qztdri",
-    "rc":   "https://padlet.com/vvvvvvvvvvvvvvvvvv/rainbow-city-fwvlaiawvad7ugrc",
-    "sah": "https://padlet.com/vvvvvvvvvvvvvvvvvvv/sahan-fyxbs54jbh7nqvk4",
-    "ub":   "https://padlet.com/vvvvvvvvvvvvvvvvvvv/uwaga-bestia-o0plra2tzpi96h76",
-    "yiam":   "https://padlet.com/vvvvvvvvvvvvvvvvvvv/yang-ilwoo-and-me-7r525d9si7ca6l7c"
-  };
 
-  /* ===== PADLET LAZY LOAD ===== */
-  let padletLoaded = false;
+/*  
+===========================================================
+   ⭐⭐⭐ NOWA SEKCJA PADLETU — AUTOMATYCZNA ⭐⭐⭐
+===========================================================
+*/
 
-  function loadPadlet() {
-    if (padletLoaded) return;
-    padletLoaded = true;
+let padletLoaded = false;
 
-    const loadingMsg = document.getElementById("padlet_loading");
-    if (loadingMsg) loadingMsg.remove();
+function loadPadlet() {
+  if (padletLoaded) return;
+  padletLoaded = true;
 
-    const title = document.getElementById("comments_title");
-    title.style.opacity = "1";
+  const loadingMsg = document.getElementById("padlet_loading");
+  if (loadingMsg) loadingMsg.remove();
 
-    const padletBox = document.getElementById("padlet_box");
-    const url = padletMap[comicKey];
+  const title = document.getElementById("comments_title");
+  title.style.opacity = "1";
 
-    padletBox.innerHTML = `
-      <div style="
-        border:1px solid rgba(0,0,0,0.1);
-        border-radius:2px;
-        overflow:hidden;
-        width:100%;
-        max-width:720px;
-        margin:0 auto;
-        background:#191818;
-      ">
-        <iframe src="${url}" frameborder="0"
-          style="width:100%;height:600px;display:block;">
-        </iframe>
-        
-        <p style="text-align:center; margin-top:10px;">
-  <a href="https://padlet.com/vvvvvvvvvvvvvvvv/padlet-xvfowvg6hnywhy1s" target="_blank" style="color:#8394F4;">
-    Otwórz Padlet w nowej karcie (żeby komentować jako zalogowany użytkownik)
-  </a>
-</p>
+  const padletBox = document.getElementById("padlet_box");
 
-      </div>
-    `;
+  const embedUrl = data.padlet;
+  const fullUrl = embedUrl.replace("/embed/", "/");
 
-    padletBox.style.visibility = "visible";
-    padletBox.style.opacity = "1";
+  padletBox.innerHTML = `
+    <div style="
+      border:1px solid rgba(0,0,0,0.1);
+      border-radius:2px;
+      overflow:hidden;
+      width:100%;
+      max-width:720px;
+      margin:0 auto;
+      background:#191818;
+    ">
+      <iframe src="${embedUrl}" frameborder="0"
+        style="width:100%;height:600px;display:block;">
+      </iframe>
+
+      <p style="text-align:center; margin-top:10px;">
+        <a href="${fullUrl}" target="_blank" style="color:#8394F4;">
+          Otwórz Padlet w nowej karcie (żeby komentować jako zalogowany użytkownik)
+        </a>
+      </p>
+    </div>
+  `;
+
+  padletBox.style.visibility = "visible";
+  padletBox.style.opacity = "1";
+}
+
+/* ===== OBSERWATOR PADLETU ===== */
+const padletEl = document.getElementById("padlet_box");
+
+const observerPadlet = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) loadPadlet();
+}, { threshold: 0.1 });
+
+observerPadlet.observe(padletEl);
+
+/* ===== POKAŻ PADLET PO 250 PX ===== */
+function revealExtras() {
+  if (window.scrollY > 250) {
+    padletEl.style.visibility = "visible";
+    padletEl.style.opacity = "1";
+    window.removeEventListener("scroll", revealExtras);
+  }
+}
+
+window.addEventListener("scroll", revealExtras);
+
+setTimeout(() => {
+  if (window.scrollY > 250) revealExtras();
+}, 50);
+
+
+/* ===== ZNIKANIE NAWIGACJI ===== */
+const nav = document.getElementById("nav");
+let lastScroll = window.scrollY;
+
+window.addEventListener("scroll", () => {
+  const current = window.scrollY;
+
+  if (current > lastScroll) {
+    nav.classList.add("hidden");
+  } else {
+    nav.classList.remove("hidden");
   }
 
-  /* ===== OBSERWATOR PADLETU ===== */
-  const padletEl = document.getElementById("padlet_box");
-
-  const observerPadlet = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) loadPadlet();
-  }, { threshold: 0.1 });
-
-  observerPadlet.observe(padletEl);
-
-  /* ===== POKAŻ PADLET PO 250 PX ===== */
-  function revealExtras() {
-    if (window.scrollY > 250) {
-      padletEl.style.visibility = "visible";
-      padletEl.style.opacity = "1";
-      window.removeEventListener("scroll", revealExtras);
-    }
-  }
-
-  window.addEventListener("scroll", revealExtras);
-
-  setTimeout(() => {
-    if (window.scrollY > 250) revealExtras();
-  }, 50);
-
-  /* ===== ZNIKANIE NAWIGACJI — SCROLL DOWN/UP ===== */
-  const nav = document.getElementById("nav");
-  let lastScroll = window.scrollY;
-
-  window.addEventListener("scroll", () => {
-    const current = window.scrollY;
-
-    if (current > lastScroll) {
-      nav.classList.add("hidden");   // scroll w dół → ukryj
-    } else {
-      nav.classList.remove("hidden"); // scroll w górę → pokaż
-    }
-
-    lastScroll = current;
-  });
+  lastScroll = current;
+});
 
 })();
 </script>
