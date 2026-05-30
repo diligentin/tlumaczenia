@@ -10,7 +10,7 @@
 <style>
 
 @font-face {
-font-family: "figtree";
+  font-family: "figtree";
   src: url("https://tajnachalupka.github.io/main/Figtree.ttf") format("truetype");
 }
 
@@ -19,20 +19,13 @@ font-family: "figtree";
   src: url("https://tajnachalupka.github.io/main/Piekos.otf") format("opentype");
   font-weight: 300;
 }
- 
-  @font-face {
-  font-family: "satoshi";
-  src: url("https://tajnachalupka.github.io/main/Satoshi.otf") format("opentype");
-  font-weight: 300;
-  font-style: normal;
-   }
-  
+
 /* ===== RESET / BAZA ===== */
 body {
   margin: 0;
   background: #191818ff;
   color: white;
-  font-family: figtree;
+  font-family: figtree, sans-serif;
 }
 a { color: white; text-decoration: none; }
 
@@ -170,12 +163,15 @@ a { color: white; text-decoration: none; }
 <!-- ROZDZIAŁY -->
 <div class="section">
   <h2>Rozdziały</h2>
-  <div id="chapters"></div>
+  <div class="chapter-grid" id="chapters"></div>
 </div>
+
+<!-- PADLET USUNIĘTY -->
 
 <script>
 (async function() {
 
+  /* ===== POBIERANIE KLUCZA SERII ===== */
   const params = new URLSearchParams(location.search);
   const comicKey = params.get("title");
 
@@ -184,115 +180,52 @@ a { color: white; text-decoration: none; }
     return;
   }
 
+  /* ===== ŁADOWANIE JSON ===== */
   const data = await fetch(`${comicKey}.json`).then(r => r.json());
 
+  /* ===== USTAWIANIE TYTUŁU STRONY ===== */
   document.getElementById("page-title").textContent = data.title || comicKey;
+
+  /* ===== WYPEŁNIANIE DANYCH ===== */
   document.getElementById("cover").src = data.cover;
   document.getElementById("header-img").src = data.header_img;
   document.getElementById("desc").innerHTML = data.desc.replace(/\n/g, "<br>");
 
-  /* ===== MAPA SEZONÓW / TOMÓW ===== */
-  const segmentMap = {
-    "afos": [
-      { title: "Sezon 1", start: 1, end: 40 },
-      { title: "Sezon 2", start: 41, end: Infinity }
-    ],
+  /* ===== ROZDZIAŁY ===== */
+  const chaptersBox = document.getElementById("chapters");
+  const chapterNumbers = Object.keys(data.chapters)
+    .sort((a,b)=>{
 
-    "at": [
-      { title: "Tom 1", start: 1, end: 12 },
-      { title: "Tom 2", start: 13, end: 24 }
-    ],
+      const na = parseInt(a);
+      const nb = parseInt(b);
 
-    "bn": [],
-    "mp": [],
-    "mo": [],
-    "mnbig": [],
-    "1rta": [],
-    "osd": [],
-    "rc": [],
-    "sah": [],
-    "ub": [],
-    "yiam": []
-  };
+      const ha = !isNaN(na);
+      const hb = !isNaN(nb);
 
-  const segments = segmentMap[comicKey] || [];
+      if (ha && hb) {
+        if (na !== nb) return na - nb;
+        return a.localeCompare(b);
+      }
+      if (ha) return -1;
+      if (hb) return 1;
+      return a.localeCompare(b);
+    });
 
-/* ===== ROZDZIAŁY ===== */
-const chaptersBox = document.getElementById("chapters");
-chaptersBox.innerHTML = "";
-
-/* Pobieramy klucze rozdziałów w KOLEJNOŚCI z JSON */
-const chapterKeys = Object.keys(data.chapters);
-
-/* Funkcja: wyciąga numer bazowy z klucza */
-function baseNumber(key) {
-  const m = key.match(/^\d+/);
-  return m ? parseInt(m[0]) : null;
-}
-
-/* ===== BRAK SEGMENTÓW ===== */
-if (segments.length === 0) {
-  const grid = document.createElement("div");
-  grid.className = "chapter-grid";
-
-  chapterKeys.forEach(key => {
+  chapterNumbers.forEach(num => {
     const a = document.createElement("a");
-    a.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(key)}`;
+    a.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(num)}`;
 
     const btn = document.createElement("div");
     btn.className = "chapter-btn";
-    btn.innerText = key;
+    btn.innerText = num;
 
-    if (localStorage.getItem(`read_${comicKey}_${key}`) === "1") {
+    if (localStorage.getItem(`read_${comicKey}_${num}`) === "1") {
       btn.classList.add("visited");
     }
 
     a.appendChild(btn);
-    grid.appendChild(a);
+    chaptersBox.appendChild(a);
   });
-
-  chaptersBox.appendChild(grid);
-}
-
-/* ===== SĄ SEGMENTY ===== */
-else {
-  segments.forEach(seg => {
-
-    const h = document.createElement("h3");
-    h.textContent = seg.title;
-    h.style.textAlign = "center";
-    h.style.marginTop = "30px";
-    h.style.marginBottom = "15px";
-    chaptersBox.appendChild(h);
-
-    const grid = document.createElement("div");
-    grid.className = "chapter-grid";
-
-    chapterKeys.forEach(key => {
-      const n = baseNumber(key);
-      if (n === null) return; // ignorujemy totalnie nienumeryczne (jeśli kiedyś będą)
-
-      if (n >= seg.start && n <= seg.end) {
-        const a = document.createElement("a");
-        a.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(key)}`;
-
-        const btn = document.createElement("div");
-        btn.className = "chapter-btn";
-        btn.innerText = key;
-
-        if (localStorage.getItem(`read_${comicKey}_${key}`) === "1") {
-          btn.classList.add("visited");
-        }
-
-        a.appendChild(btn);
-        grid.appendChild(a);
-      }
-    });
-
-    chaptersBox.appendChild(grid);
-  });
-}
-
 
 })();
 </script>
