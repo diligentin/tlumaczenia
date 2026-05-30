@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
-<title>.oo.✦⏖✦</title>
+<title>✦⏖✦</title>
 
 <style>
 @font-face {
@@ -23,7 +23,6 @@ body {
   margin: 0 auto;
 }
 
-/* naturalne dopasowanie */
 img.comic-page {
   width: 100%;
   height: auto;
@@ -65,11 +64,11 @@ img.comic-page {
   filter: invert(1);
 }
 
-/* ===== KOMENTARZE ===== */
+/* ===== KOMENTARZE — NAGŁÓWEK ===== */
 #comments_title {
   color: white;
   font-family: figtree;
-  font-size: 24px;
+  font-size: 22px;
   text-align: center;
   margin-top: 30px;
   opacity: 0;
@@ -123,7 +122,28 @@ img.comic-page {
 
   if (!comicKey || !chapter) return;
 
-  /* ===== SLICER — ORYGINALNY ===== */
+  /* ===== FALLBACK ===== */
+  function isOldDevice() {
+    const ua = navigator.userAgent || "";
+    const oldAndroid = /Android [0-8]\./i.test(ua);
+
+    let slowCPU = false;
+    const t0 = performance.now();
+    for (let i = 0; i < 40000; i++) {}
+    if (performance.now() - t0 > 10) slowCPU = true;
+
+    let badCanvas = false;
+    try {
+      const c = document.createElement("canvas");
+      if (!c.getContext("2d")) badCanvas = true;
+    } catch { badCanvas = true; }
+
+    return oldAndroid || slowCPU || badCanvas;
+  }
+
+  const USE_SLICER = !isOldDevice();
+
+  /* ===== SLICER ===== */
   async function sliceImage(src, sliceHeight = 1800) {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -139,7 +159,7 @@ img.comic-page {
         for (let y = 0; y < img.height; y += sliceHeight) {
           const h = Math.min(sliceHeight, img.height - y);
           canvas.width = 720;
-          canvas.height = Math.round(h * scale);
+          canvas.height = h * scale;
           ctx.drawImage(img, 0, y, img.width, h, 0, 0, canvas.width, canvas.height);
           slices.push(canvas.toDataURL("image/jpeg", 0.9));
         }
@@ -169,6 +189,10 @@ img.comic-page {
     entries.forEach(entry => {
       const img = entry.target;
       if (entry.isIntersecting) {
+        if (img.dataset.src) {
+          img.src = img.dataset.src;
+          img.dataset.src = "";
+        }
         img.style.opacity = "1";
 
         const loadingChapter = document.getElementById("chapter_loading");
@@ -180,22 +204,26 @@ img.comic-page {
   /* ===== WSTAWIANIE OBRAZÓW ===== */
   for (const src of pages) {
     try {
-      const slices = await sliceImage(src);
-
-      for (const s of slices) {
+      if (USE_SLICER) {
+        const slices = await sliceImage(src);
+        for (const s of slices) {
+          const img = document.createElement("img");
+          img.className = "comic-page";
+          img.dataset.src = s;
+          img.loading = "lazy";
+          img.decoding = "async";
+          container.appendChild(img);
+          lazyObserver.observe(img);
+        }
+      } else {
         const img = document.createElement("img");
         img.className = "comic-page";
-
-        /* KLUCZOWA ZMIANA — Waterfox FIX */
-        img.src = s;
-
+        img.dataset.src = src;
         img.loading = "lazy";
         img.decoding = "async";
-
         container.appendChild(img);
         lazyObserver.observe(img);
       }
-
     } catch {
       container.innerHTML += "<p style='color:red;text-align:center;'>Błąd obrazu.</p>";
     }
@@ -304,7 +332,7 @@ img.comic-page {
     if (window.scrollY > 250) revealExtras();
   }, 50);
 
-  /* ===== ZNIKANIE NAWIGACJI ===== */
+  /* ===== ZNIKANIE NAWIGACJI — SCROLL DOWN/UP ===== */
   const nav = document.getElementById("nav");
   let lastScroll = window.scrollY;
 
@@ -312,9 +340,9 @@ img.comic-page {
     const current = window.scrollY;
 
     if (current > lastScroll) {
-      nav.classList.add("hidden");
+      nav.classList.add("hidden");   // scroll w dół → ukryj
     } else {
-      nav.classList.remove("hidden");
+      nav.classList.remove("hidden"); // scroll w górę → pokaż
     }
 
     lastScroll = current;
