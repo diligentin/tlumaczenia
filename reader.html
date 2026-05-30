@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
-<title>...</title>
+<title>..o.</title>
 
 <style>
 @font-face {
@@ -231,9 +231,9 @@ img.comic-page {
         img.className = "comic-page";
         img.dataset.src = src;
 
-        /* POPRAWKA — tylko fallback */
+        /* FALLBACK — async ZOSTAJE, bo jest bezpieczniejszy */
         img.loading = "lazy";
-        img.decoding = "sync";
+        img.decoding = "async";
 
         container.appendChild(img);
         lazyObserver.observe(img);
