@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
-<title>.R.</title>
+<title>...</title>
 
 <style>
 @font-face {
@@ -29,6 +29,8 @@ img.comic-page {
   display: block;
   opacity: 0;
   transition: opacity .35s ease;
+
+  /* UNIWERSALNE POPRAWKI JAKOŚCI */
   image-rendering: auto;
   will-change: transform;
   transform: translateZ(0);
@@ -161,9 +163,15 @@ img.comic-page {
 
         for (let y = 0; y < img.height; y += sliceHeight) {
           const h = Math.min(sliceHeight, img.height - y);
+
+          /* KLUCZOWA POPRAWKA — ZAOKRĄGLANIE */
+          const scaledHeight = Math.round(h * scale);
+
           canvas.width = 720;
-          canvas.height = h * scale;
+          canvas.height = scaledHeight;
+
           ctx.drawImage(img, 0, y, img.width, h, 0, 0, canvas.width, canvas.height);
+
           slices.push(canvas.toDataURL("image/jpeg", 0.9));
         }
         resolve(slices);
@@ -222,8 +230,11 @@ img.comic-page {
         const img = document.createElement("img");
         img.className = "comic-page";
         img.dataset.src = src;
+
+        /* POPRAWKA — tylko fallback */
         img.loading = "lazy";
         img.decoding = "sync";
+
         container.appendChild(img);
         lazyObserver.observe(img);
       }
@@ -343,9 +354,9 @@ img.comic-page {
     const current = window.scrollY;
 
     if (current > lastScroll) {
-      nav.classList.add("hidden");   // scroll w dół → ukryj
+      nav.classList.add("hidden");
     } else {
-      nav.classList.remove("hidden"); // scroll w górę → pokaż
+      nav.classList.remove("hidden");
     }
 
     lastScroll = current;
