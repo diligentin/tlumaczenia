@@ -17,15 +17,6 @@ body {
   margin: 0;
   background: #191818;
 }
-<div id="series-header" style="
-  text-align:center;
-  margin:20px 0 10px 0;
-  transition: opacity .15s ease;
-">
-  <a id="series-link" href="#">
-    <img id="series-img" src="" style="max-width:160px; height:auto; opacity:0; transition:opacity .3s ease;">
-  </a>
-</div>
 
 #comic-container {
   max-width: 720px;
@@ -120,6 +111,17 @@ img.comic-page {
 
 <body>
 
+<!-- ⭐ NOWY HEADER PNG (poprawne miejsce!) -->
+<div id="series-header" style="
+  text-align:center;
+  margin:20px 0 10px 0;
+  transition: opacity .15s ease;
+">
+  <a id="series-link" href="#">
+    <img id="series-img" src="" style="max-width:160px; height:auto; opacity:0; transition:opacity .3s ease;">
+  </a>
+</div>
+
 <div id="comic-container"></div>
 
 <p id="chapter_loading">Ładuję rozdział...</p>
@@ -208,16 +210,17 @@ async function sliceImage(src, sliceHeight = 1800) {
   let data;
   try {
     data = await fetch(`${comicKey}.json`).then(r => r.json());
- /* ===== SERIES ICON ===== */
-const seriesImg = document.getElementById("series-img");
-const seriesLink = document.getElementById("series-link");
 
-if (data.series_icon) {
-  seriesImg.src = data.series_icon;
-  seriesImg.style.opacity = "1";
-}
+    /* ⭐ SERIES ICON */
+    const seriesImg = document.getElementById("series-img");
+    const seriesLink = document.getElementById("series-link");
 
-seriesLink.href = `index.html?comic=${comicKey}`;
+    if (data.series_icon) {
+      seriesImg.src = data.series_icon;
+      seriesImg.style.opacity = "1";
+    }
+
+    seriesLink.href = `index.html?comic=${comicKey}`;
 
   } catch {
     container.innerHTML = "<p style='color:white;text-align:center;padding:50px;'>Błąd JSON.</p>";
@@ -340,26 +343,25 @@ function loadPadlet() {
       </iframe>
 
     <p style="text-align:center; margin-top:14px;">
-  <a href="${fullUrl}" target="_blank"
-     style="
-       display:inline-block;
-       padding:10px 18px;
-       background:#272727;
-       color:white;
-       font-family: figtree;
-       font-size:14px;
-       border-radius:3px;
-       border:0px solid #3a3a3a;
-       text-decoration:none;
-       transition:0.2s;
-     "
-     onmouseover="this.style.background='#2f2f2f'"
-     onmouseout="this.style.background='#272727'"
-  >
-    Otwórz padlet w nowej karcie
-  </a>
-</p>
-
+      <a href="${fullUrl}" target="_blank"
+         style="
+           display:inline-block;
+           padding:10px 18px;
+           background:#272727;
+           color:white;
+           font-family: figtree;
+           font-size:14px;
+           border-radius:3px;
+           border:0px solid #3a3a3a;
+           text-decoration:none;
+           transition:0.2s;
+         "
+         onmouseover="this.style.background='#2f2f2f'"
+         onmouseout="this.style.background='#272727'"
+      >
+        Otwórz padlet w nowej karcie
+      </a>
+    </p>
 
     </div>
   `;
