@@ -170,7 +170,7 @@ a { color: white; text-decoration: none; }
 <!-- ROZDZIAŁY -->
 <div class="section">
   <h2>Rozdziały</h2>
-  <div class="chapter-grid" id="chapters"></div>
+  <div id="chapters"></div>
 </div>
 
 <script>
@@ -196,20 +196,11 @@ a { color: white; text-decoration: none; }
   document.getElementById("header-img").src = data.header_img;
   document.getElementById("desc").innerHTML = data.desc.replace(/\n/g, "<br>");
 
-  /*  
-  ============================================================
-  ⭐ MAPA SEZONÓW / TOMÓW — DZIAŁA JAK PADLET MAP ⭐
-  ============================================================
-  Każdy klucz = nazwa serii (taka jak w JSON: afos, at, bn...)
-  Każda wartość = lista segmentów (sezony/tomy)
-  Jeśli seria nie ma segmentów → pusta tablica → zwykła lista
-  ============================================================
-  */
-
+  /* ===== MAPA SEZONÓW / TOMÓW ===== */
   const segmentMap = {
     "afos": [
       { title: "Sezon 1", start: 1, end: 40 },
-      { title: "Sezon 2", start: 41, end: 60♡ }
+      { title: "Sezon 2", start: 41, end: 60 }
     ],
 
     "at": [
@@ -217,9 +208,9 @@ a { color: white; text-decoration: none; }
       { title: "Tom 2", start: 13, end: 24 }
     ],
 
-    "bn": [],   // brak sezonów → zwykła lista
-    "mp": [],   // brak sezonów
-    "mo": [],   // brak sezonów
+    "bn": [],
+    "mp": [],
+    "mo": [],
     "mnbig": [],
     "1rta": [],
     "osd": [],
@@ -229,20 +220,25 @@ a { color: white; text-decoration: none; }
     "yiam": []
   };
 
-  /* Pobieramy segmenty dla danej serii */
   const segments = segmentMap[comicKey] || [];
 
-  /* ===== ROZDZIAŁY / SEZONY / TOMY ===== */
+  /* ===== ROZDZIAŁY ===== */
   const chaptersBox = document.getElementById("chapters");
   chaptersBox.innerHTML = "";
 
-  const chapterNumbers = Object.keys(data.chapters)
-    .map(Number)
-    .sort((a, b) => a - b);
+  const chapterKeys = Object.keys(data.chapters);
 
-  /* ===== BRAK SEGMENTÓW → ZWYKŁA LISTA ===== */
+  /* rozdziały numeryczne i nienumeryczne */
+  const numeric = chapterKeys.filter(k => !isNaN(parseInt(k))).map(Number).sort((a,b)=>a-b);
+  const special = chapterKeys.filter(k => isNaN(parseInt(k))).sort();
+
+  /* ===== BRAK SEGMENTÓW ===== */
   if (segments.length === 0) {
-    chapterNumbers.forEach(num => {
+    const grid = document.createElement("div");
+    grid.className = "chapter-grid";
+
+    [...numeric, ...special].forEach(key => {
+      const num = key.toString();
       const a = document.createElement("a");
       a.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(num)}`;
 
@@ -255,28 +251,30 @@ a { color: white; text-decoration: none; }
       }
 
       a.appendChild(btn);
-      chaptersBox.appendChild(a);
+      grid.appendChild(a);
     });
+
+    chaptersBox.appendChild(grid);
   }
 
-  /* ===== SĄ SEGMENTY → SEZONY / TOMY ===== */
+  /* ===== SĄ SEGMENTY ===== */
   else {
     segments.forEach(seg => {
 
       const h = document.createElement("h3");
       h.textContent = seg.title;
+      h.style.textAlign = "center";
       h.style.marginTop = "30px";
       h.style.marginBottom = "15px";
-      h.style.fontWeight = "200";
-      h.style.textAlign = "center";
       chaptersBox.appendChild(h);
 
       const grid = document.createElement("div");
       grid.className = "chapter-grid";
 
-      chapterNumbers
+      numeric
         .filter(n => n >= seg.start && n <= seg.end)
-        .forEach(num => {
+        .forEach(n => {
+          const num = n.toString();
           const a = document.createElement("a");
           a.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(num)}`;
 
@@ -294,11 +292,41 @@ a { color: white; text-decoration: none; }
 
       chaptersBox.appendChild(grid);
     });
+
+    /* rozdziały specjalne (np. 46♡) */
+    if (special.length > 0) {
+      const h = document.createElement("h3");
+      h.textContent = "Specjalne";
+      h.style.textAlign = "center";
+      h.style.marginTop = "30px";
+      h.style.marginBottom = "15px";
+      chaptersBox.appendChild(h);
+
+      const grid = document.createElement("div");
+      grid.className = "chapter-grid";
+
+      special.forEach(num => {
+        const a = document.createElement("a");
+        a.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(num)}`;
+
+        const btn = document.createElement("div");
+        btn.className = "chapter-btn";
+        btn.innerText = num;
+
+        if (localStorage.getItem(`read_${comicKey}_${num}`) === "1") {
+          btn.classList.add("visited");
+        }
+
+        a.appendChild(btn);
+        grid.appendChild(a);
+      });
+
+      chaptersBox.appendChild(grid);
+    }
   }
 
 })();
 </script>
-
 
 </body>
 </html>
