@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
-<title>t✦⏖✦</title>
+<title>0✦⏖✦</title>
 
 <style>
 @font-face {
@@ -143,38 +143,42 @@ img.comic-page {
 
   const USE_R = !isOldDevice();
 
-  /* ===== SLICER ===== */
-async function sliceImage(src, sliceHeight = 1800) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.src = src;
+  /* ===== SLICER — TYLKO CIĘCIE, ZERO SKALOWANIA ===== */
+  async function sliceImage(src, sliceHeight = 1800) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = src;
 
-    img.onload = () => {
-      const slices = [];
+      img.onload = () => {
 
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
+        // zabezpieczenie przed błędem (czasem width=0 na starych urządzeniach)
+        if (img.width === 0 || img.height === 0) {
+          reject("Broken image");
+          return;
+        }
 
-      for (let y = 0; y < img.height; y += sliceHeight) {
-        const h = Math.min(sliceHeight, img.height - y);
+        const slices = [];
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
 
-        // NIE SKALUJEMY — używamy naturalnej szerokości i wysokości
-        canvas.width = img.width;
-        canvas.height = h;
+        for (let y = 0; y < img.height; y += sliceHeight) {
+          const h = Math.min(sliceHeight, img.height - y);
 
-        ctx.drawImage(img, 0, y, img.width, h, 0, 0, canvas.width, canvas.height);
+          canvas.width = img.width;   // NIE SKALUJEMY
+          canvas.height = h;
 
-        slices.push(canvas.toDataURL("image/jpeg", 0.95));
-      }
+          ctx.drawImage(img, 0, y, img.width, h, 0, 0, canvas.width, canvas.height);
 
-      resolve(slices);
-    };
+          slices.push(canvas.toDataURL("image/jpeg", 0.95));
+        }
 
-    img.onerror = reject;
-  });
-}
+        resolve(slices);
+      };
 
+      img.onerror = reject;
+    });
+  }
 
   /* ===== JSON ===== */
   let data;
@@ -338,7 +342,7 @@ async function sliceImage(src, sliceHeight = 1800) {
     if (window.scrollY > 250) revealExtras();
   }, 50);
 
-  /* ===== ZNIKANIE NAWIGACJI — SCROLL DOWN/UP ===== */
+  /* ===== ZNIKANIE NAWIGACJI ===== */
   const nav = document.getElementById("nav");
   let lastScroll = window.scrollY;
 
@@ -346,9 +350,9 @@ async function sliceImage(src, sliceHeight = 1800) {
     const current = window.scrollY;
 
     if (current > lastScroll) {
-      nav.classList.add("hidden");   // scroll w dół → ukryj
+      nav.classList.add("hidden");
     } else {
-      nav.classList.remove("hidden"); // scroll w górę → pokaż
+      nav.classList.remove("hidden");
     }
 
     lastScroll = current;
