@@ -239,8 +239,13 @@ a { color: white; text-decoration: none; }
   for (const seasonName of Object.keys(data.seasons)) {
 
     const range = data.seasons[seasonName];
-    const from = parseInt(range.from);
-    const to = parseInt(range.to);
+
+    // NOWA LOGIKA SEZONÓW
+    const from = range.from === "∞" ? Infinity :
+                 isNaN(parseInt(range.from)) ? range.from : parseInt(range.from);
+
+    const to = range.to === "∞" ? Infinity :
+               isNaN(parseInt(range.to)) ? range.to : parseInt(range.to);
 
     const header = document.createElement("h3");
     header.style.textAlign = "center";
@@ -254,10 +259,27 @@ a { color: white; text-decoration: none; }
     grid.className = "chapter-grid";
 
     sorted.forEach(num => {
-      const n = parseInt(num);
-      if (isNaN(n)) return;
 
-      if (n >= from && n <= to) {
+      let fits = false;
+
+      // 1) from/to są liczbami → porównanie liczbowe
+      if (typeof from === "number" && typeof to === "number") {
+        const n = parseInt(num);
+        if (!isNaN(n) && n >= from && n <= to) fits = true;
+      }
+
+      // 2) from jest stringiem → musi być dokładne dopasowanie
+      if (typeof from === "string") {
+        if (num === from) fits = true;
+      }
+
+      // 3) to = Infinity → wszystko powyżej from
+      if (to === Infinity && typeof from === "number") {
+        const n = parseInt(num);
+        if (!isNaN(n) && n >= from) fits = true;
+      }
+
+      if (fits) {
         const a = document.createElement("a");
         a.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(num)}`;
 
