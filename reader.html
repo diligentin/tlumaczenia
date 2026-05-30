@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
-<title>...</title>
+<title>..h.</title>
 
 <style>
 @font-face {
@@ -159,7 +159,7 @@ img.comic-page {
         for (let y = 0; y < img.height; y += sliceHeight) {
           const h = Math.min(sliceHeight, img.height - y);
           canvas.width = 720;
-          canvas.height = h * scale;
+          canvas.height = Math.round(h * scale); // ← jedyna zmiana
           ctx.drawImage(img, 0, y, img.width, h, 0, 0, canvas.width, canvas.height);
           slices.push(canvas.toDataURL("image/jpeg", 0.9));
         }
