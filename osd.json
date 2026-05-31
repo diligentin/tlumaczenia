@@ -504,7 +504,8 @@
       "https://tajnachalupka.github.io/osd/76/4.jpg",
       "https://tajnachalupka.github.io/osd/osd-coins.jpg"
     ],
-    "77": [
+    "77": {
+  "pages": [
       "https://tajnachalupka.github.io/osd/77/0.jpg",
       "https://tajnachalupka.github.io/osd/77/1.jpg",
       "https://tajnachalupka.github.io/osd/77/2.jpg",
@@ -514,6 +515,7 @@
       "https://tajnachalupka.github.io/osd/osd-coins.jpg"
     ],
     "disqus_id": "https://tajnachalupka.wixsite.com/osd-1/osd77"
+      }
     "77.5": [
       "https://tajnachalupka.github.io/osd/77.5/0.jpg",
       "https://tajnachalupka.github.io/osd/77.5/1.jpg",
