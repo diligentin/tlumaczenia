@@ -106,7 +106,7 @@ a { color: white; text-decoration: none; }
   document.getElementById("desc").innerHTML = data.desc.replace(/\n/g, "<br>");
 
   /* SORTOWANIE ROZDZIAŁÓW */
- const keys = Object.keys(data.chapters).sort((a, b) => {
+const keys = Object.keys(data.chapters).sort((a, b) => {
   const na = parseInt(a);
   const nb = parseInt(b);
 
@@ -123,6 +123,7 @@ a { color: white; text-decoration: none; }
 
   return a.localeCompare(b, 'pl');
 });
+
 
 
   const container = document.getElementById("chapters-container");
