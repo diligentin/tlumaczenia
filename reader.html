@@ -256,22 +256,22 @@ img.comic-page {
     }
   });
 
-  /* ⭐ NOWY, ULTRA-PROSTY AUTO-HIDE ⭐ */
-  let lastY = 0;
+/* ===== AUTO-HIDE BUTTONS — DZIAŁA OD PIERWSZEGO RUCHU ===== */
+let lastY = 0;
 
-  function hideOnMove(y) {
-    if (y > lastY) {
-      nav.classList.add("hidden");
-      header.style.opacity = "0";
-    } else {
-      nav.classList.remove("hidden");
-      header.style.opacity = "1";
-    }
-    lastY = y;
+function hideOnMove(y) {
+  if (y > lastY) {
+    nav.classList.add("hidden");
+    header.style.opacity = "0";
+  } else {
+    nav.classList.remove("hidden");
+    header.style.opacity = "1";
   }
+  lastY = y;
+}
 
-  window.addEventListener("wheel", e => hideOnMove(e.deltaY), { passive: true });
-  window.addEventListener("touchmove", e => hideOnMove(e.touches[0].clientY), { passive: true });
+window.addEventListener("wheel", e => hideOnMove(e.deltaY), { passive: true });
+window.addEventListener("touchmove", e => hideOnMove(e.touches[0].clientY), { passive: true });
 
 })();
 </script>
