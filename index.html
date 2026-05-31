@@ -35,8 +35,9 @@ body {
 }
 
 .card { text-decoration:none; color:white; text-align:center; }
-.card img { transition:transform .25s ease; }
-.card:hover img { transform:scale(1.03); }
+.card img { transition: filter .25s ease;}
+.card:hover img { transform: none; filter: brightness(0.85);}
+
 
 .card.square img {
   width:100%; max-width:150px; border-radius:2px;
@@ -44,7 +45,7 @@ body {
 }
 
 .card.tall img {
-  width:100%; max-width:150px; border-radius:2px;
+  width:100%; max-width:150px;
   aspect-ratio:5/9; object-fit:cover;
 }
 
