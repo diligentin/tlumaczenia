@@ -10,25 +10,44 @@
 @font-face { font-family: "figtree"; src: url("https://tajnachalupka.github.io/main/Figtree.ttf"); }
 @font-face { font-family: "satoshi"; src: url("https://tajnachalupka.github.io/main/Satoshi.otf"); font-weight: 300; }
 
-body { margin:0; background:#191818; color:white; font-family: figtree, sans-serif;}
+body {
+  margin:0; background:#191818; color:white;
+  font-family: figtree, sans-serif;
+}
 
 .hero { display:flex; justify-content:center; padding:15px 0; }
 .hero img { width:160px; }
 
-.section-block { width:min(100%,1000px); margin:0 auto; padding:0 9px; box-sizing:border-box;}
+.section-block {
+  width:min(100%,1000px); margin:0 auto;
+  padding:0 9px; box-sizing:border-box;
+}
 
-.section-title-img { display:block; width:100%; max-width:200px; margin:35px 0 20px 0;}
+.section-title-img {
+  display:block; width:100%; max-width:200px;
+  margin:35px 0 20px 0;
+}
 
-.auto-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:9px; justify-items:center; width:fit-content; margin:0 auto;}
+.auto-grid {
+  display:grid; grid-template-columns:repeat(6,1fr);
+  gap:9px; justify-items:center;
+  width:fit-content; margin:0 auto;
+}
 
 .card { text-decoration:none; color:white; text-align:center; }
 .card img { transition: filter .25s ease;}
 .card:hover img { transform: none; filter: brightness(0.8);}
 
 
-.card.square img { width:100%; max-width:150px; border-radius:2px; aspect-ratio:1/1; object-fit:cover;}
+.card.square img {
+  width:100%; max-width:150px; border-radius:2px;
+  aspect-ratio:1/1; object-fit:cover;
+}
 
-.card.tall img { width:100%; max-width:150px; aspect-ratio:5/9; object-fit:cover;}
+.card.tall img {
+  width:100%; max-width:150px;
+  aspect-ratio:5/9; object-fit:cover;
+}
 
 @media(max-width:600px){
   .auto-grid { grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:9px; }
