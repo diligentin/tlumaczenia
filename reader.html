@@ -4,105 +4,57 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-
 <title>✦⏖✦</title>
 
 <style>
-@font-face {
-  font-family: "figtree";
-  src: url("https://tajnachalupka.github.io/main/Figtree.ttf");
-}
+@font-face { font-family: "figtree"; src: url("https://tajnachalupka.github.io/main/Figtree.ttf"); }
 
-body {
-  margin: 0;
-  background: #191818;
-}
+body { margin: 0; background: #191818; }
 
-#comic-container {
-  max-width: 720px;
-  margin: 0 auto;
-}
+#comic-container { max-width: 720px; margin: 0 auto; }
 
 img.comic-page {
-  width: 100%;
-  height: auto;
-  display: block;
-  opacity: 0;
-  transition: opacity .25s ease;
+  width: 100%; display: block;
+  opacity: 0; transition: opacity .25s ease;
 }
 
-/* ===== FLOATING BUTTONS ===== */
+/* NAV BUTTONS */
 .nav-buttons {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 0px;
-  transition: opacity .15s ease;
-  opacity: 1;
+  position: fixed; bottom: 20px; left: 20px;
+  display: flex; flex-direction: column;
+  opacity: 1; transition: opacity .15s ease;
 }
-
-.nav-buttons.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
+.nav-buttons.hidden { opacity: 0; pointer-events: none; }
 
 .nav-btn {
-  width: 60px;
-  height: 60px;
+  width: 60px; height: 60px;
   border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   cursor: pointer;
 }
+.btn-icon { width: 42px; filter: invert(1); }
 
-.btn-icon {
-  width: 42px;
-  height: 42px;
-  filter: invert(1);
-}
-
-/* ===== KOMENTARZE ===== */
+/* COMMENTS */
 #comments_title {
-  color: white;
-  font-family: figtree;
-  font-size: 22px;
-  text-align: center;
-  margin-top: 30px;
-  opacity: 0;
+  color: white; font-family: figtree;
+  font-size: 22px; text-align: center;
+  margin-top: 30px; opacity: 0;
   transition: opacity .3s ease;
 }
 
-/* ===== PADLET ===== */
+/* PADLET */
 #padlet_box {
-  padding: 10px;
-  background: #191818;
-  margin-top: 0px;
-  visibility: hidden;
-  opacity: 0;
+  padding: 10px; background: #191818;
+  visibility: hidden; opacity: 0;
   transition: opacity .1s ease;
 }
-
 #padlet_loading, #chapter_loading {
-  color: white;
-  text-align: center;
-  font-family: figtree;
-  padding: 20px;
+  color: white; text-align: center;
+  font-family: figtree; padding: 20px;
 }
 
-@media (max-width: 600px) {
-  #padlet_box iframe {
-    height: 635px !important;
-  }
-}
-
-@media (min-width: 601px) and (max-width: 1024px) {
-  #padlet_box iframe {
-    height: 960px !important;
-  }
-}
+@media (max-width: 600px) { #padlet_box iframe { height: 635px !important; } }
+@media (min-width: 601px) and (max-width: 1024px) { #padlet_box iframe { height: 960px !important; } }
 </style>
 </head>
 
@@ -110,21 +62,12 @@ img.comic-page {
 
 <!-- HEADER PNG -->
 <div id="series-header" style="
-  position: fixed;
-  top: 7px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-  opacity: 1;
-  transition: opacity .15s ease;
-">
-  <a id="series-link" href="#">
-    <img id="series-img" src="" style="max-height:30px; width:auto; opacity:1; transition:opacity .15s ease;">
-  </a>
+  position: fixed; top: 7px; left: 50%; transform: translateX(-50%);
+  z-index: 9999; opacity: 1; transition: opacity .15s ease;">
+  <a id="series-link" href="#"><img id="series-img" src="" style="max-height:30px; width:auto;"></a>
 </div>
 
 <div id="comic-container"></div>
-
 <p id="chapter_loading" style="margin-top:40px;">Ładuję rozdział...</p>
 
 <!-- BUTTONS -->
@@ -135,7 +78,6 @@ img.comic-page {
 </div>
 
 <p id="comments_title">Komentarze</p>
-
 <p id="padlet_loading" style="margin-top:40px;">Ładuję komentarze...</p>
 <div id="padlet_box"></div>
 
@@ -149,7 +91,7 @@ img.comic-page {
 
   if (!comicKey || !chapter) return;
 
-  /* ===== FALLBACK ===== */
+  /* DEVICE CHECK */
   function isOldDevice() {
     const ua = navigator.userAgent || "";
     const oldAndroid = /Android [0-8]\./i.test(ua);
@@ -160,17 +102,15 @@ img.comic-page {
     if (performance.now() - t0 > 10) slowCPU = true;
 
     let badCanvas = false;
-    try {
-      const c = document.createElement("canvas");
-      if (!c.getContext("2d")) badCanvas = true;
-    } catch { badCanvas = true; }
+    try { if (!document.createElement("canvas").getContext("2d")) badCanvas = true; }
+    catch { badCanvas = true; }
 
     return oldAndroid || slowCPU || badCanvas;
   }
 
   const USE_SLICER = !isOldDevice();
 
-  /* ===== SLICER ===== */
+  /* SLICER */
   async function sliceImage(src, sliceHeight = 1800) {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -178,10 +118,7 @@ img.comic-page {
       img.src = src;
 
       img.onload = () => {
-        if (img.width === 0 || img.height === 0) {
-          reject("Broken image");
-          return;
-        }
+        if (!img.width || !img.height) return reject();
 
         const slices = [];
         const canvas = document.createElement("canvas");
@@ -189,15 +126,11 @@ img.comic-page {
 
         for (let y = 0; y < img.height; y += sliceHeight) {
           const h = Math.min(sliceHeight, img.height - y);
-
           canvas.width = img.width;
           canvas.height = h;
-
           ctx.drawImage(img, 0, y, img.width, h, 0, 0, canvas.width, canvas.height);
-
           slices.push(canvas.toDataURL("image/jpeg", 0.95));
         }
-
         resolve(slices);
       };
 
@@ -205,21 +138,12 @@ img.comic-page {
     });
   }
 
-  /* ===== JSON ===== */
+  /* LOAD JSON */
   let data;
   try {
     data = await fetch(`${comicKey}.json`).then(r => r.json());
-
-    const seriesImg = document.getElementById("series-img");
-    const seriesLink = document.getElementById("series-link");
-
-    if (data.series_icon) {
-      seriesImg.src = data.series_icon;
-      seriesImg.style.opacity = "1";
-    }
-
-    seriesLink.href = `index.html?comic=${comicKey}`;
-
+    if (data.series_icon) document.getElementById("series-img").src = data.series_icon;
+    document.getElementById("series-link").href = `index.html?comic=${comicKey}`;
   } catch {
     container.innerHTML = "<p style='color:white;text-align:center;padding:50px;'>Błąd JSON.</p>";
     return;
@@ -230,215 +154,147 @@ img.comic-page {
 
   localStorage.setItem(`read_${comicKey}_${chapter}`, "1");
 
-  /* ===== LAZY + FADE-IN ===== */
+  /* LAZY OBSERVER */
   const lazyObserver = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       const img = entry.target;
-      if (entry.isIntersecting) {
-        if (img.dataset.src) {
-          img.src = img.dataset.src;
-          img.dataset.src = "";
-        }
+      if (entry.isIntersecting && img.dataset.src) {
+        img.src = img.dataset.src;
+        img.dataset.src = "";
         img.style.opacity = "1";
-
-        const loadingChapter = document.getElementById("chapter_loading");
-        if (loadingChapter) loadingChapter.remove();
+        const loading = document.getElementById("chapter_loading");
+        if (loading) loading.remove();
       }
     });
   }, { rootMargin: "1200px 0px" });
 
-  /*  
-  ===========================================================
-     ⭐⭐⭐ WSTAWIANIE OBRAZÓW — PIERWSZY SLICE NATYCHMIAST ⭐⭐⭐
-  ===========================================================
-  */
-
-  let firstSliceInserted = false;
+  /* INSERT IMAGES — FIRST SLICE IMMEDIATE */
+  let firstSlice = true;
 
   for (const src of pages) {
     try {
       if (USE_SLICER) {
         const slices = await sliceImage(src);
-
         for (const s of slices) {
           const img = document.createElement("img");
           img.className = "comic-page";
 
-          if (!firstSliceInserted) {
-            img.src = s;               // ⭐ natychmiast
-            img.style.opacity = "1";   // ⭐ widoczny od razu
-            firstSliceInserted = true;
+          if (firstSlice) {
+            img.src = s;
+            img.style.opacity = "1";
+            firstSlice = false;
           } else {
             img.dataset.src = s;
             img.loading = "lazy";
-            img.decoding = "async";
             lazyObserver.observe(img);
           }
 
           container.appendChild(img);
         }
-
       } else {
         const img = document.createElement("img");
         img.className = "comic-page";
 
-        if (!firstSliceInserted) {
+        if (firstSlice) {
           img.src = src;
           img.style.opacity = "1";
-          firstSliceInserted = true;
+          firstSlice = false;
         } else {
           img.dataset.src = src;
           img.loading = "lazy";
-          img.decoding = "async";
           lazyObserver.observe(img);
         }
 
         container.appendChild(img);
       }
-
     } catch {
       container.innerHTML += "<p style='color:red;text-align:center;'>Błąd obrazu.</p>";
     }
   }
 
-  /* ===== SORTOWANIE ===== */
+  /* SORT CHAPTERS */
   const keys = Object.keys(data.chapters).sort((a, b) => {
     const na = parseInt(a), nb = parseInt(b);
-    const ha = !isNaN(na), hb = !isNaN(nb);
-    if (ha && hb) return na - nb || a.localeCompare(b);
-    if (ha) return -1;
-    if (hb) return 1;
+    if (!isNaN(na) && !isNaN(nb)) return na - nb || a.localeCompare(b);
+    if (!isNaN(na)) return -1;
+    if (!isNaN(nb)) return 1;
     return a.localeCompare(b);
   });
 
   const index = keys.indexOf(chapter);
 
-  /* ===== BUTTONS ===== */
-  const nextBtn = document.getElementById("nextBtn");
-  const prevBtn = document.getElementById("prevBtn");
-  const homeBtn = document.getElementById("homeBtn");
+  /* BUTTONS */
+  nextBtn.onclick = () =>
+    location.href = index < keys.length - 1
+      ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index + 1])}`
+      : "https://diligentin.github.io/tlumaczenia/";
 
-  nextBtn.onclick = () => {
-    if (index < keys.length - 1)
-      location.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index + 1])}`;
-    else location.href = "https://diligentin.github.io/tlumaczenia/";
-  };
-
-  prevBtn.onclick = () => {
-    if (index > 0)
-      location.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index - 1])}`;
-    else location.href = "https://diligentin.github.io/tlumaczenia/";
-  };
+  prevBtn.onclick = () =>
+    location.href = index > 0
+      ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index - 1])}`
+      : "https://diligentin.github.io/tlumaczenia/";
 
   homeBtn.onclick = () => location.href = "https://diligentin.github.io/tlumaczenia/";
 
-
-  /* ===== PADLET ===== */
+  /* PADLET */
   let padletLoaded = false;
 
   function loadPadlet() {
     if (padletLoaded) return;
     padletLoaded = true;
 
-    const loadingMsg = document.getElementById("padlet_loading");
-    if (loadingMsg) loadingMsg.remove();
+    const loading = document.getElementById("padlet_loading");
+    if (loading) loading.remove();
 
-    const title = document.getElementById("comments_title");
-    title.style.opacity = "1";
+    document.getElementById("comments_title").style.opacity = "1";
 
-    const padletBox = document.getElementById("padlet_box");
+    const box = document.getElementById("padlet_box");
+    const embed = data.padlet;
+    const full = embed.replace("/embed/", "/");
 
-    const embedUrl = data.padlet;
-    const fullUrl = embedUrl.replace("/embed/", "/");
-
-    padletBox.innerHTML = `
-      <div style="
-        border:1px solid rgba(0,0,0,0.1);
-        border-radius:2px;
-        overflow:hidden;
-        width:100%;
-        max-width:720px;
-        margin:0 auto;
-        background:#191818;
-      ">
-        <iframe src="${embedUrl}" frameborder="0"
-          style="width:100%;height:600px;display:block;">
-        </iframe>
-
-      <p style="text-align:center; margin-top:14px;">
-        <a href="${fullUrl}" target="_blank"
-           style="
-             display:inline-block;
-             padding:10px 18px;
-             background:#272727;
-             color:white;
-             font-family: figtree;
-             font-size:14px;
-             border-radius:3px;
-             border:0px solid #3a3a3a;
-             text-decoration:none;
-             transition:0.2s;
-           "
-           onmouseover="this.style.background='#2f2f2f'"
-           onmouseout="this.style.background='#272727'"
-        >
-          Otwórz padlet w nowej karcie
-        </a>
-      </p>
-
+    box.innerHTML = `
+      <div style="border:1px solid #0001; border-radius:2px; overflow:hidden; max-width:720px; margin:0 auto;">
+        <iframe src="${embed}" frameborder="0" style="width:100%;height:600px;"></iframe>
+        <p style="text-align:center; margin-top:14px;">
+          <a href="${full}" target="_blank"
+             style="padding:10px 18px; background:#272727; color:white; font-family:figtree; font-size:14px; border-radius:3px; text-decoration:none;">
+            Otwórz padlet w nowej karcie
+          </a>
+        </p>
       </div>
     `;
 
-    padletBox.style.visibility = "visible";
-    padletBox.style.opacity = "1";
+    box.style.visibility = "visible";
+    box.style.opacity = "1";
   }
 
   const padletEl = document.getElementById("padlet_box");
+  new IntersectionObserver(e => e[0].isIntersecting && loadPadlet(), { threshold: 0.1 })
+    .observe(padletEl);
 
-  const observerPadlet = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) loadPadlet();
-  }, { threshold: 0.1 });
-
-  observerPadlet.observe(padletEl);
-
-  function revealExtras() {
+  window.addEventListener("scroll", function reveal() {
     if (window.scrollY > 250) {
       padletEl.style.visibility = "visible";
       padletEl.style.opacity = "1";
-      window.removeEventListener("scroll", revealExtras);
+      window.removeEventListener("scroll", reveal);
     }
-  }
+  });
 
-  window.addEventListener("scroll", revealExtras);
-
-  setTimeout(() => {
-    if (window.scrollY > 250) revealExtras();
-  }, 50);
-
-
-  /*  
-  ===========================================================
-     ⭐⭐⭐ ZNIKANIE NAWIGACJI — WERSJA STARA, NATYCHMIASTOWA ⭐⭐⭐
-  ===========================================================
-  */
-
+  /* NAV HIDE — OLD, INSTANT VERSION */
   const nav = document.getElementById("nav");
-  const seriesHeader = document.getElementById("series-header");
-
+  const header = document.getElementById("series-header");
   let lastScroll = 0;
 
   window.addEventListener("scroll", () => {
-    const current = window.scrollY;
-
-    if (current > lastScroll) {
+    const y = window.scrollY;
+    if (y > lastScroll) {
       nav.classList.add("hidden");
-      seriesHeader.style.opacity = "0";
+      header.style.opacity = "0";
     } else {
       nav.classList.remove("hidden");
-      seriesHeader.style.opacity = "1";
+      header.style.opacity = "1";
     }
-
-    lastScroll = current;
+    lastScroll = y;
   });
 
 })();
