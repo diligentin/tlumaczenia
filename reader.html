@@ -149,7 +149,8 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
       this.page.identifier = comicKey + "_" + chapter;
     }
 
-    this.page.url = location.href;
+    this.page.url = chapterData.disqus_id || location.href;
+
   };
 
   (function() {
