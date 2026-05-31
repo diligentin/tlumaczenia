@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-<title>✦⏖✦</title>
+<title>ttttt✦⏖✦</title>
 
 <style>
 @font-face {
@@ -172,23 +172,6 @@ img.comic-page {
           const ctx = canvas.getContext("2d");
 
           for (let y = 0; y < img.height; y += sliceHeight) {
-
-            /* ⭐ UI BREATH FIX — odblokowuje kliknięcia ⭐ */
-            // (wykonuje się w pętli, ale nie wpływa na jakość ani wydajność)
-            // (pozwala next/prev działać natychmiast)
-            // (nie obciąża sprzętu)
-            // (nie zmienia czasu ładowania)
-            // (nie zmienia działania slicera)
-            // (nie zmienia jakości)
-            // (nie zmienia logiki)
-            // (jest w 100% bezpieczne)
-            // (jest standardem w dużych aplikacjach webowych)
-            // (jest najlepszym możliwym rozwiązaniem)
-            // (i działa perfekcyjnie)
-            // 
-            // UWAGA: to musi być w środku pętli, nie przed nią.
-            await new Promise(r => setTimeout(r, 0));
-
             const h = Math.min(sliceHeight, img.height - y);
 
             canvas.width = img.width;
@@ -237,25 +220,25 @@ img.comic-page {
 
   const loadingInfo = document.getElementById("chapter_loading");
 
- /* Wstawianie obrazów */
-for (const src of pages) {
+  /* ⭐ Wstawianie obrazów — TU JEST UI BREATH ⭐ */
+  for (const src of pages) {
 
-  // ⭐ UI BREATH — odblokowuje kliknięcia next/prev
-  await new Promise(r => setTimeout(r, 0));
+    // ⭐ odblokowuje UI, next/prev działają natychmiast
+    await new Promise(r => setTimeout(r, 0));
 
-  try {
-    const slices = await sliceImage(src, 2000);
-    slices.forEach(url => {
-      const img = document.createElement("img");
-      img.className = "comic-page";
-      img.src = url;
-      img.loading = "lazy";
-      container.appendChild(img);
-    });
-  } catch {
-    container.innerHTML += "<p style='color:red;text-align:center;'>Błąd obrazu.</p>";
+    try {
+      const slices = await sliceImage(src, 2000);
+      slices.forEach(url => {
+        const img = document.createElement("img");
+        img.className = "comic-page";
+        img.src = url;
+        img.loading = "lazy";
+        container.appendChild(img);
+      });
+    } catch {
+      container.innerHTML += "<p style='color:red;text-align:center;'>Błąd obrazu.</p>";
+    }
   }
-}
 
   if (loadingInfo) loadingInfo.remove();
 
@@ -277,7 +260,7 @@ for (const src of pages) {
 
   const index = keys.indexOf(chapter);
 
-  /* ⭐ NADPISANIE GUZIKÓW — TERAZ DZIAŁAJĄ NATYCHMIAST ⭐ */
+  /* ⭐ NADPISANIE GUZIKÓW — DZIAŁAJĄ NATYCHMIAST ⭐ */
   nextBtn.onclick = () => {
     if (index !== -1 && index < keys.length - 1) {
       location.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index + 1])}`;
