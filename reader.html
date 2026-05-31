@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-<title>✦⏖✦</title>
+<title>bb✦⏖✦</title>
 
 <style>
 @font-face {
@@ -119,6 +119,7 @@ img.comic-page {
 
 <script>
 (async function () {
+
   const qs = new URLSearchParams(location.search);
   const comicKey = qs.get("comic");
   const chapter = qs.get("chapter");
@@ -127,17 +128,37 @@ img.comic-page {
   const nextBtn = document.getElementById("nextBtn");
   const prevBtn = document.getElementById("prevBtn");
   const homeBtn = document.getElementById("homeBtn");
+  const nav = document.getElementById("nav");
+  const header = document.getElementById("series-header");
 
   if (!comicKey || !chapter) {
     container.innerHTML = "<p style='color:white;text-align:center;padding:50px;'>Brak parametru comic lub chapter.</p>";
     return;
   }
 
-  homeBtn.onclick = () => {
-    location.href = "https://diligentin.github.io/tlumaczenia/";
-  };
+  /* ⭐ NATYCHMIASTOWA KLIKALNOŚĆ GUZIKÓW ⭐ */
+  nextBtn.onclick = () => {};
+  prevBtn.onclick = () => {};
+  homeBtn.onclick = () => location.href = "https://diligentin.github.io/tlumaczenia/";
 
-  // proste cięcie jak w starym kodzie
+  /* ⭐ DETEKCJA STARYCH URZĄDZEŃ — PRZYWRÓCONE ⭐ */
+  const USE_SLICER = (() => {
+    const ua = navigator.userAgent || "";
+
+    // stare Androidy
+    if (/Android [0-8]\./i.test(ua)) return false;
+
+    // wolne CPU
+    const t0 = performance.now();
+    for (let i = 0; i < 40000; i++) {}
+    if (performance.now() - t0 > 10) return false;
+
+    // brak canvas
+    try { return !!document.createElement("canvas").getContext("2d"); }
+    catch { return false; }
+  })();
+
+  /* ⭐ SLICER — jak w Twoim oryginale ⭐ */
   async function sliceImage(src, sliceHeight = 2000) {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -146,6 +167,11 @@ img.comic-page {
 
       img.onload = () => {
         try {
+          if (!USE_SLICER) {
+            resolve([src]); // ⭐ na starych urządzeniach — brak cięcia
+            return;
+          }
+
           const slices = [];
           const scale = img.width > 720 ? 720 / img.width : 1;
 
@@ -179,7 +205,7 @@ img.comic-page {
     });
   }
 
-  // JSON
+  /* JSON */
   let data;
   try {
     const res = await fetch(`${comicKey}.json`);
@@ -201,7 +227,7 @@ img.comic-page {
 
   const loadingInfo = document.getElementById("chapter_loading");
 
-  // wstawianie obrazów (bez IntersectionObserver, bez lazy mechaniki)
+  /* Wstawianie obrazów */
   for (const src of pages) {
     try {
       const slices = await sliceImage(src, 2000);
@@ -219,7 +245,7 @@ img.comic-page {
 
   if (loadingInfo) loadingInfo.remove();
 
-  // sortowanie rozdziałów
+  /* Sortowanie rozdziałów */
   const keys = Object.keys(data.chapters).sort((a, b) => {
     const na = parseInt(a);
     const nb = parseInt(b);
@@ -237,6 +263,7 @@ img.comic-page {
 
   const index = keys.indexOf(chapter);
 
+  /* ⭐ NADPISANIE GUZIKÓW — TERAZ DZIAŁAJĄ ⭐ */
   nextBtn.onclick = () => {
     if (index !== -1 && index < keys.length - 1) {
       location.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index + 1])}`;
@@ -253,7 +280,7 @@ img.comic-page {
     }
   };
 
-  // PADLET
+  /* PADLET */
   let padletLoaded = false;
 
   const loadPadlet = () => {
@@ -299,7 +326,7 @@ img.comic-page {
 
 })();
 
-/* ===== AUTO-HIDE BUTTONS — PROSTO JAK W STARYM KODZIE ===== */
+/* ⭐ AUTO-HIDE — jak w starym kodzie ⭐ */
 let lastScroll = 0;
 const nav = document.getElementById("nav");
 const header = document.getElementById("series-header");
