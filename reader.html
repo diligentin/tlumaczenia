@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
-<title>o✦⏖✦</title>
+<title>✦⏖✦</title>
 
 <style>
 @font-face {
@@ -173,47 +173,111 @@ img.comic-page {
 
   const USE_SLICER = !isOldDevice();
 
- /* ===== STREAMOWANY SLICER ===== */
-async function* sliceImageStream(src, sliceHeight = 1800) {
-  const img = new Image();
-  img.crossOrigin = "anonymous";
-  img.src = src;
+ /* ===== SLICER ===== */
+async function sliceImage(src, sliceHeight = 1800) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = src;
 
-  await new Promise((res, rej) => {
-    img.onload = res;
-    img.onerror = rej;
+    img.onload = () => {
+
+      if (img.width === 0 || img.height === 0) {
+        reject("Broken image");
+        return;
+      }
+
+      const slices = [];
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      for (let y = 0; y < img.height; y += sliceHeight) {
+        const h = Math.min(sliceHeight, img.height - y);
+
+        canvas.width = img.width;
+        canvas.height = h;
+
+        ctx.drawImage(img, 0, y, img.width, h, 0, 0, canvas.width, canvas.height);
+
+        slices.push(canvas.toDataURL("image/jpeg", 0.95));
+      }
+
+      resolve(slices);
+    };
+
+    img.onerror = reject;
   });
-
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-
-  for (let y = 0; y < img.height; y += sliceHeight) {
-    const h = Math.min(sliceHeight, img.height - y);
-
-    canvas.width = img.width;
-    canvas.height = h;
-
-    ctx.drawImage(img, 0, y, img.width, h, 0, 0, canvas.width, canvas.height);
-
-    yield canvas.toDataURL("image/jpeg", 0.95);
-
-    await new Promise(r => setTimeout(r));
-  }
 }
+
+
+  /* ===== JSON ===== */
+  let data;
+  try {
+    data = await fetch(`${comicKey}.json`).then(r => r.json());
+
+    /* ⭐ SERIES ICON */
+    const seriesImg = document.getElementById("series-img");
+    const seriesLink = document.getElementById("series-link");
+
+    if (data.series_icon) {
+      seriesImg.src = data.series_icon;
+      seriesImg.style.opacity = "1";
+    }
+
+    seriesLink.href = `index.html?comic=${comicKey}`;
+
+  } catch {
+    container.innerHTML = "<p style='color:white;text-align:center;padding:50px;'>Błąd JSON.</p>";
+    return;
+  }
+
+  const pages = data.chapters[chapter];
+  if (!pages) return;
+
+  localStorage.setItem(`read_${comicKey}_${chapter}`, "1");
+
+  /* ===== LAZY + FADE-IN ===== */
+  const lazyObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      const img = entry.target;
+      if (entry.isIntersecting) {
+        if (img.dataset.src) {
+          img.src = img.dataset.src;
+          img.dataset.src = "";
+        }
+        img.style.opacity = "1";
+
+        const loadingChapter = document.getElementById("chapter_loading");
+        if (loadingChapter) loadingChapter.remove();
+      }
+    });
+  }, { rootMargin: "1200px 0px" });
+
   /* ===== WSTAWIANIE OBRAZÓW ===== */
+  let isFirstSlice = true;
+
   for (const src of pages) {
     try {
       if (USE_SLICER) {
+        const slices = await sliceImage(src);
 
-        /* ⭐ STREAMOWANE WSTAWIANIE — guziki reagują szybciej */
-        for await (const s of sliceImageStream(src)) {
+        for (const s of slices) {
           const img = document.createElement("img");
           img.className = "comic-page";
           img.dataset.src = s;
           img.loading = "lazy";
           img.decoding = "async";
           container.appendChild(img);
-          lazyObserver.observe(img);
+
+          if (isFirstSlice) {
+            img.src = s;
+            img.style.opacity = "1";
+            const loadingChapter = document.getElementById("chapter_loading");
+            if (loadingChapter) loadingChapter.remove();
+            isFirstSlice = false;
+          } else {
+            lazyObserver.observe(img);
+          }
         }
 
       } else {
@@ -223,8 +287,18 @@ async function* sliceImageStream(src, sliceHeight = 1800) {
         img.loading = "lazy";
         img.decoding = "async";
         container.appendChild(img);
-        lazyObserver.observe(img);
+
+        if (isFirstSlice) {
+          img.src = src;
+          img.style.opacity = "1";
+          const loadingChapter = document.getElementById("chapter_loading");
+          if (loadingChapter) loadingChapter.remove();
+          isFirstSlice = false;
+        } else {
+          lazyObserver.observe(img);
+        }
       }
+
     } catch {
       container.innerHTML += "<p style='color:red;text-align:center;'>Błąd obrazu.</p>";
     }
