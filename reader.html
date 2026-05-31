@@ -7,98 +7,37 @@
 <title>✦⏖✦</title>
 
 <style>
-@font-face {
-  font-family: "figtree";
-  src: url("https://tajnachalupka.github.io/main/Figtree.ttf") format("truetype");
-}
+@font-face { font-family: "figtree"; src: url("https://tajnachalupka.github.io/main/Figtree.ttf") format("truetype");}
 
-body {
-  margin: 0;
-  background: #191818;
-  font-family: figtree, sans-serif;
-}
+body { margin: 0; background: #191818; font-family: figtree, sans-serif;}
 
-#comic-container {
-  max-width: 720px;
-  margin: 0 auto;
-}
+#comic-container { max-width: 720px; margin: 0 auto;}
 
-img.comic-page {
-  width: 100%;
-  height: auto;
-  display: block;
-  max-width: 720px;
-  image-rendering: -webkit-optimize-contrast;
-  object-fit: contain;
-}
+img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; image-rendering: -webkit-optimize-contrast; object-fit: contain;}
 
 /* NAV BUTTONS */
-.nav-buttons {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  opacity: 1;
-  transition: opacity .15s ease;
-}
-.nav-buttons.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
+.nav-buttons { position: fixed; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 0; opacity: 1; transition: opacity .15s ease;}
+.nav-buttons.hidden { opacity: 0; pointer-events: none;}
 
-.nav-btn {
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  user-select: none;
-}
+.nav-btn { width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none;}
 
-.btn-icon {
-  width: 42px;
-  height: 42px;
-  filter: invert(1);
-  pointer-events: none;
-}
+.btn-icon { width: 42px; height: 42px; filter: invert(1); pointer-events: none;}
 
 /* COMMENTS */
-#comments_title {
-  color: white;
-  font-size: 22px;
-  text-align: center;
-  margin-top: 30px;
-  opacity: 0;
-  transition: opacity .3s ease;
-}
+#comments_title { color: white; font-size: 22px; text-align: center; margin-top: 30px; opacity: 0; transition: opacity .3s ease;}
 
 /* PADLET */
-#padlet_box {
-  padding: 10px;
-  background: #191818;
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity .1s ease;
-}
+#padlet_box { padding: 10px; background: #191818; visibility: hidden; opacity: 0; transition: opacity .1s ease;}
 #padlet_loading,
-#chapter_loading {
-  color: white;
-  text-align: center;
-  padding: 20px;
-}
+#chapter_loading { color: white;  text-align: center; padding: 20px;}
+
 </style>
 </head>
 
 <body>
 
 <!-- HEADER PNG -->
-<div id="series-header" style="
-  position: fixed; top: 7px; left: 50%; transform: translateX(-50%);
-  z-index: 9999; opacity: 1; transition: opacity .15s ease;">
+<div id="series-header" style=" position: fixed; top: 7px; left: 50%; transform: translateX(-50%); z-index: 9999; opacity: 1; transition: opacity .15s ease;">
   <a id="series-link" href="#"><img id="series-img" src="" style="max-height:30px; width:auto;"></a>
 </div>
 
