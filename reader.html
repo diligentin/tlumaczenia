@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
-<title>✦⏖✦</title>
+<title>u✦⏖✦</title>
 
 <style>
 @font-face {
@@ -111,24 +111,20 @@ img.comic-page {
 
 <body>
 
-<!-- ⭐ HEADER PNG (fixed) -->
+<!-- ⭐ NOWY HEADER PNG (poprawne miejsce!) -->
 <div id="series-header" style="
-  position: fixed;
-  top: 7px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-  opacity: 1;
+  text-align:center;
+  margin:20px 0 10px 0;
   transition: opacity .15s ease;
 ">
   <a id="series-link" href="#">
-    <img id="series-img" src="" style="max-height:30px; width:auto; opacity:1; transition:opacity .15s ease;">
+    <img id="series-img" src="" style="max-height:30px; width:auto; opacity:0; transition:opacity .3s ease;">
   </a>
 </div>
 
 <div id="comic-container"></div>
 
-<p id="chapter_loading" style="margin-top:40px;">Ładuję rozdział...</p>
+<p id="chapter_loading">Ładuję rozdział...</p>
 
 <!-- BUTTONS -->
 <div class="nav-buttons" id="nav">
@@ -139,7 +135,7 @@ img.comic-page {
 
 <p id="comments_title">Komentarze</p>
 
-<p id="padlet_loading" style="margin-top:40px;">Ładuję komentarze...</p>
+<p id="padlet_loading">Ładuję komentarze...</p>
 <div id="padlet_box"></div>
 
 <script>
@@ -254,13 +250,10 @@ async function sliceImage(src, sliceHeight = 1800) {
   }, { rootMargin: "1200px 0px" });
 
   /* ===== WSTAWIANIE OBRAZÓW ===== */
-  let isFirstSlice = true;
-
   for (const src of pages) {
     try {
       if (USE_SLICER) {
         const slices = await sliceImage(src);
-
         for (const s of slices) {
           const img = document.createElement("img");
           img.className = "comic-page";
@@ -268,18 +261,8 @@ async function sliceImage(src, sliceHeight = 1800) {
           img.loading = "lazy";
           img.decoding = "async";
           container.appendChild(img);
-
-          if (isFirstSlice) {
-            img.src = s;
-            img.style.opacity = "1";
-            const loadingChapter = document.getElementById("chapter_loading");
-            if (loadingChapter) loadingChapter.remove();
-            isFirstSlice = false;
-          } else {
-            lazyObserver.observe(img);
-          }
+          lazyObserver.observe(img);
         }
-
       } else {
         const img = document.createElement("img");
         img.className = "comic-page";
@@ -287,18 +270,8 @@ async function sliceImage(src, sliceHeight = 1800) {
         img.loading = "lazy";
         img.decoding = "async";
         container.appendChild(img);
-
-        if (isFirstSlice) {
-          img.src = src;
-          img.style.opacity = "1";
-          const loadingChapter = document.getElementById("chapter_loading");
-          if (loadingChapter) loadingChapter.remove();
-          isFirstSlice = false;
-        } else {
-          lazyObserver.observe(img);
-        }
+        lazyObserver.observe(img);
       }
-
     } catch {
       container.innerHTML += "<p style='color:red;text-align:center;'>Błąd obrazu.</p>";
     }
@@ -334,7 +307,7 @@ async function sliceImage(src, sliceHeight = 1800) {
 
 /*  
 ===========================================================
-   ⭐⭐⭐ SEKCJA PADLETU — AUTOMATYCZNA ⭐⭐⭐
+   ⭐⭐⭐ NOWA SEKCJA PADLETU — AUTOMATYCZNA ⭐⭐⭐
 ===========================================================
 */
 
@@ -422,63 +395,25 @@ setTimeout(() => {
 }, 50);
 
 
-/*  
-===========================================================
-   ⭐⭐⭐ ZNIKANIE NAWIGACJI — TYLKO PRZY SCROLLU ⭐⭐⭐
-===========================================================
-*/
-
+/* ===== ZNIKANIE NAWIGACJI ===== */
 const nav = document.getElementById("nav");
+let lastScroll = window.scrollY;
+
 const seriesHeader = document.getElementById("series-header");
 
-function hideNav() {
-  nav.classList.add("hidden");
-  seriesHeader.style.opacity = "0";
-}
+window.addEventListener("scroll", () => {
+  const current = window.scrollY;
 
-function showNav() {
-  nav.classList.remove("hidden");
-  seriesHeader.style.opacity = "1";
-}
-
-/* ⭐ aktywacja dopiero gdy strona jest przewijalna */
-let scrollReady = false;
-
-function checkScrollable() {
-  if (!scrollReady && document.body.scrollHeight > window.innerHeight + 20) {
-    scrollReady = true;
+  if (current > lastScroll) {
+    nav.classList.add("hidden");
+    seriesHeader.style.opacity = "0";
+  } else {
+    nav.classList.remove("hidden");
+    seriesHeader.style.opacity = "1";
   }
-}
 
-/* sprawdzamy co 50ms, aż pojawi się pierwszy slice */
-const scrollCheckInterval = setInterval(() => {
-  checkScrollable();
-  if (scrollReady) clearInterval(scrollCheckInterval);
-}, 50);
-
-/* ⭐ reagujemy tylko jeśli jest co przewijać */
-window.addEventListener("wheel", (e) => {
-  if (!scrollReady) return;
-  if (e.deltaY > 0) hideNav();
-  else showNav();
-}, { passive: true });
-
-let lastTouchY = 0;
-
-window.addEventListener("touchstart", (e) => {
-  lastTouchY = e.touches[0].clientY;
-}, { passive: true });
-
-window.addEventListener("touchmove", (e) => {
-  if (!scrollReady) return;
-
-  const currentY = e.touches[0].clientY;
-  if (currentY < lastTouchY) hideNav();
-  else showNav();
-
-  lastTouchY = currentY;
-}, { passive: true });
-
+  lastScroll = current;
+});
 
 })();
 </script>
