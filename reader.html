@@ -405,19 +405,16 @@ let lastScroll = window.scrollY;
 
 const seriesHeader = document.getElementById("series-header");
 
-window.addEventListener("scroll", () => {
-  const current = window.scrollY;
-
-if (current - lastScroll > 1) {
+window.addEventListener("wheel", (e) => {
+  if (e.deltaY > 0) {
+    // scroll w dół
     nav.classList.add("hidden");
     seriesHeader.style.opacity = "0";
-} else if (lastScroll - current > 1) {
+  } else {
+    // scroll w górę
     nav.classList.remove("hidden");
     seriesHeader.style.opacity = "1";
-}
-
-
-  lastScroll = current;
+  }
 });
 
 })();
