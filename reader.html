@@ -78,11 +78,15 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
     return;
   }
 
-  const pages = data.chapters[chapter];
-  if (!pages) {
+  /* ⭐ POPRAWKA: obsługa tablicy i obiektu ⭐ */
+  const chapterData = data.chapters[chapter];
+
+  if (!chapterData) {
     container.innerHTML = "<p style='color:white;text-align:center;padding:50px;'>Ten rozdział nie istnieje.</p>";
     return;
   }
+
+  const pages = Array.isArray(chapterData) ? chapterData : chapterData.pages;
 
   localStorage.setItem(`read_${comicKey}_${chapter}`, "1");
 
@@ -139,9 +143,7 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
 
   var disqus_config = function () {
 
-    const chapterData = data.chapters[chapter];
-
-    if (chapterData.disqus_id) {
+    if (!Array.isArray(chapterData) && chapterData.disqus_id) {
       this.page.identifier = chapterData.disqus_id;
     } else {
       this.page.identifier = comicKey + "_" + chapter;
