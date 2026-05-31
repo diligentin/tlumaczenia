@@ -23,8 +23,9 @@ img.comic-page {
   position: fixed; bottom: 20px; left: 20px;
   display: flex; flex-direction: column;
   opacity: 1; transition: opacity .15s ease;
+  pointer-events: auto;
 }
-.nav-buttons.hidden { opacity: 0; pointer-events: none; }
+.nav-buttons.hidden { opacity: 0; }
 
 .nav-btn {
   width: 60px; height: 60px;
@@ -250,7 +251,7 @@ img.comic-page {
     }
   });
 
-  /* NAV HIDE */
+  /* NAV HIDE — NATYCHMIASTOWA REAKCJA */
   const nav = document.getElementById("nav");
   const header = document.getElementById("series-header");
   let last = 0;
@@ -261,7 +262,7 @@ img.comic-page {
     nav.classList.toggle("hidden", hide);
     header.style.opacity = hide ? "0" : "1";
     last = y;
-  });
+  }, { passive: true });
 
 })();
 </script>
