@@ -1,5 +1,5 @@
 {
-  "slug": "osd",
+  "slug": "osd2",
   "title": "our sunny days",
   "header_img": "https://tajnachalupka.github.io/main/tagi/osd.png",
   "series_icon": "https://tajnachalupka.github.io/main/guzik-gora/osd.png",
@@ -11,7 +11,7 @@
   "Sezon 3.": { "from": "52", "to": "∞" }
 },
  "padlet": "https://padlet.com/vvvvvvvvvvvvvvvvvv/our-sunny-days-a3k90ueey9qztdri",
-  "disqus_base": "osd",
+  "disqus_base": "osd2",
   "chapters": {
     "1": [
       "https://tajnachalupka.github.io/osd/01/1.jpg",
