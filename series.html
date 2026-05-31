@@ -152,32 +152,32 @@ a { color: white; text-decoration: none; }
     const grid = document.createElement("div");
     grid.className = "chapter-grid";
 
-    sorted.forEach(num => {
-      const n = +num;
-      let fits = false;
+  sorted.forEach(num => {
+  const n = +num;
 
-      /* 1) num jest liczbą → normalny zakres */
-      if (!isNaN(n) && typeof from === "number" && typeof to === "number") {
-        fits = n >= from && n <= to;
-      }
+  // ⭐ Rozdziały nienumeryczne → zawsze wstawiamy, bez filtrowania
+  if (isNaN(n)) {
+    grid.appendChild(makeBtn(num));
+    return;
+  }
 
-      /* 2) from jest stringiem → dopasowanie dokładne */
-      if (typeof from === "string" && num === from) {
-        fits = true;
-      }
+  // ⭐ Rozdziały numeryczne → filtrujemy zakresem
+  let fits = false;
 
-      /* 3) to = Infinity → wszystko od from w górę */
-      if (to === Infinity && typeof from === "number" && !isNaN(n)) {
-        fits = n >= from;
-      }
+  if (typeof from === "number" && typeof to === "number") {
+    fits = n >= from && n <= to;
+  }
 
-      /* ⭐ 4) num NIE jest liczbą → ZAWSZE pokazujemy (emoji, serduszka, bonusy) */
-      if (isNaN(n)) {
-        fits = true;
-      }
+  if (typeof from === "string" && num === from) {
+    fits = true;
+  }
 
-      if (fits) grid.appendChild(makeBtn(num));
-    });
+  if (to === Infinity && typeof from === "number") {
+    fits = n >= from;
+  }
+
+  if (fits) grid.appendChild(makeBtn(num));
+});
 
     container.appendChild(grid);
   }
