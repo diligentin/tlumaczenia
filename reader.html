@@ -138,27 +138,27 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
     }
   };
 
-  /* ⭐ DISQUS — obsługa istniejących wątków ⭐ */
-  document.getElementById("comments_title").style.opacity = "1";
+/* ⭐ DISQUS — obsługa istniejących wątków ⭐ */
+document.getElementById("comments_title").style.opacity = "1";
 
-  var disqus_config = function () {
+var disqus_config = function () {
 
-    if (!Array.isArray(chapterData) && chapterData.disqus_id) {
-      this.page.identifier = chapterData.disqus_id;
-    } else {
-      this.page.identifier = comicKey + "_" + chapter;
-    }
+  if (!Array.isArray(chapterData) && chapterData.disqus_id) {
+    this.page.identifier = chapterData.disqus_id;
+    this.page.url = chapterData.disqus_id;   // ⭐ KLUCZOWE — musi być identyczne
+  } else {
+    this.page.identifier = comicKey + "_" + chapter;
+    this.page.url = location.href;
+  }
 
-    this.page.url = chapterData.disqus_id || location.href;
+};
 
-  };
-
-  (function() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://chalupka-ruoye-chan-wix.disqus.com/embed.js';
-    s.setAttribute('data-timestamp', +new Date());
-    (d.head || d.body).appendChild(s);
-  })();
+(function() {
+  var d = document, s = d.createElement('script');
+  s.src = 'https://chalupka-ruoye-chan-wix.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', +new Date());
+  (d.head || d.body).appendChild(s);
+})();
 
 })();
 
