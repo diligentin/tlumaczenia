@@ -413,40 +413,40 @@ function showNav() {
   seriesHeader.style.opacity = "1";
 }
 
-/* 🔥 1. pointerdown — działa ZANIM scroll ruszy */
-window.addEventListener("pointerdown", () => hideNav(), { passive: true });
+/* ⭐ aktywacja dopiero gdy strona jest przewijalna */
+let scrollReady = false;
 
-/* 🔥 2. touchstart — telefony */
-window.addEventListener("touchstart", () => hideNav(), { passive: true });
+function checkScrollable() {
+  if (!scrollReady && document.body.scrollHeight > window.innerHeight + 20) {
+    scrollReady = true;
+  }
+}
 
-/* 🔥 3. wheel — PC */
+/* sprawdzamy co 50ms, aż pojawi się pierwszy slice */
+const scrollCheckInterval = setInterval(() => {
+  checkScrollable();
+  if (scrollReady) clearInterval(scrollCheckInterval);
+}, 50);
+
+/* ⭐ reagujemy tylko jeśli jest co przewijać */
 window.addEventListener("wheel", (e) => {
+  if (!scrollReady) return;
   if (e.deltaY > 0) hideNav();
   else showNav();
 }, { passive: true });
 
-/* 🔥 4. touchmove — telefony */
-let lastTouchY = 0;
-
-window.addEventListener("touchstart", (e) => {
-  lastTouchY = e.touches[0].clientY;
-}, { passive: true });
-
 window.addEventListener("touchmove", (e) => {
-  const currentY = e.touches[0].clientY;
+  if (!scrollReady) return;
 
+  const currentY = e.touches[0].clientY;
   if (currentY < lastTouchY) hideNav();
   else showNav();
-
   lastTouchY = currentY;
 }, { passive: true });
 
-/* 🔥 5. pointermove — touchpad / mysz */
-window.addEventListener("pointermove", (e) => {
-  if (e.pointerType === "touch") return;
-
-  if (e.movementY > 0) hideNav();
-  else if (e.movementY < 0) showNav();
+let lastTouchY = 0;
+window.addEventListener("touchstart", (e) => {
+  lastTouchY = e.touches[0].clientY;
 }, { passive: true });
 
 
