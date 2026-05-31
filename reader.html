@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-<title>l✦⏖✦</title>
+<title>u✦⏖✦</title>
 
 <style>
 @font-face { font-family: "figtree"; src: url("https://tajnachalupka.github.io/main/Figtree.ttf"); }
@@ -23,9 +23,8 @@ img.comic-page {
   position: fixed; bottom: 20px; left: 20px;
   display: flex; flex-direction: column;
   opacity: 1; transition: opacity .15s ease;
-  pointer-events: auto;
 }
-.nav-buttons.hidden { opacity: 0; }
+.nav-buttons.hidden { opacity: 0; pointer-events: none; }
 
 .nav-btn {
   width: 60px; height: 60px;
@@ -87,6 +86,12 @@ img.comic-page {
   const comicKey = qs.get("comic");
   const chapter = qs.get("chapter");
   const container = document.getElementById("comic-container");
+
+  const nextBtn = document.getElementById("nextBtn");
+  const prevBtn = document.getElementById("prevBtn");
+  const homeBtn = document.getElementById("homeBtn");
+  const nav = document.getElementById("nav");
+  const header = document.getElementById("series-header");
 
   if (!comicKey || !chapter) return;
 
@@ -195,17 +200,23 @@ img.comic-page {
   const idx = keys.indexOf(chapter);
 
   /* BUTTONS */
-  nextBtn.onclick = () =>
-    location.href = idx < keys.length - 1
-      ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[idx + 1])}`
-      : "https://diligentin.github.io/tlumaczenia/";
+  if (nextBtn) {
+    nextBtn.onclick = () =>
+      location.href = idx < keys.length - 1
+        ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[idx + 1])}`
+        : "https://diligentin.github.io/tlumaczenia/";
+  }
 
-  prevBtn.onclick = () =>
-    location.href = idx > 0
-      ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[idx - 1])}`
-      : "https://diligentin.github.io/tlumaczenia/";
+  if (prevBtn) {
+    prevBtn.onclick = () =>
+      location.href = idx > 0
+        ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[idx - 1])}`
+        : "https://diligentin.github.io/tlumaczenia/";
+  }
 
-  homeBtn.onclick = () => location.href = "https://diligentin.github.io/tlumaczenia/";
+  if (homeBtn) {
+    homeBtn.onclick = () => location.href = "https://diligentin.github.io/tlumaczenia/";
+  }
 
   /* PADLET */
   let padletLoaded = false;
@@ -252,17 +263,17 @@ img.comic-page {
   });
 
   /* NAV HIDE — NATYCHMIASTOWA REAKCJA */
-  const nav = document.getElementById("nav");
-  const header = document.getElementById("series-header");
-  let last = 0;
+  if (nav && header) {
+    let last = window.scrollY;
 
-  window.addEventListener("scroll", () => {
-    const y = window.scrollY;
-    const hide = y > last;
-    nav.classList.toggle("hidden", hide);
-    header.style.opacity = hide ? "0" : "1";
-    last = y;
-  }, { passive: true });
+    window.addEventListener("scroll", () => {
+      const y = window.scrollY;
+      const hide = y > last;
+      nav.classList.toggle("hidden", hide);
+      header.style.opacity = hide ? "0" : "1";
+      last = y;
+    }, { passive: true });
+  }
 
 })();
 </script>
