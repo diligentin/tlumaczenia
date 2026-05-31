@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-<title>u✦⏖✦</title>
+<title>✦⏖✦</title>
 
 <style>
 @font-face { font-family: "figtree"; src: url("https://tajnachalupka.github.io/main/Figtree.ttf"); }
@@ -200,23 +200,17 @@ img.comic-page {
   const idx = keys.indexOf(chapter);
 
   /* BUTTONS */
-  if (nextBtn) {
-    nextBtn.onclick = () =>
-      location.href = idx < keys.length - 1
-        ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[idx + 1])}`
-        : "https://diligentin.github.io/tlumaczenia/";
-  }
+  nextBtn.onclick = () =>
+    location.href = idx < keys.length - 1
+      ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[idx + 1])}`
+      : "https://diligentin.github.io/tlumaczenia/";
 
-  if (prevBtn) {
-    prevBtn.onclick = () =>
-      location.href = idx > 0
-        ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[idx - 1])}`
-        : "https://diligentin.github.io/tlumaczenia/";
-  }
+  prevBtn.onclick = () =>
+    location.href = idx > 0
+      ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[idx - 1])}`
+      : "https://diligentin.github.io/tlumaczenia/";
 
-  if (homeBtn) {
-    homeBtn.onclick = () => location.href = "https://diligentin.github.io/tlumaczenia/";
-  }
+  homeBtn.onclick = () => location.href = "https://diligentin.github.io/tlumaczenia/";
 
   /* PADLET */
   let padletLoaded = false;
@@ -262,18 +256,22 @@ img.comic-page {
     }
   });
 
-  /* NAV HIDE — NATYCHMIASTOWA REAKCJA */
-  if (nav && header) {
-    let last = window.scrollY;
+  /* ⭐ AUTO‑HIDE BUTTONS — NATYCHMIASTOWE, PROSTE, NIEZAWODNE ⭐ */
+  let lastScroll = 0;
 
-    window.addEventListener("scroll", () => {
-      const y = window.scrollY;
-      const hide = y > last;
-      nav.classList.toggle("hidden", hide);
-      header.style.opacity = hide ? "0" : "1";
-      last = y;
-    }, { passive: true });
-  }
+  window.addEventListener("scroll", () => {
+    const current = window.scrollY;
+
+    if (current > lastScroll) {
+      nav.classList.add("hidden");
+      header.style.opacity = "0";
+    } else {
+      nav.classList.remove("hidden");
+      header.style.opacity = "1";
+    }
+
+    lastScroll = current;
+  }, { passive: true });
 
 })();
 </script>
