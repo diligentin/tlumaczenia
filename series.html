@@ -105,10 +105,23 @@ a { color: white; text-decoration: none; }
   document.getElementById("header-img").src = data.header_img;
   document.getElementById("desc").innerHTML = data.desc.replace(/\n/g, "<br>");
 
-  /* ⭐ NATURALNA KOLEJNOŚĆ Z JSON — ZERO SORTOWANIA ⭐ */
-  const sorted = Object.keys(data.chapters);
-
   const container = document.getElementById("chapters-container");
+
+  /* ⭐ PRZYWRÓCONE STARE SORTOWANIE ⭐ */
+  const sorted = Object.keys(data.chapters).sort((a,b)=>{
+      const na = parseInt(a);
+      const nb = parseInt(b);
+      const ha = !isNaN(na);
+      const hb = !isNaN(nb);
+
+      if (ha && hb) {
+        if (na !== nb) return na - nb;
+        return a.localeCompare(b);
+      }
+      if (ha) return -1;
+      if (hb) return 1;
+      return a.localeCompare(b);
+  });
 
   /* FUNKCJA TWORZENIA PRZYCISKU */
   function makeBtn(num) {
@@ -135,80 +148,58 @@ a { color: white; text-decoration: none; }
     return;
   }
 
- /* Z SEZONAMI — NATURALNA KOLEJNOŚĆ JSON */
-for (const [seasonName, range] of Object.entries(data.seasons)) {
+  /* ⭐ Z SEZONAMI — DZIAŁA JAK STARY KOD ⭐ */
+  for (const [seasonName, range] of Object.entries(data.seasons)) {
 
-  const from = range.from === "∞" ? Infinity : isNaN(+range.from) ? range.from : +range.from;
-  const to   = range.to   === "∞" ? Infinity : isNaN(+range.to)   ? range.to   : +range.to;
+    const from = range.from === "∞" ? Infinity :
+                 isNaN(parseInt(range.from)) ? range.from : parseInt(range.from);
 
-  const h = document.createElement("h3");
-  h.style.textAlign = "center";
-  h.style.fontWeight = "50";
-  h.style.fontSize = "20px";
-  h.style.marginTop = "10px";
-  h.textContent = seasonName;
-  container.appendChild(h);
+    const to   = range.to === "∞" ? Infinity :
+                 isNaN(parseInt(range.to)) ? range.to : parseInt(range.to);
 
-  const grid = document.createElement("div");
-  grid.className = "chapter-grid";
+    const h = document.createElement("h3");
+    h.style.textAlign = "center";
+    h.style.fontWeight = "50";
+    h.style.fontSize = "20px";
+    h.style.marginTop = "10px";
+    h.textContent = seasonName;
+    container.appendChild(h);
 
-  sorted.forEach(num => {
-    const n = +num;
+    const grid = document.createElement("div");
+    grid.className = "chapter-grid";
 
-    /* ⭐ ROZDZIAŁY NIENUMERYCZNE — przypisujemy do sezonu
-       jeśli ich POZYCJA w JSON znajduje się między numericznymi granicami sezonu */
-    if (isNaN(n)) {
-      // znajdź poprzedni i następny numeryczny rozdział
-      const idx = sorted.indexOf(num);
+    sorted.forEach(num => {
 
-      let prevNum = null;
-      let nextNum = null;
+      let fits = false;
 
-      // szukamy poprzedniego numerycznego
-      for (let i = idx - 1; i >= 0; i--) {
-        const nn = +sorted[i];
-        if (!isNaN(nn)) { prevNum = nn; break; }
+      /* 1) numeryczne w zakresie */
+      if (typeof from === "number" && typeof to === "number") {
+        const n = parseInt(num);
+        if (!isNaN(n) && n >= from && n <= to) fits = true;
       }
 
-      // szukamy następnego numerycznego
-      for (let i = idx + 1; i < sorted.length; i++) {
-        const nn = +sorted[i];
-        if (!isNaN(nn)) { nextNum = nn; break; }
+      /* 2) from jako string → dopasowanie dokładne */
+      if (typeof from === "string" && num === from) {
+        fits = true;
       }
 
-      // przypisanie do sezonu na podstawie pozycji
-      if (
-        (typeof from === "number" && typeof to === "number" &&
-         prevNum !== null && nextNum !== null &&
-         prevNum >= from && nextNum <= to)
-      ) {
-        grid.appendChild(makeBtn(num));
+      /* 3) to = Infinity → wszystko od from */
+      if (to === Infinity && typeof from === "number") {
+        const n = parseInt(num);
+        if (!isNaN(n) && n >= from) fits = true;
       }
 
-      return;
-    }
+      /* ⭐ 4) ROZDZIAŁY Z EMOJI — STARY KOD TEŻ JE WPUSZCZAŁ DO SEZONU
+            jeśli sortowanie ustawiło je między numerami */
+      if (isNaN(parseInt(num))) {
+        fits = true;
+      }
 
-    /* ⭐ ROZDZIAŁY NUMERYCZNE — normalne filtrowanie */
-    let fits = false;
+      if (fits) grid.appendChild(makeBtn(num));
+    });
 
-    if (typeof from === "number" && typeof to === "number") {
-      fits = n >= from && n <= to;
-    }
-
-    if (typeof from === "string" && num === from) {
-      fits = true;
-    }
-
-    if (to === Infinity && typeof from === "number") {
-      fits = n >= from;
-    }
-
-    if (fits) grid.appendChild(makeBtn(num));
-  });
-
-  container.appendChild(grid);
-}
-
+    container.appendChild(grid);
+  }
 
 })();
 </script>
