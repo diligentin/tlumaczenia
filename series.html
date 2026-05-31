@@ -135,52 +135,80 @@ a { color: white; text-decoration: none; }
     return;
   }
 
-  /* ⭐ Z SEZONAMI — POPRAWIONA LOGIKA ⭐ */
-  for (const [seasonName, range] of Object.entries(data.seasons)) {
+ /* Z SEZONAMI — NATURALNA KOLEJNOŚĆ JSON */
+for (const [seasonName, range] of Object.entries(data.seasons)) {
 
-    const from = range.from === "∞" ? Infinity : isNaN(+range.from) ? range.from : +range.from;
-    const to   = range.to   === "∞" ? Infinity : isNaN(+range.to)   ? range.to   : +range.to;
+  const from = range.from === "∞" ? Infinity : isNaN(+range.from) ? range.from : +range.from;
+  const to   = range.to   === "∞" ? Infinity : isNaN(+range.to)   ? range.to   : +range.to;
 
-    const h = document.createElement("h3");
-    h.style.textAlign = "center";
-    h.style.fontWeight = "50";
-    h.style.fontSize = "20px";
-    h.style.marginTop = "10px";
-    h.textContent = seasonName;
-    container.appendChild(h);
+  const h = document.createElement("h3");
+  h.style.textAlign = "center";
+  h.style.fontWeight = "50";
+  h.style.fontSize = "20px";
+  h.style.marginTop = "10px";
+  h.textContent = seasonName;
+  container.appendChild(h);
 
-    const grid = document.createElement("div");
-    grid.className = "chapter-grid";
+  const grid = document.createElement("div");
+  grid.className = "chapter-grid";
 
   sorted.forEach(num => {
-  const n = +num;
+    const n = +num;
 
-  // ⭐ Rozdziały nienumeryczne → zawsze wstawiamy, bez filtrowania
-  if (isNaN(n)) {
-    grid.appendChild(makeBtn(num));
-    return;
-  }
+    /* ⭐ ROZDZIAŁY NIENUMERYCZNE — przypisujemy do sezonu
+       jeśli ich POZYCJA w JSON znajduje się między numericznymi granicami sezonu */
+    if (isNaN(n)) {
+      // znajdź poprzedni i następny numeryczny rozdział
+      const idx = sorted.indexOf(num);
 
-  // ⭐ Rozdziały numeryczne → filtrujemy zakresem
-  let fits = false;
+      let prevNum = null;
+      let nextNum = null;
 
-  if (typeof from === "number" && typeof to === "number") {
-    fits = n >= from && n <= to;
-  }
+      // szukamy poprzedniego numerycznego
+      for (let i = idx - 1; i >= 0; i--) {
+        const nn = +sorted[i];
+        if (!isNaN(nn)) { prevNum = nn; break; }
+      }
 
-  if (typeof from === "string" && num === from) {
-    fits = true;
-  }
+      // szukamy następnego numerycznego
+      for (let i = idx + 1; i < sorted.length; i++) {
+        const nn = +sorted[i];
+        if (!isNaN(nn)) { nextNum = nn; break; }
+      }
 
-  if (to === Infinity && typeof from === "number") {
-    fits = n >= from;
-  }
+      // przypisanie do sezonu na podstawie pozycji
+      if (
+        (typeof from === "number" && typeof to === "number" &&
+         prevNum !== null && nextNum !== null &&
+         prevNum >= from && nextNum <= to)
+      ) {
+        grid.appendChild(makeBtn(num));
+      }
 
-  if (fits) grid.appendChild(makeBtn(num));
-});
+      return;
+    }
 
-    container.appendChild(grid);
-  }
+    /* ⭐ ROZDZIAŁY NUMERYCZNE — normalne filtrowanie */
+    let fits = false;
+
+    if (typeof from === "number" && typeof to === "number") {
+      fits = n >= from && n <= to;
+    }
+
+    if (typeof from === "string" && num === from) {
+      fits = true;
+    }
+
+    if (to === Infinity && typeof from === "number") {
+      fits = n >= from;
+    }
+
+    if (fits) grid.appendChild(makeBtn(num));
+  });
+
+  container.appendChild(grid);
+}
+
 
 })();
 </script>
