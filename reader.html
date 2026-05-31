@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-<title>..✦⏖✦</title>
+<title>✦⏖✦</title>
 
 <style>
 @font-face { font-family: "figtree"; src: url("https://tajnachalupka.github.io/main/Figtree.ttf"); }
 
-body { margin: 0; background: #191818; }
+body { margin: 0; background: #191818; font-family: figtree; }
 
 #comic-container { max-width: 720px; margin: 0 auto; }
 
@@ -36,10 +36,9 @@ img.comic-page {
 
 /* COMMENTS */
 #comments_title {
-  color: white; font-family: figtree;
-  font-size: 22px; text-align: center;
-  margin-top: 30px; opacity: 0;
-  transition: opacity .3s ease;
+  color: white; font-size: 22px;
+  text-align: center; margin-top: 30px;
+  opacity: 0; transition: opacity .3s ease;
 }
 
 /* PADLET */
@@ -49,8 +48,7 @@ img.comic-page {
   transition: opacity .1s ease;
 }
 #padlet_loading, #chapter_loading {
-  color: white; text-align: center;
-  font-family: figtree; padding: 20px;
+  color: white; text-align: center; padding: 20px;
 }
 
 @media (max-width: 600px) { #padlet_box iframe { height: 635px !important; } }
@@ -84,59 +82,49 @@ img.comic-page {
 <script>
 (async function () {
 
-  const params = new URLSearchParams(location.search);
-  const comicKey = params.get("comic");
-  const chapter = params.get("chapter");
+  const qs = new URLSearchParams(location.search);
+  const comicKey = qs.get("comic");
+  const chapter = qs.get("chapter");
   const container = document.getElementById("comic-container");
 
   if (!comicKey || !chapter) return;
 
   /* DEVICE CHECK */
-  function isOldDevice() {
+  const USE_SLICER = (() => {
     const ua = navigator.userAgent || "";
-    const oldAndroid = /Android [0-8]\./i.test(ua);
+    if (/Android [0-8]\./i.test(ua)) return false;
 
-    let slowCPU = false;
     const t0 = performance.now();
     for (let i = 0; i < 40000; i++) {}
-    if (performance.now() - t0 > 10) slowCPU = true;
+    if (performance.now() - t0 > 10) return false;
 
-    let badCanvas = false;
-    try { if (!document.createElement("canvas").getContext("2d")) badCanvas = true; }
-    catch { badCanvas = true; }
-
-    return oldAndroid || slowCPU || badCanvas;
-  }
-
-  const USE_SLICER = !isOldDevice();
+    try { return !!document.createElement("canvas").getContext("2d"); }
+    catch { return false; }
+  })();
 
   /* SLICER */
-  async function sliceImage(src, sliceHeight = 1800) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.src = src;
+  const sliceImage = (src, h = 1800) => new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = src;
 
-      img.onload = () => {
-        if (!img.width || !img.height) return reject();
+    img.onload = () => {
+      if (!img.width) return reject();
+      const slices = [];
+      const c = document.createElement("canvas");
+      const ctx = c.getContext("2d");
 
-        const slices = [];
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
+      for (let y = 0; y < img.height; y += h) {
+        const sh = Math.min(h, img.height - y);
+        c.width = img.width; c.height = sh;
+        ctx.drawImage(img, 0, y, img.width, sh, 0, 0, img.width, sh);
+        slices.push(c.toDataURL("image/jpeg", 0.95));
+      }
+      resolve(slices);
+    };
 
-        for (let y = 0; y < img.height; y += sliceHeight) {
-          const h = Math.min(sliceHeight, img.height - y);
-          canvas.width = img.width;
-          canvas.height = h;
-          ctx.drawImage(img, 0, y, img.width, h, 0, 0, canvas.width, canvas.height);
-          slices.push(canvas.toDataURL("image/jpeg", 0.95));
-        }
-        resolve(slices);
-      };
-
-      img.onerror = reject;
-    });
-  }
+    img.onerror = reject;
+  });
 
   /* LOAD JSON */
   let data;
@@ -156,9 +144,9 @@ img.comic-page {
 
   /* LAZY OBSERVER */
   const lazyObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      const img = entry.target;
-      if (entry.isIntersecting && img.dataset.src) {
+    entries.forEach(e => {
+      const img = e.target;
+      if (e.isIntersecting && img.dataset.src) {
         img.src = img.dataset.src;
         img.dataset.src = "";
         img.style.opacity = "1";
@@ -168,45 +156,30 @@ img.comic-page {
     });
   }, { rootMargin: "1200px 0px" });
 
-  /* INSERT IMAGES — FIRST SLICE IMMEDIATE */
-  let firstSlice = true;
+  /* INSERT IMAGES */
+  let first = true;
 
   for (const src of pages) {
     try {
-      if (USE_SLICER) {
-        const slices = await sliceImage(src);
-        for (const s of slices) {
-          const img = document.createElement("img");
-          img.className = "comic-page";
+      const list = USE_SLICER ? await sliceImage(src) : [src];
 
-          if (firstSlice) {
-            img.src = s;
-            img.style.opacity = "1";
-            firstSlice = false;
-          } else {
-            img.dataset.src = s;
-            img.loading = "lazy";
-            lazyObserver.observe(img);
-          }
-
-          container.appendChild(img);
-        }
-      } else {
+      for (const s of list) {
         const img = document.createElement("img");
         img.className = "comic-page";
 
-        if (firstSlice) {
-          img.src = src;
+        if (first) {
+          img.src = s;
           img.style.opacity = "1";
-          firstSlice = false;
+          first = false;
         } else {
-          img.dataset.src = src;
+          img.dataset.src = s;
           img.loading = "lazy";
           lazyObserver.observe(img);
         }
 
         container.appendChild(img);
       }
+
     } catch {
       container.innerHTML += "<p style='color:red;text-align:center;'>Błąd obrazu.</p>";
     }
@@ -214,24 +187,21 @@ img.comic-page {
 
   /* SORT CHAPTERS */
   const keys = Object.keys(data.chapters).sort((a, b) => {
-    const na = parseInt(a), nb = parseInt(b);
-    if (!isNaN(na) && !isNaN(nb)) return na - nb || a.localeCompare(b);
-    if (!isNaN(na)) return -1;
-    if (!isNaN(nb)) return 1;
-    return a.localeCompare(b);
+    const na = +a, nb = +b;
+    return (!isNaN(na) && !isNaN(nb)) ? na - nb : a.localeCompare(b);
   });
 
-  const index = keys.indexOf(chapter);
+  const idx = keys.indexOf(chapter);
 
   /* BUTTONS */
   nextBtn.onclick = () =>
-    location.href = index < keys.length - 1
-      ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index + 1])}`
+    location.href = idx < keys.length - 1
+      ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[idx + 1])}`
       : "https://diligentin.github.io/tlumaczenia/";
 
   prevBtn.onclick = () =>
-    location.href = index > 0
-      ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index - 1])}`
+    location.href = idx > 0
+      ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[idx - 1])}`
       : "https://diligentin.github.io/tlumaczenia/";
 
   homeBtn.onclick = () => location.href = "https://diligentin.github.io/tlumaczenia/";
@@ -239,7 +209,7 @@ img.comic-page {
   /* PADLET */
   let padletLoaded = false;
 
-  function loadPadlet() {
+  const loadPadlet = () => {
     if (padletLoaded) return;
     padletLoaded = true;
 
@@ -257,8 +227,8 @@ img.comic-page {
         <iframe src="${embed}" frameborder="0" style="width:100%;height:600px;"></iframe>
         <p style="text-align:center; margin-top:14px;">
           <a href="${full}" target="_blank"
-             style="padding:10px 18px; background:#272727; color:white; font-family:figtree; font-size:14px; border-radius:3px; text-decoration:none;">
-            Otwórz padlet w nowej karcie
+             style="padding:10px 18px; background:#272727; color:white; font-size:14px; border-radius:3px; text-decoration:none;">
+            Otwórz padlet
           </a>
         </p>
       </div>
@@ -266,35 +236,31 @@ img.comic-page {
 
     box.style.visibility = "visible";
     box.style.opacity = "1";
-  }
+  };
 
-  const padletEl = document.getElementById("padlet_box");
   new IntersectionObserver(e => e[0].isIntersecting && loadPadlet(), { threshold: 0.1 })
-    .observe(padletEl);
+    .observe(document.getElementById("padlet_box"));
 
   window.addEventListener("scroll", function reveal() {
     if (window.scrollY > 250) {
-      padletEl.style.visibility = "visible";
-      padletEl.style.opacity = "1";
+      const box = document.getElementById("padlet_box");
+      box.style.visibility = "visible";
+      box.style.opacity = "1";
       window.removeEventListener("scroll", reveal);
     }
   });
 
-  /* NAV HIDE — OLD, INSTANT VERSION */
+  /* NAV HIDE */
   const nav = document.getElementById("nav");
   const header = document.getElementById("series-header");
-  let lastScroll = 0;
+  let last = 0;
 
   window.addEventListener("scroll", () => {
     const y = window.scrollY;
-    if (y > lastScroll) {
-      nav.classList.add("hidden");
-      header.style.opacity = "0";
-    } else {
-      nav.classList.remove("hidden");
-      header.style.opacity = "1";
-    }
-    lastScroll = y;
+    const hide = y > last;
+    nav.classList.toggle("hidden", hide);
+    header.style.opacity = hide ? "0" : "1";
+    last = y;
   });
 
 })();
