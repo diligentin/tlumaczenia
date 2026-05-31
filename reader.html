@@ -15,6 +15,7 @@ body { margin: 0; background: #191818; font-family: figtree, sans-serif;}
 
 img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; image-rendering: -webkit-optimize-contrast; object-fit: contain;}
 
+/* NAV BUTTONS */
 .nav-buttons { position: fixed; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 0; opacity: 1; transition: opacity .15s ease;}
 .nav-buttons.hidden { opacity: 0; pointer-events: none;}
 
@@ -22,7 +23,13 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
 
 .btn-icon { width: 42px; height: 42px; filter: invert(1); pointer-events: none;}
 
+/* COMMENTS */
 #comments_title { color: white; font-size: 22px; text-align: center; margin-top: 30px; opacity: 0; transition: opacity .3s ease;}
+
+/* PADLET */
+#padlet_box { padding: 10px; background: #191818; visibility: hidden; opacity: 0; transition: opacity .1s ease;}
+#padlet_loading,
+#chapter_loading { color: white;  text-align: center; padding: 20px;}
 
 </style>
 </head>
@@ -35,7 +42,7 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
 </div>
 
 <div id="comic-container"></div>
-<p id="chapter_loading" style="margin-top:40px; color:white; text-align:center;">Ładuję rozdział...</p>
+<p id="chapter_loading" style="margin-top:40px;">Ładuję rozdział...</p>
 
 <!-- BUTTONS -->
 <div class="nav-buttons" id="nav">
@@ -45,7 +52,8 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
 </div>
 
 <p id="comments_title">Komentarze</p>
-<div id="disqus_thread" style="max-width:720px; margin:0 auto; padding:10px;"></div>
+<p id="padlet_loading" style="margin-top:40px;">Ładuję komentarze...</p>
+<div id="padlet_box"></div>
 
 <script>
 (async function () {
@@ -58,13 +66,76 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
   const nextBtn = document.getElementById("nextBtn");
   const prevBtn = document.getElementById("prevBtn");
   const homeBtn = document.getElementById("homeBtn");
+  const nav = document.getElementById("nav");
+  const header = document.getElementById("series-header");
 
   if (!comicKey || !chapter) {
     container.innerHTML = "<p style='color:white;text-align:center;padding:50px;'>Brak parametru comic lub chapter.</p>";
     return;
   }
 
+  /* ⭐ NATYCHMIASTOWA KLIKALNOŚĆ ⭐ */
+  nextBtn.onclick = () => {};
+  prevBtn.onclick = () => {};
   homeBtn.onclick = () => location.href = "https://tajnachalupka.github.io/tlumaczenia/";
+
+  /* ⭐ DETEKCJA STARYCH URZĄDZEŃ ⭐ */
+  const USE_SLICER = (() => {
+    const ua = navigator.userAgent || "";
+    if (/Android [0-8]\./i.test(ua)) return false;
+
+    const t0 = performance.now();
+    for (let i = 0; i < 40000; i++) {}
+    if (performance.now() - t0 > 10) return false;
+
+    try { return !!document.createElement("canvas").getContext("2d"); }
+    catch { return false; }
+  })();
+
+  /* ⭐ SLICER BEZ SKALOWANIA ⭐ */
+  async function sliceImage(src, sliceHeight = 2000) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = src;
+
+      img.onload = () => {
+        try {
+          if (!USE_SLICER) {
+            resolve([src]);
+            return;
+          }
+
+          const slices = [];
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+
+          for (let y = 0; y < img.height; y += sliceHeight) {
+            const h = Math.min(sliceHeight, img.height - y);
+
+            canvas.width = img.width;
+            canvas.height = h;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.drawImage(
+              img,
+              0, y, img.width, h,
+              0, 0, img.width, h
+            );
+
+            slices.push(canvas.toDataURL("image/jpeg", 0.95));
+          }
+
+          resolve(slices);
+        } catch (e) {
+          reject(e);
+        }
+      };
+
+      img.onerror = () => reject();
+    });
+  }
 
   /* JSON */
   let data;
@@ -78,28 +149,34 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
     return;
   }
 
-  /* ⭐ POPRAWKA: obsługa tablicy i obiektu ⭐ */
-  const chapterData = data.chapters[chapter];
-
-  if (!chapterData) {
+  const pages = data.chapters[chapter];
+  if (!pages) {
     container.innerHTML = "<p style='color:white;text-align:center;padding:50px;'>Ten rozdział nie istnieje.</p>";
     return;
   }
-
-  const pages = Array.isArray(chapterData) ? chapterData : chapterData.pages;
 
   localStorage.setItem(`read_${comicKey}_${chapter}`, "1");
 
   const loadingInfo = document.getElementById("chapter_loading");
 
-  /* Wstawianie obrazów */
+  /* ⭐ Wstawianie obrazów — TU JEST UI BREATH ⭐ */
   for (const src of pages) {
+
+    // ⭐ odblokowuje UI, next/prev działają natychmiast
     await new Promise(r => setTimeout(r, 0));
-    const img = document.createElement("img");
-    img.className = "comic-page";
-    img.src = src;
-    img.loading = "lazy";
-    container.appendChild(img);
+
+    try {
+      const slices = await sliceImage(src, 2000);
+      slices.forEach(url => {
+        const img = document.createElement("img");
+        img.className = "comic-page";
+        img.src = url;
+        img.loading = "lazy";
+        container.appendChild(img);
+      });
+    } catch {
+      container.innerHTML += "<p style='color:red;text-align:center;'>Błąd obrazu.</p>";
+    }
   }
 
   if (loadingInfo) loadingInfo.remove();
@@ -122,6 +199,7 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
 
   const index = keys.indexOf(chapter);
 
+  /* ⭐ NADPISANIE GUZIKÓW — DZIAŁAJĄ NATYCHMIAST ⭐ */
   nextBtn.onclick = () => {
     if (index !== -1 && index < keys.length - 1) {
       location.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index + 1])}`;
@@ -138,31 +216,53 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
     }
   };
 
-/* ⭐ DISQUS — obsługa istniejących wątków ⭐ */
-document.getElementById("comments_title").style.opacity = "1";
+  /* PADLET */
+  let padletLoaded = false;
 
-var disqus_config = function () {
+  const loadPadlet = () => {
+    if (padletLoaded) return;
+    padletLoaded = true;
 
-  if (!Array.isArray(chapterData) && chapterData.disqus_id) {
-    this.page.identifier = chapterData.disqus_id;
-    this.page.url = chapterData.disqus_id;   // ⭐ KLUCZOWE — musi być identyczne
-  } else {
-    this.page.identifier = comicKey + "_" + chapter;
-    this.page.url = location.href;
-  }
+    const loading = document.getElementById("padlet_loading");
+    if (loading) loading.remove();
 
-};
+    document.getElementById("comments_title").style.opacity = "1";
 
-(function() {
-  var d = document, s = d.createElement('script');
-  s.src = 'https://chalupka-ruoye-chan-wix.disqus.com/embed.js';
-  s.setAttribute('data-timestamp', +new Date());
-  (d.head || d.body).appendChild(s);
+    const box = document.getElementById("padlet_box");
+    const embed = data.padlet;
+    const full = embed.replace("/embed/", "/");
+
+    box.innerHTML = `
+      <div style="border:1px solid #0001; border-radius:2px; overflow:hidden; max-width:720px; margin:0 auto;">
+        <iframe src="${embed}" frameborder="0" style="width:100%;height:600px;"></iframe>
+        <p style="text-align:center; margin-top:14px;">
+          <a href="${full}" target="_blank"
+             style="padding:10px 18px; background:#272727; color:white; font-size:14px; border-radius:3px; text-decoration:none;">
+            Otwórz padlet
+          </a>
+        </p>
+      </div>
+    `;
+
+    box.style.visibility = "visible";
+    box.style.opacity = "1";
+  };
+
+  new IntersectionObserver(e => e[0].isIntersecting && loadPadlet(), { threshold: 0.1 })
+    .observe(document.getElementById("padlet_box"));
+
+  window.addEventListener("scroll", function reveal() {
+    if (window.scrollY > 250) {
+      const box = document.getElementById("padlet_box");
+      box.style.visibility = "visible";
+      box.style.opacity = "1";
+      window.removeEventListener("scroll", reveal);
+    }
+  });
+
 })();
 
-})();
-
-/* AUTO-HIDE */
+/* ⭐ AUTO-HIDE — jak w starym kodzie ⭐ */
 let lastScroll = 0;
 const nav = document.getElementById("nav");
 const header = document.getElementById("series-header");
