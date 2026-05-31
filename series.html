@@ -105,28 +105,10 @@ a { color: white; text-decoration: none; }
   document.getElementById("header-img").src = data.header_img;
   document.getElementById("desc").innerHTML = data.desc.replace(/\n/g, "<br>");
 
-  /* SORTOWANIE ROZDZIAŁÓW */
-const keys = Object.keys(data.chapters).sort((a, b) => {
-  const na = parseInt(a);
-  const nb = parseInt(b);
+  /* ⭐ NATURALNA KOLEJNOŚĆ Z JSON — ZERO SORTOWANIA ⭐ */
+  const sorted = Object.keys(data.chapters);
 
-  const aIsNum = !isNaN(na);
-  const bIsNum = !isNaN(nb);
-
-  if (aIsNum && bIsNum) {
-    if (na !== nb) return na - nb;
-    return a.localeCompare(b, 'pl');
-  }
-
-  if (aIsNum) return -1;
-  if (bIsNum) return 1;
-
-  return a.localeCompare(b, 'pl');
-});
-
-
-
-  const container = document.getElementById("chapters");
+  const container = document.getElementById("chapters-container");
 
   /* FUNKCJA TWORZENIA PRZYCISKU */
   function makeBtn(num) {
