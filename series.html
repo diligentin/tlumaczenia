@@ -100,10 +100,10 @@ a { color: white; text-decoration: none; }
   }
 
   /* USTAWIENIA */
-  page-title.textContent = data.title || comicKey;
-  cover.src = data.cover;
-  header-img.src = data.header_img;
-  desc.innerHTML = data.desc.replace(/\n/g, "<br>");
+  document.getElementById("page-title").textContent = data.title || comicKey;
+  document.getElementById("cover").src = data.cover;
+  document.getElementById("header-img").src = data.header_img;
+  document.getElementById("desc").innerHTML = data.desc.replace(/\n/g, "<br>");
 
   /* SORTOWANIE ROZDZIAŁÓW */
   const sorted = Object.keys(data.chapters).sort((a, b) => {
