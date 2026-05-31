@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-<title>r✦⏖✦</title>
+<title>✦⏖✦</title>
 
 <style>
 @font-face { font-family: "figtree"; src: url("https://tajnachalupka.github.io/main/Figtree.ttf"); }
@@ -14,10 +14,10 @@ body { margin: 0; background: #191818; font-family: figtree; }
 #comic-container { max-width: 720px; margin: 0 auto; }
 
 img.comic-page {
-  width: 100%; display: block;
-  opacity: 0; transition: opacity .25s ease;
-  min-height: 400px;      /* ← DODANE */
-  background: #111;       /* ← DODANE (opcjonalne, ale ładne) */
+  width: 100%;
+  display: block;
+  opacity: 0;
+  transition: opacity .25s ease;
 }
 
 /* NAV BUTTONS */
@@ -176,10 +176,12 @@ img.comic-page {
         img.className = "comic-page";
 
         if (first) {
+          /* ⭐ PIERWSZY OBRAZEK — NIGDY LAZY ⭐ */
           img.src = s;
           img.style.opacity = "1";
           first = false;
         } else {
+          /* ⭐ KOLEJNE — LAZY ⭐ */
           img.dataset.src = s;
           img.loading = "lazy";
           lazyObserver.observe(img);
@@ -258,7 +260,7 @@ img.comic-page {
     }
   });
 
-  /* ⭐ AUTO‑HIDE BUTTONS — NATYCHMIASTOWE, PROSTE, NIEZAWODNE ⭐ */
+  /* ⭐ AUTO‑HIDE BUTTONS — NATYCHMIASTOWE ⭐ */
   let lastScroll = 0;
 
   window.addEventListener("scroll", () => {
