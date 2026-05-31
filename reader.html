@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
-<title>✦⏖✦</title>
+<title>m✦⏖✦</title>
 
 <style>
 @font-face {
@@ -64,7 +64,7 @@ img.comic-page {
   filter: invert(1);
 }
 
-/* ===== KOMENTARZE — NAGŁÓWEK ===== */
+/* ===== KOMENTARZE ===== */
 #comments_title {
   color: white;
   font-family: figtree;
@@ -92,14 +92,12 @@ img.comic-page {
   padding: 20px;
 }
 
-/* Wyższy Padlet na telefonach */
 @media (max-width: 600px) {
   #padlet_box iframe {
     height: 635px !important;
   }
 }
 
-/* Wyższy Padlet na tabletach */
 @media (min-width: 601px) and (max-width: 1024px) {
   #padlet_box iframe {
     height: 960px !important;
@@ -131,15 +129,9 @@ img.comic-page {
 
 <!-- BUTTONS -->
 <div class="nav-buttons" id="nav">
-  <div class="nav-btn" id="nextBtn">
-    <img src="https://tajnachalupka.github.io/main/szczala-next.png" class="btn-icon">
-  </div>
-  <div class="nav-btn" id="prevBtn">
-    <img src="https://tajnachalupka.github.io/main/szczala-prev.png" class="btn-icon">
-  </div>
-  <div class="nav-btn" id="homeBtn">
-    <img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon">
-  </div>
+  <div class="nav-btn" id="nextBtn"><img src="https://tajnachalupka.github.io/main/szczala-next.png" class="btn-icon"></div>
+  <div class="nav-btn" id="prevBtn"><img src="https://tajnachalupka.github.io/main/szczala-prev.png" class="btn-icon"></div>
+  <div class="nav-btn" id="homeBtn"><img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon"></div>
 </div>
 
 <p id="comments_title">Komentarze</p>
@@ -315,12 +307,7 @@ img.comic-page {
   homeBtn.onclick = () => location.href = "https://diligentin.github.io/tlumaczenia/";
 
 
-  /*  
-  ===========================================================
-     PADLET — AUTOMATYCZNY
-  ===========================================================
-  */
-
+  /* ===== PADLET ===== */
   let padletLoaded = false;
 
   function loadPadlet() {
@@ -380,7 +367,6 @@ img.comic-page {
     padletBox.style.opacity = "1";
   }
 
-  /* ===== OBSERWATOR PADLETU ===== */
   const padletEl = document.getElementById("padlet_box");
 
   const observerPadlet = new IntersectionObserver(entries => {
@@ -389,7 +375,6 @@ img.comic-page {
 
   observerPadlet.observe(padletEl);
 
-  /* ===== POKAŻ PADLET PO 250 PX ===== */
   function revealExtras() {
     if (window.scrollY > 250) {
       padletEl.style.visibility = "visible";
@@ -407,7 +392,7 @@ img.comic-page {
 
   /*  
   ===========================================================
-     ZNIKANIE NAWIGACJI — WERSJA STARA, SZYBKA
+     ⭐⭐⭐ ZNIKANIE NAWIGACJI — WERSJA STARA, NATYCHMIASTOWA ⭐⭐⭐
   ===========================================================
   */
 
