@@ -1,27 +1,21 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
-<title>...</title>
+<title>✦⏖✦</title>
 
 <style>
 @font-face {
   font-family: "figtree";
-  src: url("https://tajnachalupka.github.io/main/Figtree.ttf") format("truetype");
+  src: url("https://tajnachalupka.github.io/main/Figtree.ttf");
 }
 
-@font-face {
-  font-family: "piekos";
-  src: url("https://tajnachalupka.github.io/main/Piekos.otf") format("opentype");
-  font-weight: 300;
-}
-  
 body {
   margin: 0;
-  background: #191818ff;
+  background: #191818;
 }
 
 #comic-container {
@@ -29,22 +23,12 @@ body {
   margin: 0 auto;
 }
 
-/* obrazki */
-img {
+img.comic-page {
   width: 100%;
   height: auto;
   display: block;
-  max-width: 720px;
-  aspect-ratio: auto;
-  image-rendering: -webkit-optimize-contrast;
-  object-fit: contain;
-}
-
-@media (max-width: 800px) {
-  img {
-    max-width: 100% !important;
-    margin: 0;
-  }
+  opacity: 0;
+  transition: opacity .25s ease;
 }
 
 /* ===== FLOATING BUTTONS ===== */
@@ -55,7 +39,7 @@ img {
   display: flex;
   flex-direction: column;
   gap: 0px;
-  transition: opacity 0.2s ease;
+  transition: opacity .15s ease;
   opacity: 1;
 }
 
@@ -72,264 +56,236 @@ img {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  user-select: none;
-  transition: 0.2s;
 }
 
 .btn-icon {
   width: 42px;
   height: 42px;
-  pointer-events: none;
   filter: invert(1);
 }
 
-/* ===== REACTIONS ===== */
-#reactions {
-  padding: 25px 10px 15px;
-  text-align: center;
+/* ===== KOMENTARZE — NAGŁÓWEK ===== */
+#comments_title {
   color: white;
+  font-family: figtree;
+  font-size: 22px;
+  text-align: center;
+  margin-top: 30px;
+  opacity: 0;
+  transition: opacity .3s ease;
 }
 
-.reaction-row {
-  display: flex;
-  justify-content: center;
-  gap: 2px;
-  flex-wrap: nowrap;
+/* ===== PADLET ===== */
+#padlet_box {
+  padding: 10px;
+  background: #191818;
+  margin-top: 0px;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity .1s ease;
 }
 
-.react img {
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
-  border-radius: 2px;
-  flex-shrink: 0;
-  min-width: 60px;
-  min-height: 60px;
-  max-width: 16vw;
-  max-height: 16vw;
-}
-
-.react {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  transition: transform 0.15s ease;
-  border-radius: 2px;
-}
-
-.react .count {
-  margin-top: 4px;
-  font-size: 14px;
-  color: #ddd;
-}
-
-.react.clicked {
-  animation: pulse 0.35s ease;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.08); }
-  100% { transform: scale(1); }
-}
-
-/* ===== DISQUS ===== */
-#disqus_thread {
+#padlet_loading, #chapter_loading {
+  color: white;
+  text-align: center;
+  font-family: figtree;
   padding: 20px;
-  background: #111;
-  margin-top: 40px;
 }
+
+/* Wyższy Padlet na telefonach */
+@media (max-width: 600px) {
+  #padlet_box iframe {
+    height: 635px !important;
+  }
+}
+
+/* Wyższy Padlet na tabletach */
+@media (min-width: 601px) and (max-width: 1024px) {
+  #padlet_box iframe {
+    height: 960px !important;
+  }
+}
+
 </style>
 </head>
 
 <body>
 
+<!-- ⭐ NOWY HEADER PNG (poprawne miejsce!) -->
+<div id="series-header" style="
+  position: fixed;
+  top: 7px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity .15s ease;
+">
+  <a id="series-link" href="#">
+    <img id="series-img" src="" style="max-height:30px; width:auto; opacity:1; transition:opacity .15s ease;">
+  </a>
+</div>
+
 <div id="comic-container"></div>
 
-<!-- ===== FLOATING BUTTONS ===== -->
+<p id="chapter_loading" style="margin-top:40px;">Ładuję rozdział...</p>
+
+<!-- BUTTONS -->
 <div class="nav-buttons" id="nav">
-
-  <div class="nav-btn" id="nextBtn">
-    <img src="https://tajnachalupka.github.io/main/szczala-next.png" class="btn-icon">
-  </div>
-  
-  <div class="nav-btn" id="prevBtn">
-    <img src="https://tajnachalupka.github.io/main/szczala-prev.png" class="btn-icon">
-  </div>
-
-  <div class="nav-btn" id="homeBtn">
-    <img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon">
-  </div>
+  <div class="nav-btn" id="nextBtn"><img src="https://tajnachalupka.github.io/main/szczala-next.png" class="btn-icon"></div>
+  <div class="nav-btn" id="prevBtn"><img src="https://tajnachalupka.github.io/main/szczala-prev.png" class="btn-icon"></div>
+  <div class="nav-btn" id="homeBtn"><img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon"></div>
 </div>
 
-<!-- ===== REACTIONS ===== -->
-<div id="reactions">
-  <div class="reaction-row">
+<p id="comments_title">Komentarze</p>
 
-    <div class="react" data-id="1">
-      <img src="https://tajnachalupka.github.io/main/guziki-reakcji/r1.jpg">
-      <div class="count">0</div>
-    </div>
-
-    <div class="react" data-id="2">
-      <img src="https://tajnachalupka.github.io/main/guziki-reakcji/r2.jpg">
-      <div class="count">0</div>
-    </div>
-
-    <div class="react" data-id="3">
-      <img src="https://tajnachalupka.github.io/main/guziki-reakcji/r3.jpg">
-      <div class="count">0</div>
-    </div>
-
-    <div class="react" data-id="4">
-      <img src="https://tajnachalupka.github.io/main/guziki-reakcji/r4.jpg">
-      <div class="count">0</div>
-    </div>
-
-    <div class="react" data-id="5">
-      <img src="https://tajnachalupka.github.io/main/guziki-reakcji/r5.jpg">
-      <div class="count">0</div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ===== DISQUS ===== -->
-<div id="disqus_thread"></div>
+<p id="padlet_loading" style="margin-top:40px;">Ładuję komentarze...</p>
+<div id="padlet_box"></div>
 
 <script>
 (async function () {
 
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(location.search);
   const comicKey = params.get("comic");
   const chapter = params.get("chapter");
-
   const container = document.getElementById("comic-container");
 
-  /* ⭐ UKRYJ REAKCJE I DISQUS NA START ⭐ */
-  document.getElementById("reactions").style.display = "none";
-  document.getElementById("disqus_thread").style.display = "none";
+  if (!comicKey || !chapter) return;
 
-  document.getElementById("homeBtn").onclick = () => {
-    window.location.href = "https://diligentin.github.io/tlumaczenia/";
-  };
+  /* ===== FALLBACK ===== */
+  function isOldDevice() {
+    const ua = navigator.userAgent || "";
+    const oldAndroid = /Android [0-8]\./i.test(ua);
 
-  if (!comicKey || !chapter) {
-    container.innerHTML =
-      "<p style='color:white;text-align:center;padding:50px;'>Brak parametru comic lub chapter.</p>";
-    return;
+    let slowCPU = false;
+    const t0 = performance.now();
+    for (let i = 0; i < 40000; i++) {}
+    if (performance.now() - t0 > 10) slowCPU = true;
+
+    let badCanvas = false;
+    try {
+      const c = document.createElement("canvas");
+      if (!c.getContext("2d")) badCanvas = true;
+    } catch { badCanvas = true; }
+
+    return oldAndroid || slowCPU || badCanvas;
   }
 
-  /* ===== CIĘCIE OBRAZÓW (NAPRAWIONE) ===== */
-  async function sliceImage(src, sliceHeight = 2000) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.src = src;
+  const USE_SLICER = !isOldDevice();
 
-      img.onload = () => {
-        try {
-          const slices = [];
+ /* ===== SLICER ===== */
+async function sliceImage(src, sliceHeight = 1800) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = src;
 
-          const scale = img.width > 720 ? 720 / img.width : 1;
+    img.onload = () => {
 
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
+      if (img.width === 0 || img.height === 0) {
+        reject("Broken image");
+        return;
+      }
 
-          for (let y = 0; y < img.height; y += sliceHeight) {
-            const h = Math.min(sliceHeight, img.height - y);
+      const slices = [];
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
 
-            canvas.width = img.width * scale;
-            canvas.height = h * scale;
+      for (let y = 0; y < img.height; y += sliceHeight) {
+        const h = Math.min(sliceHeight, img.height - y);
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.width = img.width;
+        canvas.height = h;
 
-            ctx.drawImage(
-              img,
-              0, y, img.width, h,
-              0, 0, canvas.width, canvas.height
-            );
+        ctx.drawImage(img, 0, y, img.width, h, 0, 0, canvas.width, canvas.height);
 
-            slices.push({
-              url: canvas.toDataURL("image/jpeg", 0.95)
-            });
-          }
+        slices.push(canvas.toDataURL("image/jpeg", 0.95));
+      }
 
-          resolve(slices);
-        } catch (e) {
-          reject(e);
-        }
-      };
+      resolve(slices);
+    };
 
-      img.onerror = () => reject();
-    });
-  }
+    img.onerror = reject;
+  });
+}
 
-  /* ===== ŁADOWANIE JSON ===== */
+
+  /* ===== JSON ===== */
   let data;
   try {
-    const res = await fetch(`${comicKey}.json`);
-    data = await res.json();
+    data = await fetch(`${comicKey}.json`).then(r => r.json());
+
+    /* ⭐ SERIES ICON */
+    const seriesImg = document.getElementById("series-img");
+    const seriesLink = document.getElementById("series-link");
+
+    if (data.series_icon) {
+      seriesImg.src = data.series_icon;
+      seriesImg.style.opacity = "1";
+    }
+
+    seriesLink.href = `index.html?comic=${comicKey}`;
+
   } catch {
-    container.innerHTML =
-      "<p style='color:white;text-align:center;padding:50px;'>Błąd wczytywania pliku JSON.</p>";
+    container.innerHTML = "<p style='color:white;text-align:center;padding:50px;'>Błąd JSON.</p>";
     return;
   }
 
   const pages = data.chapters[chapter];
+  if (!pages) return;
 
-  if (!pages) {
-    container.innerHTML =
-      "<p style='color:white;text-align:center;padding:50px;'>Ten rozdział nie istnieje.</p>";
-    return;
-  }
-
-  /* ===== ZAPIS HISTORII ===== */
   localStorage.setItem(`read_${comicKey}_${chapter}`, "1");
 
-  /* ===== ŁADOWANIE ===== */
-  const loadingInfo = document.createElement("p");
-  loadingInfo.style.color = "white";
-  loadingInfo.style.textAlign = "center";
-  loadingInfo.style.padding = "24px";
-  loadingInfo.style.fontFamily = "figtree, sans-serif";
-  loadingInfo.textContent = "Ładowanie rozdziału...";
-  container.appendChild(loadingInfo);
+  /* ===== LAZY + FADE-IN ===== */
+  const lazyObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      const img = entry.target;
+      if (entry.isIntersecting) {
+        if (img.dataset.src) {
+          img.src = img.dataset.src;
+          img.dataset.src = "";
+        }
+        img.style.opacity = "1";
 
-  /* ===== WYCINANIE I WSTAWIANIE ===== */
+        const loadingChapter = document.getElementById("chapter_loading");
+        if (loadingChapter) loadingChapter.remove();
+      }
+    });
+  }, { rootMargin: "1200px 0px" });
+
+  /* ===== WSTAWIANIE OBRAZÓW ===== */
   for (const src of pages) {
     try {
-      const slices = await sliceImage(src, 2000);
-      slices.forEach(slice => {
+      if (USE_SLICER) {
+        const slices = await sliceImage(src);
+        for (const s of slices) {
+          const img = document.createElement("img");
+          img.className = "comic-page";
+          img.dataset.src = s;
+          img.loading = "lazy";
+          img.decoding = "async";
+          container.appendChild(img);
+          lazyObserver.observe(img);
+        }
+      } else {
         const img = document.createElement("img");
-        img.src = slice.url;
+        img.className = "comic-page";
+        img.dataset.src = src;
         img.loading = "lazy";
+        img.decoding = "async";
         container.appendChild(img);
-      });
+        lazyObserver.observe(img);
+      }
     } catch {
-      const errP = document.createElement("p");
-      errP.style.color = "red";
-      errP.style.textAlign = "center";
-      errP.style.padding = "10px";
-      errP.textContent = "Błąd ładowania strony.";
-      container.appendChild(errP);
+      container.innerHTML += "<p style='color:red;text-align:center;'>Błąd obrazu.</p>";
     }
   }
 
-  loadingInfo.remove();
-
-  /* ===== SORTOWANIE KLUCZY ===== */
+  /* ===== SORTOWANIE ===== */
   const keys = Object.keys(data.chapters).sort((a, b) => {
-    const na = parseInt(a);
-    const nb = parseInt(b);
-    const ha = !isNaN(na);
-    const hb = !isNaN(nb);
-
-    if (ha && hb) {
-      if (na !== nb) return na - nb;
-      return a.localeCompare(b);
-    }
+    const na = parseInt(a), nb = parseInt(b);
+    const ha = !isNaN(na), hb = !isNaN(nb);
+    if (ha && hb) return na - nb || a.localeCompare(b);
     if (ha) return -1;
     if (hb) return 1;
     return a.localeCompare(b);
@@ -337,102 +293,133 @@ img {
 
   const index = keys.indexOf(chapter);
 
-  /* ===== NEXT ===== */
-  document.getElementById("nextBtn").onclick = () => {
-    if (index !== -1 && index < keys.length - 1) {
-      window.location.href =
-        `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index + 1])}`;
-    } else {
-      window.location.href = "https://diligentin.github.io/tlumaczenia/";
-    }
+  /* ===== BUTTONS ===== */
+  nextBtn.onclick = () => {
+    if (index < keys.length - 1)
+      location.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index + 1])}`;
+    else location.href = "https://diligentin.github.io/tlumaczenia/";
   };
 
-  /* ===== PREV ===== */
-  document.getElementById("prevBtn").onclick = () => {
-    if (index > 0) {
-      window.location.href =
-        `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index - 1])}`;
-    } else {
-      window.location.href = "https://diligentin.github.io/tlumaczenia/";
-    }
+  prevBtn.onclick = () => {
+    if (index > 0)
+      location.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index - 1])}`;
+    else location.href = "https://diligentin.github.io/tlumaczenia/";
   };
 
-})();
-  
-/* ===== AUTO-HIDE BUTTONS ===== */
-let lastScroll = 0;
-const nav = document.getElementById("nav");
+  homeBtn.onclick = () => location.href = "https://diligentin.github.io/tlumaczenia/";
 
-window.addEventListener("scroll", () => {
-  const current = window.scrollY;
-  if (current > lastScroll) nav.classList.add("hidden");
-  else nav.classList.remove("hidden");
-  lastScroll = current;
-});
 
-/* ===== REACTIONS ===== */
-document.querySelectorAll(".react").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const id = btn.dataset.id;
+/*  
+===========================================================
+   ⭐⭐⭐ NOWA SEKCJA PADLETU — AUTOMATYCZNA ⭐⭐⭐
+===========================================================
+*/
 
-    const key = `react_${comicKey}_${chapter}_${id}`;
-    if (localStorage.getItem(key)) return;
+let padletLoaded = false;
 
-    localStorage.setItem(key, "1");
+function loadPadlet() {
+  if (padletLoaded) return;
+  padletLoaded = true;
 
-    btn.classList.add("clicked");
+  const loadingMsg = document.getElementById("padlet_loading");
+  if (loadingMsg) loadingMsg.remove();
 
-    const count = btn.querySelector(".count");
-    count.textContent = parseInt(count.textContent) + 1;
+  const title = document.getElementById("comments_title");
+  title.style.opacity = "1";
 
-    setTimeout(() => btn.classList.remove("clicked"), 250);
-  });
-});
+  const padletBox = document.getElementById("padlet_box");
 
-/* ===== DISQUS MAPA ===== */
-const disqusMap = {
-  "afos:2": "https://tajnachalupka.wixsite.com/ub-1/ub25",
-  "afos:2♡": "https://tajnachalupka.wixsite.com/ub-1/ub24"
-};
+  const embedUrl = data.padlet;
+  const fullUrl = embedUrl.replace("/embed/", "/");
 
-var disqus_config = function () {
-  const key = `${comicKey}:${chapter}`;
-  const mapped = disqusMap[key];
+  padletBox.innerHTML = `
+    <div style="
+      border:1px solid rgba(0,0,0,0.1);
+      border-radius:2px;
+      overflow:hidden;
+      width:100%;
+      max-width:720px;
+      margin:0 auto;
+      background:#191818;
+    ">
+      <iframe src="${embedUrl}" frameborder="0"
+        style="width:100%;height:600px;display:block;">
+      </iframe>
 
-  this.page.url = window.location.href;
-  this.page.identifier = mapped || `${comicKey}-${chapter}`;
-};
+    <p style="text-align:center; margin-top:14px;">
+      <a href="${fullUrl}" target="_blank"
+         style="
+           display:inline-block;
+           padding:10px 18px;
+           background:#272727;
+           color:white;
+           font-family: figtree;
+           font-size:14px;
+           border-radius:3px;
+           border:0px solid #3a3a3a;
+           text-decoration:none;
+           transition:0.2s;
+         "
+         onmouseover="this.style.background='#2f2f2f'"
+         onmouseout="this.style.background='#272727'"
+      >
+        Otwórz padlet w nowej karcie
+      </a>
+    </p>
 
-/* ===== DISQUS LAZY LOAD ===== */
-let disqusLoaded = false;
+    </div>
+  `;
 
-function loadDisqus() {
-  if (disqusLoaded) return;
-  disqusLoaded = true;
-
-  var d = document, s = d.createElement('script');
-  s.src = 'https://chalupka-ruoye-chan-wix.disqus.com/embed.js';
-  s.setAttribute('data-timestamp', +new Date());
-  (d.head || d.body).appendChild(s);
+  padletBox.style.visibility = "visible";
+  padletBox.style.opacity = "1";
 }
 
-const observerDisqus = new IntersectionObserver(entries => {
-  if (entries[0].isIntersecting) loadDisqus();
+/* ===== OBSERWATOR PADLETU ===== */
+const padletEl = document.getElementById("padlet_box");
+
+const observerPadlet = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) loadPadlet();
 }, { threshold: 0.1 });
 
-observerDisqus.observe(document.getElementById("disqus_thread"));
+observerPadlet.observe(padletEl);
 
-/* ⭐ POKAŻ REAKCJE I DISQUS PO PRZEWIJANIU ⭐ */
+/* ===== POKAŻ PADLET PO 250 PX ===== */
 function revealExtras() {
   if (window.scrollY > 250) {
-    document.getElementById("reactions").style.display = "block";
-    document.getElementById("disqus_thread").style.display = "block";
+    padletEl.style.visibility = "visible";
+    padletEl.style.opacity = "1";
     window.removeEventListener("scroll", revealExtras);
   }
 }
 
 window.addEventListener("scroll", revealExtras);
 
+setTimeout(() => {
+  if (window.scrollY > 250) revealExtras();
+}, 50);
+
+
+/* ===== ZNIKANIE NAWIGACJI — wersja stara, szybka, idealna ===== */
+const nav = document.getElementById("nav");
+const seriesHeader = document.getElementById("series-header");
+
+let lastScroll = 0;
+
+window.addEventListener("scroll", () => {
+  const current = window.scrollY;
+
+  if (current > lastScroll) {
+    nav.classList.add("hidden");
+    seriesHeader.style.opacity = "0";
+  } else {
+    nav.classList.remove("hidden");
+    seriesHeader.style.opacity = "1";
+  }
+
+  lastScroll = current;
+});
+
+})();
 </script>
 
 </body>
