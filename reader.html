@@ -229,10 +229,15 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
   /* PADLET — tylko po kliknięciu */
   let padletLoaded = false;
 
-  const loadPadlet = () => {
+const loadPadlet = () => {
     if (padletLoaded) return;
     padletLoaded = true;
 
+    // ⭐ ukryj przycisk
+    const btn = document.getElementById("comments_title");
+    btn.style.display = "none";
+
+    // ⭐ wstaw komentarze dokładnie w to miejsce
     const box = document.getElementById("padlet_box");
     const embed = data.padlet;
     const full = embed.replace("/embed/", "/");
@@ -251,7 +256,8 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
 
     box.style.visibility = "visible";
     box.style.opacity = "1";
-  };
+};
+
 
   document.getElementById("comments_title").onclick = loadPadlet;
 
