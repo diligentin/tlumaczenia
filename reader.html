@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-<title>bb✦⏖✦</title>
+<title>✦⏖✦</title>
 
 <style>
 @font-face {
@@ -23,7 +23,6 @@ body {
   margin: 0 auto;
 }
 
-/* strony komiksu */
 img.comic-page {
   width: 100%;
   height: auto;
@@ -136,29 +135,25 @@ img.comic-page {
     return;
   }
 
-  /* ⭐ NATYCHMIASTOWA KLIKALNOŚĆ GUZIKÓW ⭐ */
+  /* ⭐ NATYCHMIASTOWA KLIKALNOŚĆ ⭐ */
   nextBtn.onclick = () => {};
   prevBtn.onclick = () => {};
   homeBtn.onclick = () => location.href = "https://diligentin.github.io/tlumaczenia/";
 
-  /* ⭐ DETEKCJA STARYCH URZĄDZEŃ — PRZYWRÓCONE ⭐ */
+  /* ⭐ DETEKCJA STARYCH URZĄDZEŃ ⭐ */
   const USE_SLICER = (() => {
     const ua = navigator.userAgent || "";
-
-    // stare Androidy
     if (/Android [0-8]\./i.test(ua)) return false;
 
-    // wolne CPU
     const t0 = performance.now();
     for (let i = 0; i < 40000; i++) {}
     if (performance.now() - t0 > 10) return false;
 
-    // brak canvas
     try { return !!document.createElement("canvas").getContext("2d"); }
     catch { return false; }
   })();
 
-  /* ⭐ SLICER — jak w Twoim oryginale ⭐ */
+  /* ⭐ SLICER BEZ SKALOWANIA — FIX JAKOŚCI ⭐ */
   async function sliceImage(src, sliceHeight = 2000) {
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -168,12 +163,11 @@ img.comic-page {
       img.onload = () => {
         try {
           if (!USE_SLICER) {
-            resolve([src]); // ⭐ na starych urządzeniach — brak cięcia
+            resolve([src]); // stare urządzenia — pełny obraz
             return;
           }
 
           const slices = [];
-          const scale = img.width > 720 ? 720 / img.width : 1;
 
           const canvas = document.createElement("canvas");
           const ctx = canvas.getContext("2d");
@@ -181,15 +175,15 @@ img.comic-page {
           for (let y = 0; y < img.height; y += sliceHeight) {
             const h = Math.min(sliceHeight, img.height - y);
 
-            canvas.width = img.width * scale;
-            canvas.height = h * scale;
+            canvas.width = img.width;   // FIX: no scaling
+            canvas.height = h;          // FIX: no scaling
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             ctx.drawImage(
               img,
               0, y, img.width, h,
-              0, 0, canvas.width, canvas.height
+              0, 0, img.width, h
             );
 
             slices.push(canvas.toDataURL("image/jpeg", 0.95));
