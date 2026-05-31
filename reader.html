@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-<title>✦⏖✦</title>
+<title>1✦⏖✦</title>
 
 <style>
 @font-face { font-family: "figtree"; src: url("https://tajnachalupka.github.io/main/Figtree.ttf"); }
@@ -14,15 +14,8 @@ body { margin: 0; background: #191818; font-family: figtree; }
 #comic-container { max-width: 720px; margin: 0 auto; }
 
 img.comic-page {
-  width: 100%;
-  display: block;
-  opacity: 0;
-  transition: opacity .25s ease;
-}
-
-/* ⭐ sztuczny scroll od pierwszej ms */
-#scroll-buffer {
-  height: 200vh;
+  width: 100%; display: block;
+  opacity: 0; transition: opacity .25s ease;
 }
 
 /* NAV BUTTONS */
@@ -57,6 +50,9 @@ img.comic-page {
 #padlet_loading, #chapter_loading {
   color: white; text-align: center; padding: 20px;
 }
+
+@media (max-width: 600px) { #padlet_box iframe { height: 635px !important; } }
+@media (min-width: 601px) and (max-width: 1024px) { #padlet_box iframe { height: 960px !important; } }
 </style>
 </head>
 
@@ -68,9 +64,6 @@ img.comic-page {
   z-index: 9999; opacity: 1; transition: opacity .15s ease;">
   <a id="series-link" href="#"><img id="series-img" src="" style="max-height:30px; width:auto;"></a>
 </div>
-
-<!-- ⭐ sztuczny scroll -->
-<div id="scroll-buffer"></div>
 
 <div id="comic-container"></div>
 <p id="chapter_loading" style="margin-top:40px;">Ładuję rozdział...</p>
@@ -93,12 +86,6 @@ img.comic-page {
   const comicKey = qs.get("comic");
   const chapter = qs.get("chapter");
   const container = document.getElementById("comic-container");
-
-  const nextBtn = document.getElementById("nextBtn");
-  const prevBtn = document.getElementById("prevBtn");
-  const homeBtn = document.getElementById("homeBtn");
-  const nav = document.getElementById("nav");
-  const header = document.getElementById("series-header");
 
   if (!comicKey || !chapter) return;
 
@@ -263,22 +250,18 @@ img.comic-page {
     }
   });
 
-  /* ⭐ AUTO‑HIDE BUTTONS — NATYCHMIASTOWE ⭐ */
-  let lastScroll = 0;
+  /* NAV HIDE */
+  const nav = document.getElementById("nav");
+  const header = document.getElementById("series-header");
+  let last = 0;
 
   window.addEventListener("scroll", () => {
-    const current = window.scrollY;
-
-    if (current > lastScroll) {
-      nav.classList.add("hidden");
-      header.style.opacity = "0";
-    } else {
-      nav.classList.remove("hidden");
-      header.style.opacity = "1";
-    }
-
-    lastScroll = current;
-  }, { passive: true });
+    const y = window.scrollY;
+    const hide = y > last;
+    nav.classList.toggle("hidden", hide);
+    header.style.opacity = hide ? "0" : "1";
+    last = y;
+  });
 
 })();
 </script>
