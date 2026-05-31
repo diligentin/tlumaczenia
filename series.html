@@ -135,7 +135,7 @@ a { color: white; text-decoration: none; }
     return;
   }
 
-  /* Z SEZONAMI */
+  /* ⭐ Z SEZONAMI — POPRAWIONA LOGIKA ⭐ */
   for (const [seasonName, range] of Object.entries(data.seasons)) {
 
     const from = range.from === "∞" ? Infinity : isNaN(+range.from) ? range.from : +range.from;
@@ -156,14 +156,25 @@ a { color: white; text-decoration: none; }
       const n = +num;
       let fits = false;
 
-      if (typeof from === "number" && typeof to === "number" && !isNaN(n))
+      /* 1) num jest liczbą → normalny zakres */
+      if (!isNaN(n) && typeof from === "number" && typeof to === "number") {
         fits = n >= from && n <= to;
+      }
 
-      if (typeof from === "string" && num === from)
+      /* 2) from jest stringiem → dopasowanie dokładne */
+      if (typeof from === "string" && num === from) {
         fits = true;
+      }
 
-      if (to === Infinity && typeof from === "number" && !isNaN(n))
+      /* 3) to = Infinity → wszystko od from w górę */
+      if (to === Infinity && typeof from === "number" && !isNaN(n)) {
         fits = n >= from;
+      }
+
+      /* ⭐ 4) num NIE jest liczbą → ZAWSZE pokazujemy (emoji, serduszka, bonusy) */
+      if (isNaN(n)) {
+        fits = true;
+      }
 
       if (fits) grid.appendChild(makeBtn(num));
     });
