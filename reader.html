@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-<title>złoto✦⏖✦</title>
+<title>✦⏖✦</title>
 
 <style>
 @font-face {
@@ -237,21 +237,25 @@ img.comic-page {
 
   const loadingInfo = document.getElementById("chapter_loading");
 
-  /* Wstawianie obrazów */
-  for (const src of pages) {
-    try {
-      const slices = await sliceImage(src, 2000);
-      slices.forEach(url => {
-        const img = document.createElement("img");
-        img.className = "comic-page";
-        img.src = url;
-        img.loading = "lazy";
-        container.appendChild(img);
-      });
-    } catch {
-      container.innerHTML += "<p style='color:red;text-align:center;'>Błąd obrazu.</p>";
-    }
+ /* Wstawianie obrazów */
+for (const src of pages) {
+
+  // ⭐ UI BREATH — odblokowuje kliknięcia next/prev
+  await new Promise(r => setTimeout(r, 0));
+
+  try {
+    const slices = await sliceImage(src, 2000);
+    slices.forEach(url => {
+      const img = document.createElement("img");
+      img.className = "comic-page";
+      img.src = url;
+      img.loading = "lazy";
+      container.appendChild(img);
+    });
+  } catch {
+    container.innerHTML += "<p style='color:red;text-align:center;'>Błąd obrazu.</p>";
   }
+}
 
   if (loadingInfo) loadingInfo.remove();
 
