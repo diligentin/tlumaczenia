@@ -4,24 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-<title>6✦⏖✦</title>
+<title>✦⏖✦</title>
 
 <style>
 @font-face { font-family: "figtree"; src: url("https://tajnachalupka.github.io/main/Figtree.ttf"); }
 
 body { margin: 0; background: #191818; font-family: figtree; }
 
-#comic-container { max-width: 720px; min-height: 100vh; margin: 0 auto; }
-
-#scroll-buffer {
-  height: 200vh; /* daje 2 ekrany scrolla natychmiast */
-}
+#comic-container { max-width: 720px; margin: 0 auto; }
 
 img.comic-page {
   width: 100%;
   display: block;
   opacity: 0;
   transition: opacity .25s ease;
+}
+
+/* ⭐ sztuczny scroll od pierwszej ms */
+#scroll-buffer {
+  height: 200vh;
 }
 
 /* NAV BUTTONS */
@@ -56,9 +57,6 @@ img.comic-page {
 #padlet_loading, #chapter_loading {
   color: white; text-align: center; padding: 20px;
 }
-
-@media (max-width: 600px) { #padlet_box iframe { height: 635px !important; } }
-@media (min-width: 601px) and (max-width: 1024px) { #padlet_box iframe { height: 960px !important; } }
 </style>
 </head>
 
@@ -71,6 +69,7 @@ img.comic-page {
   <a id="series-link" href="#"><img id="series-img" src="" style="max-height:30px; width:auto;"></a>
 </div>
 
+<!-- ⭐ sztuczny scroll -->
 <div id="scroll-buffer"></div>
 
 <div id="comic-container"></div>
@@ -182,12 +181,10 @@ img.comic-page {
         img.className = "comic-page";
 
         if (first) {
-          /* ⭐ PIERWSZY OBRAZEK — NIGDY LAZY ⭐ */
           img.src = s;
           img.style.opacity = "1";
           first = false;
         } else {
-          /* ⭐ KOLEJNE — LAZY ⭐ */
           img.dataset.src = s;
           img.loading = "lazy";
           lazyObserver.observe(img);
