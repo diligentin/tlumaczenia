@@ -131,7 +131,7 @@ img.comic-page {
   try {
     data = await fetch(`${comicKey}.json`).then(r => r.json());
     if (data.series_icon) document.getElementById("series-img").src = data.series_icon;
-    document.getElementById("series-link").href = `index.html?comic=${comicKey}`;
+   document.getElementById("series-link").href = `series.html?comic=${comicKey}`;
   } catch {
     container.innerHTML = "<p style='color:white;text-align:center;padding:50px;'>Błąd JSON.</p>";
     return;
