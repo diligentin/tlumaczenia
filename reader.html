@@ -111,7 +111,7 @@ img.comic-page {
 
 <body>
 
-<!-- ⭐ NOWY HEADER PNG (poprawne miejsce!) -->
+<!-- ⭐ HEADER PNG (fixed) -->
 <div id="series-header" style="
   position: fixed;
   top: 7px;
@@ -399,10 +399,8 @@ setTimeout(() => {
 }, 50);
 
 
-/* ===== ZNIKANIE NAWIGACJI ===== */
+/* ===== ZNIKANIE NAWIGACJI — NATYCHMIASTOWE ===== */
 const nav = document.getElementById("nav");
-let lastScroll = window.scrollY;
-
 const seriesHeader = document.getElementById("series-header");
 
 function hideNav() {
@@ -415,35 +413,41 @@ function showNav() {
   seriesHeader.style.opacity = "1";
 }
 
-/* PC — kółko myszy / gest przewijania */
+/* 🔥 1. pointerdown — działa ZANIM scroll ruszy */
+window.addEventListener("pointerdown", () => hideNav(), { passive: true });
+
+/* 🔥 2. touchstart — telefony */
+window.addEventListener("touchstart", () => hideNav(), { passive: true });
+
+/* 🔥 3. wheel — PC */
 window.addEventListener("wheel", (e) => {
   if (e.deltaY > 0) hideNav();
   else showNav();
-});
+}, { passive: true });
 
-/* Telefony — przesuwanie palcem */
+/* 🔥 4. touchmove — telefony */
 let lastTouchY = 0;
 
 window.addEventListener("touchstart", (e) => {
   lastTouchY = e.touches[0].clientY;
-});
+}, { passive: true });
 
 window.addEventListener("touchmove", (e) => {
   const currentY = e.touches[0].clientY;
 
-  if (currentY < lastTouchY) hideNav();   // ruch w dół
-  else showNav();                         // ruch w górę
+  if (currentY < lastTouchY) hideNav();
+  else showNav();
 
   lastTouchY = currentY;
-});
+}, { passive: true });
 
-/* Touchpad / przeciąganie */
+/* 🔥 5. pointermove — touchpad / mysz */
 window.addEventListener("pointermove", (e) => {
-  if (e.pointerType === "touch") return; // telefony już obsłużone
+  if (e.pointerType === "touch") return;
 
   if (e.movementY > 0) hideNav();
   else if (e.movementY < 0) showNav();
-});
+}, { passive: true });
 
 
 })();
