@@ -405,17 +405,46 @@ let lastScroll = window.scrollY;
 
 const seriesHeader = document.getElementById("series-header");
 
+function hideNav() {
+  nav.classList.add("hidden");
+  seriesHeader.style.opacity = "0";
+}
+
+function showNav() {
+  nav.classList.remove("hidden");
+  seriesHeader.style.opacity = "1";
+}
+
+/* PC — kółko myszy / gest przewijania */
 window.addEventListener("wheel", (e) => {
-  if (e.deltaY > 0) {
-    // scroll w dół
-    nav.classList.add("hidden");
-    seriesHeader.style.opacity = "0";
-  } else {
-    // scroll w górę
-    nav.classList.remove("hidden");
-    seriesHeader.style.opacity = "1";
-  }
+  if (e.deltaY > 0) hideNav();
+  else showNav();
 });
+
+/* Telefony — przesuwanie palcem */
+let lastTouchY = 0;
+
+window.addEventListener("touchstart", (e) => {
+  lastTouchY = e.touches[0].clientY;
+});
+
+window.addEventListener("touchmove", (e) => {
+  const currentY = e.touches[0].clientY;
+
+  if (currentY < lastTouchY) hideNav();   // ruch w dół
+  else showNav();                         // ruch w górę
+
+  lastTouchY = currentY;
+});
+
+/* Touchpad / przeciąganie */
+window.addEventListener("pointermove", (e) => {
+  if (e.pointerType === "touch") return; // telefony już obsłużone
+
+  if (e.movementY > 0) hideNav();
+  else if (e.movementY < 0) showNav();
+});
+
 
 })();
 </script>
