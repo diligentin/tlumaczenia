@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
-<title>✦⏖✦</title>
+<title>x✦⏖✦</title>
 
 <style>
 @font-face {
@@ -247,29 +247,55 @@ img.comic-page {
     });
   }, { rootMargin: "1200px 0px" });
 
-  /* ===== WSTAWIANIE OBRAZÓW ===== */
+  /*  
+  ===========================================================
+     ⭐⭐⭐ WSTAWIANIE OBRAZÓW — PIERWSZY SLICE NATYCHMIAST ⭐⭐⭐
+  ===========================================================
+  */
+
+  let firstSliceInserted = false;
+
   for (const src of pages) {
     try {
       if (USE_SLICER) {
         const slices = await sliceImage(src);
+
         for (const s of slices) {
           const img = document.createElement("img");
           img.className = "comic-page";
-          img.dataset.src = s;
-          img.loading = "lazy";
-          img.decoding = "async";
+
+          if (!firstSliceInserted) {
+            img.src = s;               // ⭐ natychmiast
+            img.style.opacity = "1";   // ⭐ widoczny od razu
+            firstSliceInserted = true;
+          } else {
+            img.dataset.src = s;
+            img.loading = "lazy";
+            img.decoding = "async";
+            lazyObserver.observe(img);
+          }
+
           container.appendChild(img);
-          lazyObserver.observe(img);
         }
+
       } else {
         const img = document.createElement("img");
         img.className = "comic-page";
-        img.dataset.src = src;
-        img.loading = "lazy";
-        img.decoding = "async";
+
+        if (!firstSliceInserted) {
+          img.src = src;
+          img.style.opacity = "1";
+          firstSliceInserted = true;
+        } else {
+          img.dataset.src = src;
+          img.loading = "lazy";
+          img.decoding = "async";
+          lazyObserver.observe(img);
+        }
+
         container.appendChild(img);
-        lazyObserver.observe(img);
       }
+
     } catch {
       container.innerHTML += "<p style='color:red;text-align:center;'>Błąd obrazu.</p>";
     }
@@ -356,7 +382,7 @@ img.comic-page {
            onmouseover="this.style.background='#2f2f2f'"
            onmouseout="this.style.background='#272727'"
         >
-          zaloguj się
+          Otwórz padlet w nowej karcie
         </a>
       </p>
 
