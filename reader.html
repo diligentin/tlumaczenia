@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
-<title>yy✦⏖✦</title>
+<title>✦⏖✦</title>
 
 <style>
 @font-face {
@@ -105,13 +105,12 @@ img.comic-page {
     height: 960px !important;
   }
 }
-
 </style>
 </head>
 
 <body>
 
-<!-- ⭐ NOWY HEADER PNG (poprawne miejsce!) -->
+<!-- HEADER PNG -->
 <div id="series-header" style="
   position: fixed;
   top: 7px;
@@ -132,9 +131,15 @@ img.comic-page {
 
 <!-- BUTTONS -->
 <div class="nav-buttons" id="nav">
-  <div class="nav-btn" id="nextBtn"><img src="https://tajnachalupka.github.io/main/szczala-next.png" class="btn-icon"></div>
-  <div class="nav-btn" id="prevBtn"><img src="https://tajnachalupka.github.io/main/szczala-prev.png" class="btn-icon"></div>
-  <div class="nav-btn" id="homeBtn"><img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon"></div>
+  <div class="nav-btn" id="nextBtn">
+    <img src="https://tajnachalupka.github.io/main/szczala-next.png" class="btn-icon">
+  </div>
+  <div class="nav-btn" id="prevBtn">
+    <img src="https://tajnachalupka.github.io/main/szczala-prev.png" class="btn-icon">
+  </div>
+  <div class="nav-btn" id="homeBtn">
+    <img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon">
+  </div>
 </div>
 
 <p id="comments_title">Komentarze</p>
@@ -173,49 +178,46 @@ img.comic-page {
 
   const USE_SLICER = !isOldDevice();
 
- /* ===== SLICER ===== */
-async function sliceImage(src, sliceHeight = 1800) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.src = src;
+  /* ===== SLICER ===== */
+  async function sliceImage(src, sliceHeight = 1800) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = src;
 
-    img.onload = () => {
+      img.onload = () => {
+        if (img.width === 0 || img.height === 0) {
+          reject("Broken image");
+          return;
+        }
 
-      if (img.width === 0 || img.height === 0) {
-        reject("Broken image");
-        return;
-      }
+        const slices = [];
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
 
-      const slices = [];
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
+        for (let y = 0; y < img.height; y += sliceHeight) {
+          const h = Math.min(sliceHeight, img.height - y);
 
-      for (let y = 0; y < img.height; y += sliceHeight) {
-        const h = Math.min(sliceHeight, img.height - y);
+          canvas.width = img.width;
+          canvas.height = h;
 
-        canvas.width = img.width;
-        canvas.height = h;
+          ctx.drawImage(img, 0, y, img.width, h, 0, 0, canvas.width, canvas.height);
 
-        ctx.drawImage(img, 0, y, img.width, h, 0, 0, canvas.width, canvas.height);
+          slices.push(canvas.toDataURL("image/jpeg", 0.95));
+        }
 
-        slices.push(canvas.toDataURL("image/jpeg", 0.95));
-      }
+        resolve(slices);
+      };
 
-      resolve(slices);
-    };
-
-    img.onerror = reject;
-  });
-}
-
+      img.onerror = reject;
+    });
+  }
 
   /* ===== JSON ===== */
   let data;
   try {
     data = await fetch(`${comicKey}.json`).then(r => r.json());
 
-    /* ⭐ SERIES ICON */
     const seriesImg = document.getElementById("series-img");
     const seriesLink = document.getElementById("series-link");
 
@@ -294,6 +296,10 @@ async function sliceImage(src, sliceHeight = 1800) {
   const index = keys.indexOf(chapter);
 
   /* ===== BUTTONS ===== */
+  const nextBtn = document.getElementById("nextBtn");
+  const prevBtn = document.getElementById("prevBtn");
+  const homeBtn = document.getElementById("homeBtn");
+
   nextBtn.onclick = () => {
     if (index < keys.length - 1)
       location.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index + 1])}`;
@@ -309,115 +315,120 @@ async function sliceImage(src, sliceHeight = 1800) {
   homeBtn.onclick = () => location.href = "https://diligentin.github.io/tlumaczenia/";
 
 
-/*  
-===========================================================
-   ⭐⭐⭐ NOWA SEKCJA PADLETU — AUTOMATYCZNA ⭐⭐⭐
-===========================================================
-*/
+  /*  
+  ===========================================================
+     PADLET — AUTOMATYCZNY
+  ===========================================================
+  */
 
-let padletLoaded = false;
+  let padletLoaded = false;
 
-function loadPadlet() {
-  if (padletLoaded) return;
-  padletLoaded = true;
+  function loadPadlet() {
+    if (padletLoaded) return;
+    padletLoaded = true;
 
-  const loadingMsg = document.getElementById("padlet_loading");
-  if (loadingMsg) loadingMsg.remove();
+    const loadingMsg = document.getElementById("padlet_loading");
+    if (loadingMsg) loadingMsg.remove();
 
-  const title = document.getElementById("comments_title");
-  title.style.opacity = "1";
+    const title = document.getElementById("comments_title");
+    title.style.opacity = "1";
 
-  const padletBox = document.getElementById("padlet_box");
+    const padletBox = document.getElementById("padlet_box");
 
-  const embedUrl = data.padlet;
-  const fullUrl = embedUrl.replace("/embed/", "/");
+    const embedUrl = data.padlet;
+    const fullUrl = embedUrl.replace("/embed/", "/");
 
-  padletBox.innerHTML = `
-    <div style="
-      border:1px solid rgba(0,0,0,0.1);
-      border-radius:2px;
-      overflow:hidden;
-      width:100%;
-      max-width:720px;
-      margin:0 auto;
-      background:#191818;
-    ">
-      <iframe src="${embedUrl}" frameborder="0"
-        style="width:100%;height:600px;display:block;">
-      </iframe>
+    padletBox.innerHTML = `
+      <div style="
+        border:1px solid rgba(0,0,0,0.1);
+        border-radius:2px;
+        overflow:hidden;
+        width:100%;
+        max-width:720px;
+        margin:0 auto;
+        background:#191818;
+      ">
+        <iframe src="${embedUrl}" frameborder="0"
+          style="width:100%;height:600px;display:block;">
+        </iframe>
 
-    <p style="text-align:center; margin-top:14px;">
-      <a href="${fullUrl}" target="_blank"
-         style="
-           display:inline-block;
-           padding:10px 18px;
-           background:#272727;
-           color:white;
-           font-family: figtree;
-           font-size:14px;
-           border-radius:3px;
-           border:0px solid #3a3a3a;
-           text-decoration:none;
-           transition:0.2s;
-         "
-         onmouseover="this.style.background='#2f2f2f'"
-         onmouseout="this.style.background='#272727'"
-      >
-        Otwórz padlet w nowej karcie
-      </a>
-    </p>
+      <p style="text-align:center; margin-top:14px;">
+        <a href="${fullUrl}" target="_blank"
+           style="
+             display:inline-block;
+             padding:10px 18px;
+             background:#272727;
+             color:white;
+             font-family: figtree;
+             font-size:14px;
+             border-radius:3px;
+             border:0px solid #3a3a3a;
+             text-decoration:none;
+             transition:0.2s;
+           "
+           onmouseover="this.style.background='#2f2f2f'"
+           onmouseout="this.style.background='#272727'"
+        >
+          Otwórz padlet w nowej karcie
+        </a>
+      </p>
 
-    </div>
-  `;
+      </div>
+    `;
 
-  padletBox.style.visibility = "visible";
-  padletBox.style.opacity = "1";
-}
-
-/* ===== OBSERWATOR PADLETU ===== */
-const padletEl = document.getElementById("padlet_box");
-
-const observerPadlet = new IntersectionObserver(entries => {
-  if (entries[0].isIntersecting) loadPadlet();
-}, { threshold: 0.1 });
-
-observerPadlet.observe(padletEl);
-
-/* ===== POKAŻ PADLET PO 250 PX ===== */
-function revealExtras() {
-  if (window.scrollY > 250) {
-    padletEl.style.visibility = "visible";
-    padletEl.style.opacity = "1";
-    window.removeEventListener("scroll", revealExtras);
-  }
-}
-
-window.addEventListener("scroll", revealExtras);
-
-setTimeout(() => {
-  if (window.scrollY > 250) revealExtras();
-}, 50);
-
-
-/* ===== ZNIKANIE NAWIGACJI — wersja stara, szybka, idealna ===== */
-const nav = document.getElementById("nav");
-const seriesHeader = document.getElementById("series-header");
-
-let lastScroll = 0;
-
-window.addEventListener("scroll", () => {
-  const current = window.scrollY;
-
-  if (current > lastScroll) {
-    nav.classList.add("hidden");
-    seriesHeader.style.opacity = "0";
-  } else {
-    nav.classList.remove("hidden");
-    seriesHeader.style.opacity = "1";
+    padletBox.style.visibility = "visible";
+    padletBox.style.opacity = "1";
   }
 
-  lastScroll = current;
-});
+  /* ===== OBSERWATOR PADLETU ===== */
+  const padletEl = document.getElementById("padlet_box");
+
+  const observerPadlet = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) loadPadlet();
+  }, { threshold: 0.1 });
+
+  observerPadlet.observe(padletEl);
+
+  /* ===== POKAŻ PADLET PO 250 PX ===== */
+  function revealExtras() {
+    if (window.scrollY > 250) {
+      padletEl.style.visibility = "visible";
+      padletEl.style.opacity = "1";
+      window.removeEventListener("scroll", revealExtras);
+    }
+  }
+
+  window.addEventListener("scroll", revealExtras);
+
+  setTimeout(() => {
+    if (window.scrollY > 250) revealExtras();
+  }, 50);
+
+
+  /*  
+  ===========================================================
+     ZNIKANIE NAWIGACJI — WERSJA STARA, SZYBKA
+  ===========================================================
+  */
+
+  const nav = document.getElementById("nav");
+  const seriesHeader = document.getElementById("series-header");
+
+  let lastScroll = 0;
+
+  window.addEventListener("scroll", () => {
+    const current = window.scrollY;
+
+    if (current > lastScroll) {
+      nav.classList.add("hidden");
+      seriesHeader.style.opacity = "0";
+    } else {
+      nav.classList.remove("hidden");
+      seriesHeader.style.opacity = "1";
+    }
+
+    lastScroll = current;
+  });
 
 })();
 </script>
