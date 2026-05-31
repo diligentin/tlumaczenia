@@ -29,9 +29,9 @@ a { color: white; text-decoration: none; }
   display: flex; gap: 32px; padding: 40px;
   justify-content: center; flex-wrap: wrap;
 }
-.cover { width: 100%; max-width: 299px; height: auto; object-fit: contain; background: #191818; border-radius: 2px; }
-.comic-info { max-width: 600px; display: flex; flex-direction: column; gap: 16px; text-align: center; background: #191818; }
-.comic-header-img { width: 100%; max-width: 600px; margin: 0 auto 13px; background: #191818; }
+.cover { width: 100%; max-width: 299px; height: auto; object-fit: contain; border-radius: 2px; display: none; }
+.comic-info { max-width: 600px; display: flex; flex-direction: column; gap: 16px; text-align: center; }
+.comic-header-img { width: 100%; max-width: 600px; margin: 0 auto 13px; }
 
 /* OPIS */
 .comic-desc { font-size: 17px; color: #e0e0e0; line-height: 1.3; text-align: justify; }
@@ -102,6 +102,7 @@ a { color: white; text-decoration: none; }
   /* USTAWIENIA */
   document.getElementById("page-title").textContent = data.title || comicKey;
   document.getElementById("cover").src = data.cover;
+  cover.onload = () => cover.style.display = "block";
   document.getElementById("header-img").src = data.header_img;
   document.getElementById("desc").innerHTML = data.desc.replace(/\n/g, "<br>");
 
