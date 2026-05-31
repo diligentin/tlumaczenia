@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-<title>b✦⏖✦</title>
+<title>o✦⏖✦</title>
 
 <style>
 @font-face { font-family: "figtree"; src: url("https://tajnachalupka.github.io/main/Figtree.ttf"); }
@@ -131,7 +131,7 @@ img.comic-page {
   try {
     data = await fetch(`${comicKey}.json`).then(r => r.json());
     if (data.series_icon) document.getElementById("series-img").src = data.series_icon;
-   document.getElementById("series-link").href = `series.html?comic=${comicKey}`;
+    document.getElementById("series-link").href = `series.html?comic=${comicKey}`;
   } catch {
     container.innerHTML = "<p style='color:white;text-align:center;padding:50px;'>Błąd JSON.</p>";
     return;
