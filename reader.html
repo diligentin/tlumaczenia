@@ -50,7 +50,18 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
   margin-top: 30px;   
 }
   
-  .reaction-item {
+#chapter_reactions {
+  margin: 40px auto;
+  text-align: center;
+}
+
+.reactions-row {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+}
+
+.reaction-item {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -59,11 +70,16 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
 }
 
 .reaction-btn {
+  max-width: 75px;
+  max-height: 90px;
+  width: auto;
+  height: auto;
+  cursor: pointer;
   transition: transform .15s ease, opacity .2s ease;
 }
 
 .reaction-btn:hover {
-  transform: scale(1.15);
+  transform: scale(1.05);
 }
 
 .reaction-btn.clicked {
@@ -71,6 +87,7 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
   cursor: default;
   transform: none;
 }
+
 
 </style>
 </head>
@@ -92,44 +109,47 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
   <div class="nav-btn" id="homeBtn"><img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon"></div>
 </div>
 
-  <div id="chapter_reactions" style="margin:40px auto; text-align:center;">
-  <div id="reactions_row" style="display:flex; justify-content:center; gap:10px;">
-    
+<div id="chapter_reactions">
+  <div class="reactions-row">
+
     <!-- Reakcja 1 -->
     <div class="reaction-item">
-      <img class="reaction-btn" data-reaction="0" src="https://tajnachalupka.github.io/main/guziki-reakcji/r1.jpg" style="max-width:60px; max-height:70px; width:auto; height:auto; cursor:pointer;">
+      <img class="reaction-btn" data-reaction="0" src="https://tajnachalupka.github.io/main/guziki-reakcji/r1.jpg">
       <div class="reaction-count">0</div>
     </div>
 
     <!-- Reakcja 2 -->
     <div class="reaction-item">
-      <img class="reaction-btn" data-reaction="1" src="https://tajnachalupka.github.io/main/guziki-reakcji/r2.jpg" style="width:48px; height:48px; cursor:pointer;">
+      <img class="reaction-btn" data-reaction="1" src="https://tajnachalupka.github.io/main/guziki-reakcji/r2.jpg">
       <div class="reaction-count">0</div>
     </div>
 
     <!-- Reakcja 3 -->
     <div class="reaction-item">
-      <img class="reaction-btn" data-reaction="2" src="https://tajnachalupka.github.io/main/guziki-reakcji/r3.jpg" style="width:48px; height:48px; cursor:pointer;">
+      <img class="reaction-btn" data-reaction="2" src="https://tajnachalupka.github.io/main/guziki-reakcji/r3.jpg">
       <div class="reaction-count">0</div>
     </div>
 
     <!-- Reakcja 4 -->
     <div class="reaction-item">
-      <img class="reaction-btn" data-reaction="3" src="https://tajnachalupka.github.io/main/guziki-reakcji/r4.jpg" style="width:48px; height:48px; cursor:pointer;">
+      <img class="reaction-btn" data-reaction="3" src="https://tajnachalupka.github.io/main/guziki-reakcji/r4.jpg">
       <div class="reaction-count">0</div>
     </div>
 
     <!-- Reakcja 5 -->
     <div class="reaction-item">
-      <img class="reaction-btn" data-reaction="4" src="https://tajnachalupka.github.io/main/guziki-reakcji/r5.jpg" style="width:48px; height:48px; cursor:pointer;">
+      <img class="reaction-btn" data-reaction="4" src="https://tajnachalupka.github.io/main/guziki-reakcji/r5.jpg">
       <div class="reaction-count">0</div>
     </div>
 
     <!-- Reakcja 6 (ukryta) -->
     <div class="reaction-item" style="display:none;">
-      <img class="reaction-btn" data-reaction="5" src="LINK6" style="width:48px; height:48px;">
+      <img class="reaction-btn" data-reaction="5" src="LINK6">
       <div class="reaction-count">0</div>
     </div>
+
+  </div>
+</div>
 
   </div>
 </div>
