@@ -53,7 +53,7 @@ async function sendReaction(index) {
     await supabase.from("reactions").update({ counts: arr }).eq("id", reactionId);
   }
 
-  localStorage.setItem(localKey, "1");
+  localStorage.setItem(`${localKey}_${index}`, "1");
   buttons.forEach(b => b.classList.add("clicked"));
   loadCounts();
 }
