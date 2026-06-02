@@ -49,6 +49,29 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
   transition: opacity .1s ease;
   margin-top: 30px;   
 }
+  
+  .reaction-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  font-size: 14px;
+}
+
+.reaction-btn {
+  transition: transform .15s ease, opacity .2s ease;
+}
+
+.reaction-btn:hover {
+  transform: scale(1.15);
+}
+
+.reaction-btn.clicked {
+  opacity: 0.4;
+  cursor: default;
+  transform: none;
+}
+
 </style>
 </head>
 
@@ -67,6 +90,48 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
   <div class="nav-btn" id="nextBtn"><img src="https://tajnachalupka.github.io/main/szczala-next.png" class="btn-icon"></div>
   <div class="nav-btn" id="prevBtn"><img src="https://tajnachalupka.github.io/main/szczala-prev.png" class="btn-icon"></div>
   <div class="nav-btn" id="homeBtn"><img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon"></div>
+</div>
+
+  <div id="chapter_reactions" style="margin:40px auto; text-align:center;">
+  <div id="reactions_row" style="display:flex; justify-content:center; gap:20px;">
+    
+    <!-- Reakcja 1 -->
+    <div class="reaction-item">
+      <img class="reaction-btn" data-reaction="0" src="LINK1" style="width:48px; height:48px; cursor:pointer;">
+      <div class="reaction-count">0</div>
+    </div>
+
+    <!-- Reakcja 2 -->
+    <div class="reaction-item">
+      <img class="reaction-btn" data-reaction="1" src="LINK2" style="width:48px; height:48px; cursor:pointer;">
+      <div class="reaction-count">0</div>
+    </div>
+
+    <!-- Reakcja 3 -->
+    <div class="reaction-item">
+      <img class="reaction-btn" data-reaction="2" src="LINK3" style="width:48px; height:48px; cursor:pointer;">
+      <div class="reaction-count">0</div>
+    </div>
+
+    <!-- Reakcja 4 -->
+    <div class="reaction-item">
+      <img class="reaction-btn" data-reaction="3" src="LINK4" style="width:48px; height:48px; cursor:pointer;">
+      <div class="reaction-count">0</div>
+    </div>
+
+    <!-- Reakcja 5 -->
+    <div class="reaction-item">
+      <img class="reaction-btn" data-reaction="4" src="LINK5" style="width:48px; height:48px; cursor:pointer;">
+      <div class="reaction-count">0</div>
+    </div>
+
+    <!-- Reakcja 6 (ukryta) -->
+    <div class="reaction-item" style="display:none;">
+      <img class="reaction-btn" data-reaction="5" src="LINK6" style="width:48px; height:48px;">
+      <div class="reaction-count">0</div>
+    </div>
+
+  </div>
 </div>
 
 <p id="comments_title">Wyświetl komentarze<br>(uwaga na spoilery)</p>
