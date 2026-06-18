@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-<title>✦⏖✦jg</title>
+<title>✦⏖✦k</title>
 
 <style>
 @font-face { font-family: "figtree"; src: url("https://tajnachalupka.github.io/main/Figtree.ttf") format("truetype");}
@@ -70,12 +70,10 @@ img.comic-page { width: 100%; display: block; max-width: 720px; image-rendering:
 
 <script>
 (async function () {
-
   const qs = new URLSearchParams(location.search);
   const comicKey = qs.get("comic");
   const chapter = qs.get("chapter");
   const container = document.getElementById("comic-container");
-
   const nextBtn = document.getElementById("nextBtn");
   const prevBtn = document.getElementById("prevBtn");
   const homeBtn = document.getElementById("homeBtn");
@@ -88,7 +86,7 @@ img.comic-page { width: 100%; display: block; max-width: 720px; image-rendering:
   homeBtn.onclick = () => location.href = "https://tajnachalupka.wixsite.com/tlumaczenia";
 
   const USE_SLICER = (() => {
-    const ua = navigator.userAgent;
+    const ua = navigator.userAgent || "";
     if (/Android [0-8]\./i.test(ua)) return false;
     const t0 = performance.now();
     for (let i = 0; i < 40000; i++) {}
@@ -104,12 +102,13 @@ img.comic-page { width: 100%; display: block; max-width: 720px; image-rendering:
       img.src = src;
 
       img.onload = () => {
-        if (!USE_SLICER) return resolve([src]);
-
+        if (!USE_SLICER) {
+          resolve([src]);
+          return;
+        }
         const slices = [];
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-
         for (let y = 0; y < img.height; y += sliceHeight) {
           const h = Math.min(sliceHeight, img.height - y);
           canvas.width = img.width;
@@ -147,7 +146,6 @@ img.comic-page { width: 100%; display: block; max-width: 720px; image-rendering:
   }
 
   localStorage.setItem(`read_${comicKey}_${chapter}`, "1");
-
   const loadingInfo = document.getElementById("chapter_loading");
 
   const observer = new IntersectionObserver(entries => {
@@ -164,16 +162,20 @@ img.comic-page { width: 100%; display: block; max-width: 720px; image-rendering:
 
   for (const src of pages) {
     await new Promise(r => setTimeout(r, 0));
-
     try {
       const slices = await sliceImage(src, 800);
-
       slices.forEach(url => {
         const img = document.createElement("img");
         img.className = "comic-page";
         img.dataset.src = url;
-        img.src = placeholder;
         img.dataset.retry = "0";
+
+        if (USE_SLICER) {
+          img.src = placeholder;
+          observer.observe(img);
+        } else {
+          img.src = url;
+        }
 
         img.onerror = () => {
           let tries = +img.dataset.retry;
@@ -183,10 +185,8 @@ img.comic-page { width: 100%; display: block; max-width: 720px; image-rendering:
           }
         };
 
-        observer.observe(img);
         container.appendChild(img);
       });
-
     } catch {
       container.innerHTML += "<p style='color:red;text-align:center;'>Błąd obrazu.</p>";
     }
@@ -242,7 +242,6 @@ img.comic-page { width: 100%; display: block; max-width: 720px; image-rendering:
     box.style.visibility = "visible";
     box.style.opacity = "1";
   };
-
 })();
 </script>
 
