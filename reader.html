@@ -20,12 +20,19 @@ body{
   max-width:720px;
   margin:0 auto;
 }
-img.comic-page{
+
+/* FADE-IN */
+.comic-page{
   width:100%;
   display:block;
   max-width:720px;
   image-rendering:-webkit-optimize-contrast;
   object-fit:contain;
+  opacity:0;
+  transition:opacity .35s ease;
+}
+.comic-page.loaded{
+  opacity:1;
 }
 
 /* NAV BUTTONS */
@@ -265,6 +272,7 @@ img.comic-page{
     img.src = "";
 
     img.onload = () => {
+      img.classList.add("loaded");
       const loading = document.getElementById("chapter_loading");
       if(loading) loading.remove();
     };
@@ -358,9 +366,6 @@ img.comic-page{
     box.style.visibility = "visible";
     box.style.opacity = "1";
   };
-
-  /* REAKCJE — Supabase przez reactions.js */
-  /* (reader tylko generuje HTML — logika jest w reactions.js) */
 
 })();
 </script>
