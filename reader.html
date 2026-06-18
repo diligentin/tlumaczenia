@@ -271,11 +271,14 @@ body{
     img.dataset.retry = "0";
     img.src = "";
 
-    img.onload = () => {
-      img.classList.add("loaded");
-      const loading = document.getElementById("chapter_loading");
-      if(loading) loading.remove();
-    };
+  img.onload = () => {
+  img.classList.add("loaded");
+
+  const loading = document.getElementById("chapter_loading");
+  if (loading) {
+    setTimeout(() => loading.remove(), 350);
+  }
+};
 
     img.onerror = () => {
       let t = +img.dataset.retry;
