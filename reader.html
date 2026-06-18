@@ -196,11 +196,12 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
     catch { return false; }
   })();
 
-  /* SLICER */
-  async function sliceImage(src, sliceHeight = 800) {   // ★ zmiana 2000 → 800
+  /* SLICER + retry */
+  async function sliceImage(src, sliceHeight = 800) {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = "anonymous";
+      img.dataset.retry = "0";
       img.src = src;
 
       img.onload = () => {
@@ -238,10 +239,15 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
       };
 
       img.onerror = () => {
-        // ★ retry — bezpieczny, lekki
-        setTimeout(() => {
-          img.src = src + "?retry=" + Math.random();
-        }, 200);
+        let tries = parseInt(img.dataset.retry, 10);
+        if (tries < 3) {
+          img.dataset.retry = tries + 1;
+          setTimeout(() => {
+            img.src = src + "?retry=" + Math.random();
+          }, 250);
+        } else {
+          reject("image failed");
+        }
       };
     });
   }
@@ -268,18 +274,47 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
 
   const loadingInfo = document.getElementById("chapter_loading");
 
+  /* IntersectionObserver — stabilny lazy loader */
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        img.src = img.dataset.src;
+        observer.unobserve(img);
+      }
+    });
+  }, {
+    rootMargin: "0px 0px 300px 0px"
+  });
+
   /* Wstawianie obrazów */
   for (const src of pages) {
     await new Promise(r => setTimeout(r, 0));
 
     try {
-      const slices = await sliceImage(src, 800);   // ★ zmiana 2000 → 800
+      const slices = await sliceImage(src, 800);
 
       slices.forEach(url => {
         const img = document.createElement("img");
         img.className = "comic-page";
-        img.src = url;
-        img.loading = "lazy";
+
+        img.dataset.src = url;   // lazy source
+        img.src = "";            // puste, nie ładuje się od razu
+
+        img.dataset.retry = "0";
+
+        img.onerror = () => {
+          let tries = parseInt(img.dataset.retry, 10);
+          if (tries < 3) {
+            img.dataset.retry = tries + 1;
+            const original = img.dataset.src;
+            setTimeout(() => {
+              img.src = original + "?r=" + Date.now();
+            }, 250);
+          }
+        };
+
+        observer.observe(img);
         container.appendChild(img);
       });
 
@@ -327,7 +362,7 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
   /* PADLET — tylko po kliknięciu */
   let padletLoaded = false;
 
-const loadPadlet = () => {
+  const loadPadlet = () => {
     if (padletLoaded) return;
     padletLoaded = true;
 
@@ -352,8 +387,7 @@ const loadPadlet = () => {
 
     box.style.visibility = "visible";
     box.style.opacity = "1";
-};
-
+  };
 
   document.getElementById("comments_title").onclick = loadPadlet;
 
@@ -375,29 +409,6 @@ window.addEventListener("scroll", () => {
   }
   lastScroll = current;
 });
-
-  document.addEventListener("DOMContentLoaded", () => {
-  const imgs = document.querySelectorAll("img");
-
-  imgs.forEach(img => {
-    img.dataset.retry = "0";
-
-    img.addEventListener("error", () => {
-      const tries = parseInt(img.dataset.retry, 10);
-
-      if (tries < 3) {
-        img.dataset.retry = tries + 1;
-        const src = img.src;
-
-        setTimeout(() => {
-          img.src = src + (src.includes("?") ? "&" : "?") + "r=" + Date.now();
-        }, 300);
-      }
-    });
-  });
-});
-
-  
 </script>
   
 <script type="module" src="reactions.js"></script>
