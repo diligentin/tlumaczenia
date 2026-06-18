@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-<title>✦⏖✦.</title>
+<title>✦⏖✦e</title>
 
 <style>
 @font-face { font-family: "figtree"; src: url("https://tajnachalupka.github.io/main/Figtree.ttf") format("truetype");}
@@ -67,15 +67,6 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
   .reactions-row { gap: 7px; }
   .reaction-count { font-size: 12px; }
 }
-  .comic-page {
-  opacity: 0;
-  transition: opacity .25s ease-out;
-}
-
-.comic-page.loaded {
-  opacity: 1;
-}
-
 </style>
 </head>
 
@@ -238,7 +229,7 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
 
   const loadingInfo = document.getElementById("chapter_loading");
 
-  /* Wstawianie obrazów + PROSTY PRELOADING + FADE-IN */
+  /* Wstawianie obrazów + PRELOADING + POPRAWKA LAZY-LOADING */
   for (let i = 0; i < pages.length; i++) {
     const src = pages[i];
 
@@ -257,22 +248,9 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
         const img = document.createElement("img");
         img.className = "comic-page";
 
-        const start = performance.now();
-
-        img.onload = () => {
-          const loadTime = performance.now() - start;
-
-          if (loadTime > 100) {
-            img.classList.add("loaded");
-          } else {
-            img.style.opacity = "1";
-          }
-        };
+        img.loading = "lazy";   // ★ JEDYNA ZMIANA — zawsze lazy, jak w starym readerze
 
         img.src = url;
-
-        if (!USE_SLICER) img.loading = "lazy";
-
         container.appendChild(img);
       });
 
@@ -369,6 +347,7 @@ window.addEventListener("scroll", () => {
 });
 </script>
 
+<script type="module" src="reactions.js"></script>
 
 </body>
 </html>
