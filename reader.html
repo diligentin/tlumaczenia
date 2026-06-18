@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-<title>✦⏖✦s</title>
+<title>✦⏖✦a</title>
 
 <style>
 @font-face { font-family: "figtree"; src: url("https://tajnachalupka.github.io/main/Figtree.ttf") format("truetype");}
@@ -13,7 +13,15 @@ body { margin: 0; background: #191818; font-family: figtree, sans-serif;}
 
 #comic-container { max-width: 720px; margin: 0 auto;}
 
-img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; image-rendering: -webkit-optimize-contrast; object-fit: contain;}
+img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; image-rendering: -webkit-optimize-contrast; object-fit: contain; }
+
+.placeholder-slice {
+  width: 100%;
+  max-width: 720px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
 
 /* NAV BUTTONS */
 .nav-buttons { position: fixed; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 6; opacity: 1; transition: opacity .15s ease;}
@@ -186,41 +194,81 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
     catch { return false; }
   })();
 
-  /* HYBRYDA — LIMIT 40 SLICE’ÓW */
+  /* HYBRYDA + PLACEHOLDERY */
   const MAX_SLICES = 40;
-  const sliceCache = [];
 
-  function addSliceToDOM(url, index) {
+  const sliceCache = [];          // { src, height }
+  const slicePlaceholders = [];   // placeholder DIV lub null
+
+  function createSliceImg(src, index) {
     const img = document.createElement("img");
     img.className = "comic-page";
-    img.src = url;
+    img.src = src;
     img.loading = "lazy";
     img.dataset.sliceIndex = index;
-    container.appendChild(img);
+
+    img.onload = () => {
+      if (!sliceCache[index]) sliceCache[index] = { src, height: img.offsetHeight };
+      else if (!sliceCache[index].height) sliceCache[index].height = img.offsetHeight;
+    };
+
+    return img;
+  }
+
+  function addSliceToDOM(src, index) {
+    const img = createSliceImg(src, index);
+
+    const placeholder = slicePlaceholders[index];
+    if (placeholder && placeholder.parentNode) {
+      placeholder.parentNode.replaceChild(img, placeholder);
+      slicePlaceholders[index] = null;
+    } else {
+      container.appendChild(img);
+    }
   }
 
   function enforceHybridLimit() {
     const imgs = container.querySelectorAll("img.comic-page");
-
     if (imgs.length <= MAX_SLICES) return;
 
     const toRemove = imgs.length - MAX_SLICES;
 
     for (let i = 0; i < toRemove; i++) {
       const img = imgs[i];
-      const idx = img.dataset.sliceIndex;
-      sliceCache[idx] = img.src;
-      img.remove();
+      const idx = parseInt(img.dataset.sliceIndex);
+
+      let h = sliceCache[idx]?.height;
+      if (!h || h <= 0) h = img.offsetHeight || 10;
+
+      sliceCache[idx] = { src: img.src, height: h };
+
+      const ph = document.createElement("div");
+      ph.className = "placeholder-slice";
+      ph.style.height = h + "px";
+      ph.dataset.sliceIndex = idx;
+
+      slicePlaceholders[idx] = ph;
+
+      img.parentNode.replaceChild(ph, img);
     }
   }
 
   function restoreSliceIfNeeded(index) {
-    if (!sliceCache[index]) return;
+    const cache = sliceCache[index];
+    if (!cache) return;
 
-    const exists = container.querySelector(`img[data-slice-index="${index}"]`);
-    if (exists) return;
+    const alreadyImg = container.querySelector(`img.comic-page[data-slice-index="${index}"]`);
+    if (alreadyImg) return;
 
-    addSliceToDOM(sliceCache[index], index);
+    const placeholder = slicePlaceholders[index];
+    const img = createSliceImg(cache.src, index);
+
+    if (placeholder && placeholder.parentNode) {
+      placeholder.parentNode.replaceChild(img, placeholder);
+      slicePlaceholders[index] = null;
+    } else {
+      container.appendChild(img);
+    }
   }
 
   /* SLICER */
@@ -294,11 +342,18 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
 
   const loadingInfo = document.getElementById("chapter_loading");
 
-  /* Wstawianie obrazów + HYBRYDA */
+  /* Wstawianie obrazów + HYBRYDA + PRELOAD */
   let globalSliceIndex = 0;
 
-  for (const src of pages) {
+  for (let pageIndex = 0; pageIndex < pages.length; pageIndex++) {
+    const src = pages[pageIndex];
+
     await new Promise(r => setTimeout(r, 0));
+
+    if (pageIndex + 1 < pages.length) {
+      const preload = new Image();
+      preload.src = pages[pageIndex + 1];
+    }
 
     try {
       const slices = await sliceImage(src, 800);
@@ -316,17 +371,25 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
 
   if (loadingInfo) loadingInfo.remove();
 
-  /* Przywracanie slice’ów przy scrollu w górę */
+  /* Przywracanie slice’ów przy scrollu */
   window.addEventListener("scroll", () => {
-    const imgs = container.querySelectorAll("img.comic-page");
-    if (imgs.length === 0) return;
+    const placeholders = container.querySelectorAll("div[data-slice-index]");
+    if (placeholders.length === 0) return;
 
-    const firstVisible = imgs[0];
-    const idx = parseInt(firstVisible.dataset.sliceIndex);
+    const viewportTop = window.scrollY;
+    const viewportBottom = viewportTop + window.innerHeight;
 
-    for (let i = idx - 5; i < idx; i++) {
-      if (i >= 0) restoreSliceIfNeeded(i);
-    }
+    placeholders.forEach(ph => {
+      const rect = ph.getBoundingClientRect();
+      const phTop = rect.top + window.scrollY;
+      const phBottom = phTop + rect.height;
+
+      if (phBottom > viewportTop - 2 * window.innerHeight &&
+          phTop < viewportBottom + 2 * window.innerHeight) {
+        const idx = parseInt(ph.dataset.sliceIndex);
+        restoreSliceIfNeeded(idx);
+      }
+    });
   });
 
   /* Sortowanie */
@@ -366,7 +429,7 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
   /* PADLET — tylko po kliknięciu */
   let padletLoaded = false;
 
-const loadPadlet = () => {
+  const loadPadlet = () => {
     if (padletLoaded) return;
     padletLoaded = true;
 
@@ -391,8 +454,7 @@ const loadPadlet = () => {
 
     box.style.visibility = "visible";
     box.style.opacity = "1";
-};
-
+  };
 
   document.getElementById("comments_title").onclick = loadPadlet;
 
