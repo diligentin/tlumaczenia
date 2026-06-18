@@ -4,50 +4,46 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-<title>✦⏖✦k</title>
+<title>✦⏖✦io</title>
 
 <style>
-@font-face { font-family: "figtree"; src: url("https://tajnachalupka.github.io/main/Figtree.ttf") format("truetype");}
+@font-face { font-family:"figtree"; src:url("https://tajnachalupka.github.io/main/Figtree.ttf") format("truetype"); }
+body { margin:0; background:#191818; font-family:figtree,sans-serif; }
+#comic-container { max-width:720px; margin:0 auto; }
+img.comic-page { width:100%; display:block; max-width:720px; image-rendering:-webkit-optimize-contrast; object-fit:contain; }
 
-body { margin: 0; background: #191818; font-family: figtree, sans-serif;}
-#comic-container { max-width: 720px; margin: 0 auto;}
-img.comic-page { width: 100%; display: block; max-width: 720px; image-rendering: -webkit-optimize-contrast; object-fit: contain;}
+.nav-buttons { position:fixed; bottom:20px; left:20px; display:flex; flex-direction:column; gap:6; transition:opacity .15s; }
+.nav-buttons.hidden { opacity:0; pointer-events:none; }
+.nav-btn { height:50px; border-radius:12px; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.btn-icon { width:30px; height:30px; filter:invert(1); }
 
-.nav-buttons { position: fixed; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 6; transition: opacity .15s ease;}
-.nav-buttons.hidden { opacity: 0; pointer-events: none;}
-.nav-btn { height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer;}
-.btn-icon { width: 30px; height: 30px; filter: invert(1); }
+#comments_title { color:white; font-size:18px; text-align:center; margin:40px auto 20px; padding:12px; width:220px; background:#272727; border-radius:6px; cursor:pointer; }
+#comments_title:hover { background:#333; }
 
-#comments_title {
-  color: white; font-size: 18px; text-align: center; margin: 40px auto 20px;
-  padding: 12px; width: 220px; background: #272727; border-radius: 6px; cursor: pointer;
-}
-#comments_title:hover { background: #333; }
+#padlet_box { padding:10px; background:#191818; visibility:hidden; opacity:0; transition:opacity .1s; margin-top:30px; }
 
-#padlet_box { padding: 10px; background: #191818; visibility: hidden; opacity: 0; transition: opacity .1s ease; margin-top: 30px;}
+#chapter_reactions { margin:40px auto; text-align:center; }
+.reactions-row { display:flex; justify-content:center; gap:7px; }
+.reaction-item { display:flex; flex-direction:column; align-items:center; color:white; font-size:14px; }
+.reaction-btn { max-width:85px; max-height:100px; cursor:pointer; transition:transform .15s, opacity .2s; }
+.reaction-btn:hover { filter:brightness(.8); }
+.reaction-btn.clicked { opacity:.4; cursor:default; }
 
-#chapter_reactions { margin: 40px auto; text-align: center;}
-.reactions-row { display: flex; justify-content: center; gap: 7px;}
-.reaction-item { display: flex; flex-direction: column; align-items: center; color: white; font-size: 14px;}
-.reaction-btn { max-width: 85px; max-height: 100px; cursor: pointer; transition: transform .15s ease, opacity .2s ease;}
-.reaction-btn:hover { filter: brightness(0.8);}
-.reaction-btn.clicked { opacity: 0.4; cursor: default;}
-
-@media (max-width: 600px) {
-  .reaction-btn { max-width: 80px; max-height: 80px; }
-  .reaction-count { font-size: 12px; }
+@media(max-width:600px){
+  .reaction-btn{max-width:80px;max-height:80px;}
+  .reaction-count{font-size:12px;}
 }
 </style>
 </head>
 
 <body>
 
-<div id="series-header" style="position: fixed; top: 7px; left: 50%; transform: translateX(-50%); z-index: 9999; transition: opacity .15s ease;">
+<div id="series-header" style="position:fixed;top:7px;left:50%;transform:translateX(-50%);z-index:9999;transition:opacity .15s;">
   <a id="series-link" href="#"><img id="series-img" src="" style="max-height:23px;"></a>
 </div>
 
 <div id="comic-container"></div>
-<p id="chapter_loading" style="margin-top:88px; color:white; text-align:center;">Ładuję rozdział...</p>
+<p id="chapter_loading" style="margin-top:88px;color:white;text-align:center;">Ładuję rozdział...</p>
 
 <div class="nav-buttons" id="nav">
   <div class="nav-btn" id="nextBtn"><img src="https://tajnachalupka.github.io/main/szczala-next.png" class="btn-icon"></div>
@@ -69,197 +65,181 @@ img.comic-page { width: 100%; display: block; max-width: 720px; image-rendering:
 <div id="padlet_box"></div>
 
 <script>
-(async function () {
-  const qs = new URLSearchParams(location.search);
-  const comicKey = qs.get("comic");
-  const chapter = qs.get("chapter");
-  const container = document.getElementById("comic-container");
-  const nextBtn = document.getElementById("nextBtn");
-  const prevBtn = document.getElementById("prevBtn");
-  const homeBtn = document.getElementById("homeBtn");
+(async function(){
 
-  if (!comicKey || !chapter) {
-    container.innerHTML = "<p style='color:white;text-align:center;padding:50px;'>Brak parametru.</p>";
+  const qs=new URLSearchParams(location.search);
+  const comicKey=qs.get("comic");
+  const chapter=qs.get("chapter");
+  const container=document.getElementById("comic-container");
+
+  if(!comicKey||!chapter){
+    container.innerHTML="<p style='color:white;text-align:center;padding:50px;'>Brak parametru.</p>";
     return;
   }
 
-  homeBtn.onclick = () => location.href = "https://tajnachalupka.wixsite.com/tlumaczenia";
+  document.getElementById("homeBtn").onclick=()=>location.href="https://tajnachalupka.wixsite.com/tlumaczenia";
 
-  const USE_SLICER = (() => {
-    const ua = navigator.userAgent || "";
-    if (/Android [0-8]\./i.test(ua)) return false;
-    const t0 = performance.now();
-    for (let i = 0; i < 40000; i++) {}
-    if (performance.now() - t0 > 10) return false;
-    try { return !!document.createElement("canvas").getContext("2d"); } catch { return false; }
+  const USE_SLICER=(()=>{
+    const ua=navigator.userAgent||"";
+    if(/Android [0-8]\./i.test(ua))return false;
+    const t0=performance.now();
+    for(let i=0;i<40000;i++){}
+    if(performance.now()-t0>10)return false;
+    try{return !!document.createElement("canvas").getContext("2d");}catch{return false;}
   })();
 
-  async function sliceImage(src, sliceHeight = 800) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = "anonymous";
-      img.dataset.retry = "0";
-      img.src = src;
+  async function sliceImage(src,h=800){
+    return new Promise((res,rej)=>{
+      const img=new Image();
+      img.crossOrigin="anonymous";
+      img.dataset.retry="0";
+      img.src=src;
 
-      img.onload = () => {
-        if (!USE_SLICER) {
-          resolve([src]);
-          return;
+      img.onload=()=>{
+        if(!USE_SLICER){ res([src]); return; }
+        const out=[],c=document.createElement("canvas"),x=c.getContext("2d");
+        for(let y=0;y<img.height;y+=h){
+          const hh=Math.min(h,img.height-y);
+          c.width=img.width; c.height=hh;
+          x.drawImage(img,0,y,img.width,hh,0,0,img.width,hh);
+          out.push(c.toDataURL("image/jpeg",0.95));
         }
-        const slices = [];
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        for (let y = 0; y < img.height; y += sliceHeight) {
-          const h = Math.min(sliceHeight, img.height - y);
-          canvas.width = img.width;
-          canvas.height = h;
-          ctx.drawImage(img, 0, y, img.width, h, 0, 0, img.width, h);
-          slices.push(canvas.toDataURL("image/jpeg", 0.95));
-        }
-        resolve(slices);
+        res(out);
       };
 
-      img.onerror = () => {
-        let tries = +img.dataset.retry;
-        if (tries < 3) {
-          img.dataset.retry = tries + 1;
-          img.src = src + "?retry=" + Math.random();
-        } else reject();
+      img.onerror=()=>{
+        let t=+img.dataset.retry;
+        if(t<3){ img.dataset.retry=t+1; img.src=src+"?retry="+Math.random(); }
+        else rej();
       };
     });
   }
 
   let data;
-  try {
-    data = await (await fetch(`${comicKey}.json`)).json();
-    if (data.series_icon) document.getElementById("series-img").src = data.series_icon;
-    document.getElementById("series-link").href = `series.html?comic=${comicKey}`;
-  } catch {
-    container.innerHTML = "<p style='color:white;text-align:center;padding:50px;'>Błąd JSON.</p>";
+  try{
+    data=await (await fetch(`${comicKey}.json`)).json();
+    if(data.series_icon)document.getElementById("series-img").src=data.series_icon;
+    document.getElementById("series-link").href=`series.html?comic=${comicKey}`;
+  }catch{
+    container.innerHTML="<p style='color:white;text-align:center;padding:50px;'>Błąd JSON.</p>";
     return;
   }
 
-  const pages = data.chapters[chapter];
-  if (!pages) {
-    container.innerHTML = "<p style='color:white;text-align:center;padding:50px;'>Rozdział nie istnieje.</p>";
+  const pages=data.chapters[chapter];
+  if(!pages){
+    container.innerHTML="<p style='color:white;text-align:center;padding:50px;'>Rozdział nie istnieje.</p>";
     return;
   }
 
-  localStorage.setItem(`read_${comicKey}_${chapter}`, "1");
-  const loadingInfo = document.getElementById("chapter_loading");
+  localStorage.setItem(`read_${comicKey}_${chapter}`,"1");
+  document.getElementById("chapter_loading")?.remove();
 
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        const img = e.target;
-        img.src = img.dataset.src;
+  const observer=new IntersectionObserver(e=>{
+    e.forEach(v=>{
+      if(v.isIntersecting){
+        const img=v.target;
+        img.src=img.dataset.src;
         observer.unobserve(img);
       }
     });
-  }, { rootMargin: "0px 0px 300px 0px" });
+  },{rootMargin:"0px 0px 300px 0px"});
 
-  const placeholder = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+  const placeholder="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
 
-  for (const src of pages) {
-    await new Promise(r => setTimeout(r, 0));
-    try {
-      const slices = await sliceImage(src, 800);
-      slices.forEach(url => {
-        const img = document.createElement("img");
-        img.className = "comic-page";
-        img.dataset.src = url;
-        img.dataset.retry = "0";
+  for(const src of pages){
+    await new Promise(r=>setTimeout(r,0));
+    try{
+      const slices=await sliceImage(src,800);
+      slices.forEach(url=>{
+        const img=document.createElement("img");
+        img.className="comic-page";
+        img.dataset.src=url;
+        img.dataset.retry="0";
 
-        if (USE_SLICER) {
-          img.src = placeholder;
-          observer.observe(img);
-        } else {
-          img.src = url;
-        }
+        img.src = USE_SLICER ? placeholder : "";
 
-        img.onerror = () => {
-          let tries = +img.dataset.retry;
-          if (tries < 3) {
-            img.dataset.retry = tries + 1;
-            img.src = img.dataset.src + "?r=" + Date.now();
+        observer.observe(img);
+
+        img.onerror=()=>{
+          let t=+img.dataset.retry;
+          if(t<3){
+            img.dataset.retry=t+1;
+            img.src=img.dataset.src+"?r="+Date.now();
           }
         };
 
         container.appendChild(img);
       });
-    } catch {
-      container.innerHTML += "<p style='color:red;text-align:center;'>Błąd obrazu.</p>";
+    }catch{
+      container.innerHTML+="<p style='color:red;text-align:center;'>Błąd obrazu.</p>";
     }
   }
 
-  loadingInfo?.remove();
-
-  const keys = Object.keys(data.chapters).sort((a, b) => {
-    const na = +a, nb = +b;
-    const ha = !isNaN(na), hb = !isNaN(nb);
-    if (ha && hb) return na - nb || a.localeCompare(b);
-    if (ha) return -1;
-    if (hb) return 1;
+  const keys=Object.keys(data.chapters).sort((a,b)=>{
+    const na=+a, nb=+b, ha=!isNaN(na), hb=!isNaN(nb);
+    if(ha&&hb)return na-nb||a.localeCompare(b);
+    if(ha)return -1;
+    if(hb)return 1;
     return a.localeCompare(b);
   });
 
-  const index = keys.indexOf(chapter);
+  const idx=keys.indexOf(chapter);
 
-  nextBtn.onclick = () => {
-    location.href = index < keys.length - 1
-      ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index + 1])}`
+  document.getElementById("nextBtn").onclick=()=>{
+    location.href=idx<keys.length-1
+      ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[idx+1])}`
       : "https://tajnachalupka.wixsite.com/tlumaczenia";
   };
 
-  prevBtn.onclick = () => {
-    location.href = index > 0
-      ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[index - 1])}`
+  document.getElementById("prevBtn").onclick=()=>{
+    location.href=idx>0
+      ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[idx-1])}`
       : "https://tajnachalupka.wixsite.com/tlumaczenia";
   };
 
-  let padletLoaded = false;
-  document.getElementById("comments_title").onclick = () => {
-    if (padletLoaded) return;
-    padletLoaded = true;
+  let padletLoaded=false;
+  document.getElementById("comments_title").onclick=()=>{
+    if(padletLoaded)return;
+    padletLoaded=true;
 
-    const box = document.getElementById("padlet_box");
-    const embed = data.padlet;
-    const full = embed.replace("/embed/", "/");
+    const box=document.getElementById("padlet_box");
+    const embed=data.padlet;
+    const full=embed.replace("/embed/","/");
 
-    box.innerHTML = `
-      <div style="border:1px solid #0001; border-radius:2px; overflow:hidden; max-width:580px; margin:0 auto;">
+    box.innerHTML=`
+      <div style="border:1px solid #0001;border-radius:2px;overflow:hidden;max-width:580px;margin:0 auto;">
         <iframe src="${embed}" frameborder="0" style="width:100%;height:600px;"></iframe>
-        <p style="text-align:center; margin-top:14px;">
-          <a href="${full}" target="_blank"
-             style="padding:10px 18px; background:#272727; color:white; font-size:14px; border-radius:3px; text-decoration:none;">
+        <p style="text-align:center;margin-top:14px;">
+          <a href="${full}" target="_blank" style="padding:10px 18px;background:#272727;color:white;font-size:14px;border-radius:3px;text-decoration:none;">
             Otwórz padlet
           </a>
         </p>
       </div>
     `;
 
-    document.getElementById("comments_title").style.display = "none";
-    box.style.visibility = "visible";
-    box.style.opacity = "1";
+    document.getElementById("comments_title").style.display="none";
+    box.style.visibility="visible";
+    box.style.opacity="1";
   };
+
 })();
 </script>
 
 <script>
-let lastScroll = 0;
-const nav = document.getElementById("nav");
-const header = document.getElementById("series-header");
+let lastScroll=0;
+const nav=document.getElementById("nav");
+const header=document.getElementById("series-header");
 
-window.addEventListener("scroll", () => {
-  const y = window.scrollY;
-  if (y > lastScroll) {
+window.addEventListener("scroll",()=>{
+  const y=window.scrollY;
+  if(y>lastScroll){
     nav.classList.add("hidden");
-    header.style.opacity = "0";
-  } else {
+    header.style.opacity="0";
+  }else{
     nav.classList.remove("hidden");
-    header.style.opacity = "1";
+    header.style.opacity="1";
   }
-  lastScroll = y;
+  lastScroll=y;
 });
 </script>
 
