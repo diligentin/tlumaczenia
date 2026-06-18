@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>✦⏖✦</title>
+<title>✦⏖✦jg</title>
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
 <style>
@@ -249,7 +249,7 @@ img.comic-page{
   // ZAPIS PRZECZYTANIA
   localStorage.setItem(`read_${comicKey}_${chapter}`, "1");
 
-  // DYNAMICZNY LAZY-LOAD: 1 obraz na raz
+  // NOWY SYSTEM OBRAZÓW — dynamiczny, bez slicera
   let index = 0;
 
   async function loadNext(){
@@ -279,7 +279,7 @@ img.comic-page{
 
     container.appendChild(img);
 
-    // ładowanie obrazu gdy wejdzie w viewport
+    // lazy-load
     const obs = new IntersectionObserver(entries => {
       if(entries[0].isIntersecting){
         img.src = img.dataset.src;
@@ -288,7 +288,7 @@ img.comic-page{
     });
     obs.observe(img);
 
-    // gdy dojedziemy do końca obrazu → ładuj następny
+    // auto-load next
     const endObs = new IntersectionObserver(entries => {
       if(entries[0].isIntersecting){
         endObs.disconnect();
@@ -359,17 +359,8 @@ img.comic-page{
     box.style.opacity = "1";
   };
 
-  /* REAKCJE — lokalne kliknięcia */
-  const reactionButtons = document.querySelectorAll(".reaction-btn");
-  reactionButtons.forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      if(btn.classList.contains("clicked")) return;
-      btn.classList.add("clicked");
-      const countEl = btn.parentElement.querySelector(".reaction-count");
-      const val = parseInt(countEl.textContent || "0", 10);
-      countEl.textContent = String(val + 1);
-    });
-  });
+  /* REAKCJE — Supabase przez reactions.js */
+  /* (reader tylko generuje HTML — logika jest w reactions.js) */
 
 })();
 </script>
