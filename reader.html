@@ -1,11 +1,9 @@
-A — KOD ZE SLICEREM
-
 <!DOCTYPE html>
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>✦⏖✦l</title>
+<title>✦⏖✦jg</title>
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
 <style>
@@ -176,6 +174,28 @@ for(const src of pages){
 }
 
 document.getElementById("chapter_loading")?.remove();
+
+const keys=Object.keys(data.chapters).sort((a,b)=>{
+  const na=+a,nb=+b,ha=!isNaN(na),hb=!isNaN(nb);
+  if(ha&&hb)return na-nb||a.localeCompare(b);
+  if(ha)return -1;
+  if(hb)return 1;
+  return a.localeCompare(b);
+});
+
+const idx=keys.indexOf(chapter);
+
+document.getElementById("nextBtn").onclick=()=>{
+  location.href=idx<keys.length-1
+    ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[idx+1])}`
+    : "https://tajnachalupka.wixsite.com/tlumaczenia";
+};
+
+document.getElementById("prevBtn").onclick=()=>{
+  location.href=idx>0
+    ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[idx-1])}`
+    : "https://tajnachalupka.wixsite.com/tlumaczenia";
+};
 
 })();
 </script>
