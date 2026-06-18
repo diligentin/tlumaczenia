@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>✦⏖✦jg</title>
+<title>✦⏖✦ą</title>
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
 <style>
@@ -16,30 +16,10 @@ img.comic-page{width:100%;display:block;max-width:720px;image-rendering:-webkit-
 .nav-buttons.hidden{opacity:0;pointer-events:none;}
 .nav-btn{height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
 .btn-icon{width:30px;height:30px;filter:invert(1);}
-
-#comments_title{color:white;font-size:18px;text-align:center;margin:40px auto 20px;padding:12px;width:220px;background:#272727;border-radius:6px;cursor:pointer;}
-#comments_title:hover{background:#333;}
-#padlet_box{padding:10px;background:#191818;visibility:hidden;opacity:0;transition:opacity .1s;margin-top:30px;}
-
-#chapter_reactions{margin:40px auto;text-align:center;}
-.reactions-row{display:flex;justify-content:center;gap:7px;}
-.reaction-item{display:flex;flex-direction:column;align-items:center;color:white;font-size:14px;}
-.reaction-btn{max-width:85px;max-height:100px;cursor:pointer;transition:transform .15s,opacity .2s;}
-.reaction-btn:hover{filter:brightness(.8);}
-.reaction-btn.clicked{opacity:.4;cursor:default;}
-
-@media(max-width:600px){
-.reaction-btn{max-width:80px;max-height:80px;}
-.reaction-count{font-size:12px;}
-}
 </style>
 </head>
 
 <body>
-
-<div id="series-header" style="position:fixed;top:7px;left:50%;transform:translateX(-50%);z-index:9999;transition:opacity .15s;">
-  <a id="series-link" href="#"><img id="series-img" src="" style="max-height:23px;"></a>
-</div>
 
 <div id="comic-container"></div>
 <p id="chapter_loading" style="margin-top:88px;color:white;text-align:center;">Ładuję rozdział...</p>
@@ -50,19 +30,6 @@ img.comic-page{width:100%;display:block;max-width:720px;image-rendering:-webkit-
   <div class="nav-btn" id="homeBtn"><img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon"></div>
 </div>
 
-<div id="chapter_reactions">
-  <div class="reactions-row">
-    <div class="reaction-item"><img class="reaction-btn" data-reaction="0" src="https://tajnachalupka.github.io/main/guziki-reakcji/r1.jpg"><div class="reaction-count">0</div></div>
-    <div class="reaction-item"><img class="reaction-btn" data-reaction="1" src="https://tajnachalupka.github.io/main/guziki-reakcji/r2.jpg"><div class="reaction-count">0</div></div>
-    <div class="reaction-item"><img class="reaction-btn" data-reaction="2" src="https://tajnachalupka.github.io/main/guziki-reakcji/r3.jpg"><div class="reaction-count">0</div></div>
-    <div class="reaction-item"><img class="reaction-btn" data-reaction="3" src="https://tajnachalupka.github.io/main/guziki-reakcji/r4.jpg"><div class="reaction-count">0</div></div>
-    <div class="reaction-item"><img class="reaction-btn" data-reaction="4" src="https://tajnachalupka.github.io/main/guziki-reakcji/r5.jpg"><div class="reaction-count">0</div></div>
-  </div>
-</div>
-
-<p id="comments_title">Wyświetl komentarze<br>(uwaga na spoilery)</p>
-<div id="padlet_box"></div>
-
 <script>
 (async function(){
 
@@ -71,109 +38,53 @@ const comicKey=qs.get("comic");
 const chapter=qs.get("chapter");
 const container=document.getElementById("comic-container");
 
-if(!comicKey||!chapter){
-  container.innerHTML="<p style='color:white;text-align:center;padding:50px;'>Brak parametru.</p>";
-  return;
-}
-
-document.getElementById("homeBtn").onclick=()=>location.href="https://tajnachalupka.wixsite.com/tlumaczenia";
-
-const USE_SLICER=(()=>{
-  const ua=navigator.userAgent||"";
-  if(/Android [0-8]\./i.test(ua))return false;
-  const t0=performance.now();
-  for(let i=0;i<40000;i++){}
-  if(performance.now()-t0>10)return false;
-  try{return !!document.createElement("canvas").getContext("2d");}catch{return false;}
-})();
-
-async function sliceImage(src,h=800){
-  return new Promise((res,rej)=>{
-    const img=new Image();
-    img.crossOrigin="anonymous";
-    img.dataset.retry="0";
-    img.src=src;
-
-    img.onload=()=>{
-      if(!USE_SLICER){res([src]);return;}
-      const out=[],c=document.createElement("canvas"),x=c.getContext("2d");
-      for(let y=0;y<img.height;y+=h){
-        const hh=Math.min(h,img.height-y);
-        c.width=img.width;c.height=hh;
-        x.drawImage(img,0,y,img.width,hh,0,0,img.width,hh);
-        out.push(c.toDataURL("image/jpeg",0.95));
-      }
-      res(out);
-    };
-
-    img.onerror=()=>{
-      let t=+img.dataset.retry;
-      if(t<3){img.dataset.retry=t+1;img.src=src+"?retry="+Math.random();}
-      else rej();
-    };
-  });
-}
-
-let data;
-try{
-  data=await (await fetch(`${comicKey}.json`)).json();
-  if(data.series_icon)document.getElementById("series-img").src=data.series_icon;
-  document.getElementById("series-link").href=`series.html?comic=${comicKey}`;
-}catch{
-  container.innerHTML="<p style='color:white;text-align:center;padding:50px;'>Błąd JSON.</p>";
-  return;
-}
-
+let data=await (await fetch(`${comicKey}.json`)).json();
 const pages=data.chapters[chapter];
-if(!pages){
-  container.innerHTML="<p style='color:white;text-align:center;padding:50px;'>Rozdział nie istnieje.</p>";
-  return;
-}
 
-localStorage.setItem(`read_${comicKey}_${chapter}`,"1");
+let index=0;
 
-const observer=new IntersectionObserver(e=>{
-  e.forEach(v=>{
-    if(v.isIntersecting){
-      const img=v.target;
+async function loadNext(){
+  if(index>=pages.length)return;
+
+  const src=pages[index];
+  index++;
+
+  const img=document.createElement("img");
+  img.className="comic-page";
+  img.dataset.src=src;
+  img.dataset.retry="0";
+  img.src="";
+
+  img.onload=()=>document.getElementById("chapter_loading")?.remove();
+
+  img.onerror=()=>{
+    let t=+img.dataset.retry;
+    if(t<3){
+      img.dataset.retry=t+1;
+      img.src=img.dataset.src+"?r="+Date.now();
+    }
+  };
+
+  container.appendChild(img);
+
+  const obs=new IntersectionObserver(e=>{
+    if(e[0].isIntersecting){
       img.src=img.dataset.src;
-      observer.unobserve(img);
+      obs.disconnect();
     }
   });
-},{rootMargin:"0px 0px 300px 0px"});
+  obs.observe(img);
 
-const placeholder="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
-
-for(const src of pages){
-  await new Promise(r=>setTimeout(r,0));
-  try{
-    const slices=await sliceImage(src,800);
-    slices.forEach(url=>{
-      const img=document.createElement("img");
-      img.className="comic-page";
-      img.dataset.src=url;
-      img.dataset.retry="0";
-
-      img.src=USE_SLICER?placeholder:"";
-
-      observer.observe(img);
-
-      img.onerror=()=>{
-        let t=+img.dataset.retry;
-        if(t<3){
-          img.dataset.retry=t+1;
-          img.src=img.dataset.src+"?r="+Date.now();
-        }
-      };
-
-      container.appendChild(img);
-    });
-  }catch{
-    container.innerHTML+="<p style='color:red;text-align:center;'>Błąd obrazu.</p>";
-  }
+  const endObs=new IntersectionObserver(e=>{
+    if(e[0].isIntersecting){
+      endObs.disconnect();
+      loadNext();
+    }
+  },{rootMargin:"0px 0px -80% 0px"});
+  endObs.observe(img);
 }
 
-document.getElementById("chapter_loading")?.remove();
+loadNext();
 
 const keys=Object.keys(data.chapters).sort((a,b)=>{
   const na=+a,nb=+b,ha=!isNaN(na),hb=!isNaN(nb);
@@ -195,6 +106,10 @@ document.getElementById("prevBtn").onclick=()=>{
   location.href=idx>0
     ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[idx-1])}`
     : "https://tajnachalupka.wixsite.com/tlumaczenia";
+};
+
+document.getElementById("homeBtn").onclick=()=>{
+  location.href="https://tajnachalupka.wixsite.com/tlumaczenia";
 };
 
 })();
