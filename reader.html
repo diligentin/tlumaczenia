@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-<title>✦⏖✦oo</title>
+<title>✦⏖✦e</title>
 
 <style>
 @font-face { font-family: "figtree"; src: url("https://tajnachalupka.github.io/main/Figtree.ttf") format("truetype");}
@@ -69,6 +69,7 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
 }
 </style>
 </head>
+
 <body>
 
 <div id="series-header" style=" position: fixed; top: 7px; left: 50%; transform: translateX(-50%); z-index: 9999; opacity: 1; transition: opacity .15s ease;">
@@ -122,6 +123,7 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
 
 <p id="comments_title">Wyświetl komentarze<br>(uwaga na spoilery)</p>
 <div id="padlet_box"></div>
+
 <script>
 (async function () {
 
@@ -227,22 +229,29 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
 
   const loadingInfo = document.getElementById("chapter_loading");
 
-  /* ★ PRELOADING — kolejka obrazów */
-  const preloadQueue = [];
+  /* Wstawianie obrazów + PROSTY PRELOADING */
+  for (let i = 0; i < pages.length; i++) {
+    const src = pages[i];
 
-  for (const src of pages) {
+    /* ★ PRELOADING — ładujemy kolejny obraz w tle */
+    if (i + 1 < pages.length) {
+      const preloadImg = new Image();
+      preloadImg.src = pages[i + 1];
+    }
+
     await new Promise(r => setTimeout(r, 0));
 
     try {
       const slices = await sliceImage(src, 800);
 
       slices.forEach(url => {
-        preloadQueue.push({
-          url,
-          loaded: false,
-          inserted: false,
-          element: null
-        });
+        const img = document.createElement("img");
+        img.className = "comic-page";
+        img.src = url;
+
+        if (!USE_SLICER) img.loading = "lazy";
+
+        container.appendChild(img);
       });
 
     } catch {
@@ -251,51 +260,6 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
   }
 
   if (loadingInfo) loadingInfo.remove();
-
-  /* ★ PRELOADING — sprawdzanie odległości */
-  function isNearViewport(index) {
-    const scrollY = window.scrollY;
-    const viewportHeight = window.innerHeight;
-
-    const approxY = index * 2000; 
-    return approxY < scrollY + viewportHeight + 2000;
-  }
-
-  /* ★ PRELOADING — główna funkcja */
-  function processQueue() {
-    preloadQueue.forEach((item, i) => {
-
-      if (!item.loaded && isNearViewport(i)) {
-        const img = new Image();
-        img.className = "comic-page";
-        img.src = item.url;
-
-        img.onload = () => {
-          item.loaded = true;
-          item.element = img;
-
-          if (!item.inserted) {
-            item.inserted = true;
-            container.appendChild(img);
-          }
-        };
-
-        img.onerror = () => {
-          setTimeout(() => {
-            img.src = item.url + "?retry=" + Math.random();
-          }, 200);
-        };
-      }
-
-      if (item.loaded && !item.inserted && item.element) {
-        item.inserted = true;
-        container.appendChild(item.element);
-      }
-    });
-  }
-
-  window.addEventListener("scroll", processQueue);
-  processQueue();
 
   /* Sortowanie */
   const keys = Object.keys(data.chapters).sort((a, b) => {
@@ -384,3 +348,6 @@ window.addEventListener("scroll", () => {
 </script>
 
 <script type="module" src="reactions.js"></script>
+
+</body>
+</html>
