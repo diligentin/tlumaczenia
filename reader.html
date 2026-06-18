@@ -1,3 +1,129 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
+<title>✦⏖✦e</title>
+
+<style>
+@font-face { font-family: "figtree"; src: url("https://tajnachalupka.github.io/main/Figtree.ttf") format("truetype");}
+
+body { margin: 0; background: #191818; font-family: figtree, sans-serif;}
+
+#comic-container { max-width: 720px; margin: 0 auto;}
+
+img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; image-rendering: -webkit-optimize-contrast; object-fit: contain;}
+
+.nav-buttons { position: fixed; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 6; opacity: 1; transition: opacity .15s ease;}
+.nav-buttons.hidden { opacity: 0; pointer-events: none;}
+
+.nav-btn { width: px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none;}
+
+.btn-icon { width: 30px; height: 30px; filter: invert(1); pointer-events: none;}
+
+#comments_title {
+  color: white;
+  font-size: 18px;
+  text-align: center;
+  margin: 40px auto 20px;
+  padding: 12px;
+  width: 220px;
+  background: #272727;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+#comments_title:hover { background: #333; }
+
+#padlet_box { 
+  padding: 10px; 
+  background: #191818; 
+  visibility: hidden; 
+  opacity: 0; 
+  transition: opacity .1s ease;
+  margin-top: 30px;   
+}
+
+#chapter_reactions { margin: 40px auto; text-align: center; }
+
+.reactions-row { display: flex; justify-content: center; gap: 7px; }
+
+.reaction-item { display: flex; flex-direction: column; align-items: center; color: white; font-size: 14px; }
+
+.reaction-btn {
+  max-width: 85px;
+  max-height: 100px;
+  width: auto;
+  height: auto;
+  cursor: pointer;
+  transition: transform .15s ease, opacity .2s ease;
+}
+.reaction-btn:hover { filter: brightness(0.8); }
+.reaction-btn.clicked { opacity: 0.4; cursor: default; transform: none; }
+
+@media (max-width: 600px) {
+  .reaction-btn { max-width: 80px; max-height: 80px; }
+  .reactions-row { gap: 7px; }
+  .reaction-count { font-size: 12px; }
+}
+</style>
+</head>
+
+<body>
+
+<div id="series-header" style=" position: fixed; top: 7px; left: 50%; transform: translateX(-50%); z-index: 9999; opacity: 1; transition: opacity .15s ease;">
+  <a id="series-link" href="#"><img id="series-img" src="" style="max-height:23px; width:auto;"></a>
+</div>
+
+<div id="comic-container"></div>
+<p id="chapter_loading" style="margin-top:88px; color:white; text-align:center;">Ładuję rozdział...</p>
+
+<div class="nav-buttons" id="nav">
+  <div class="nav-btn" id="nextBtn"><img src="https://tajnachalupka.github.io/main/szczala-next.png" class="btn-icon"></div>
+  <div class="nav-btn" id="prevBtn"><img src="https://tajnachalupka.github.io/main/szczala-prev.png" class="btn-icon"></div>
+  <div class="nav-btn" id="homeBtn"><img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon"></div>
+</div>
+
+<div id="chapter_reactions">
+  <div class="reactions-row">
+
+    <div class="reaction-item">
+      <img class="reaction-btn" data-reaction="0" src="https://tajnachalupka.github.io/main/guziki-reakcji/r1.jpg">
+      <div class="reaction-count">0</div>
+    </div>
+
+    <div class="reaction-item">
+      <img class="reaction-btn" data-reaction="1" src="https://tajnachalupka.github.io/main/guziki-reakcji/r2.jpg">
+      <div class="reaction-count">0</div>
+    </div>
+
+    <div class="reaction-item">
+      <img class="reaction-btn" data-reaction="2" src="https://tajnachalupka.github.io/main/guziki-reakcji/r3.jpg">
+      <div class="reaction-count">0</div>
+    </div>
+
+    <div class="reaction-item">
+      <img class="reaction-btn" data-reaction="3" src="https://tajnachalupka.github.io/main/guziki-reakcji/r4.jpg">
+      <div class="reaction-count">0</div>
+    </div>
+
+    <div class="reaction-item">
+      <img class="reaction-btn" data-reaction="4" src="https://tajnachalupka.github.io/main/guziki-reakcji/r5.jpg">
+      <div class="reaction-count">0</div>
+    </div>
+
+    <div class="reaction-item" style="display:none;">
+      <img class="reaction-btn" data-reaction="5" src="LINK6">
+      <div class="reaction-count">0</div>
+    </div>
+
+  </div>
+</div>
+
+<p id="comments_title">Wyświetl komentarze<br>(uwaga na spoilery)</p>
+<div id="padlet_box"></div>
+
 <script>
 (async function () {
 
@@ -233,3 +359,7 @@ window.addEventListener("scroll", () => {
   lastScroll = current;
 });
 </script>
+
+
+</body>
+</html>
