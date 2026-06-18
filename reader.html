@@ -67,6 +67,15 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
   .reactions-row { gap: 7px; }
   .reaction-count { font-size: 12px; }
 }
+  .comic-page {
+  opacity: 0;
+  transition: opacity .2s ease-out;
+}
+
+.comic-page.loaded {
+  opacity: 1;
+}
+
 </style>
 </head>
 
@@ -249,7 +258,7 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
         img.className = "comic-page";
 
         img.loading = "lazy";   // ★ JEDYNA ZMIANA — zawsze lazy, jak w starym readerze
-
+       img.onload = () => img.classList.add("loaded");   // ★ FADE-IN
         img.src = url;
         container.appendChild(img);
       });
