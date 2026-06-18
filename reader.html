@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-<title>✦⏖✦c</title>
+<title>✦⏖✦e</title>
 
 <style>
 @font-face { font-family: "figtree"; src: url("https://tajnachalupka.github.io/main/Figtree.ttf") format("truetype");}
@@ -13,7 +13,20 @@ body { margin: 0; background: #191818; font-family: figtree, sans-serif;}
 
 #comic-container { max-width: 720px; margin: 0 auto;}
 
-img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; image-rendering: -webkit-optimize-contrast; object-fit: contain;}
+img.comic-page {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-width: 720px;
+  image-rendering: -webkit-optimize-contrast;
+  object-fit: contain;
+
+  opacity: 0;                /* fade-in base */
+  transition: opacity .2s ease-out;
+}
+img.comic-page.loaded {
+  opacity: 1;
+}
 
 .nav-buttons { position: fixed; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 6; opacity: 1; transition: opacity .15s ease;}
 .nav-buttons.hidden { opacity: 0; pointer-events: none;}
@@ -67,15 +80,6 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
   .reactions-row { gap: 7px; }
   .reaction-count { font-size: 12px; }
 }
-  .comic-page {
-  opacity: 0;
-  transition: opacity .2s ease-out;
-}
-
-.comic-page.loaded {
-  opacity: 1;
-}
-
 </style>
 </head>
 
@@ -238,11 +242,11 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
 
   const loadingInfo = document.getElementById("chapter_loading");
 
-  /* Wstawianie obrazów + PRELOADING + POPRAWKA LAZY-LOADING */
+  /* Wstawianie obrazów + PRELOADING + FADE-IN TYLKO PIERWSZY SLICE */
   for (let i = 0; i < pages.length; i++) {
     const src = pages[i];
 
-    /* ★ PRELOADING — ładujemy kolejny obraz w tle */
+    /* PRELOADING */
     if (i + 1 < pages.length) {
       const preloadImg = new Image();
       preloadImg.src = pages[i + 1];
@@ -253,12 +257,18 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
     try {
       const slices = await sliceImage(src, 800);
 
-      slices.forEach(url => {
+      slices.forEach((url, index) => {
         const img = document.createElement("img");
         img.className = "comic-page";
 
-        img.loading = "lazy";   // ★ JEDYNA ZMIANA — zawsze lazy, jak w starym readerze
-       img.onload = () => img.classList.add("loaded");   // ★ FADE-IN
+        img.loading = "lazy";
+
+        if (index === 0) {
+          img.onload = () => img.classList.add("loaded");   // ★ fade‑in tylko pierwszy slice
+        } else {
+          img.style.opacity = "1";                          // ★ reszta bez animacji
+        }
+
         img.src = url;
         container.appendChild(img);
       });
