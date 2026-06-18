@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
-<title>✦⏖✦a</title>
+<title>✦⏖✦</title>
 
 <style>
 @font-face { font-family: "figtree"; src: url("https://tajnachalupka.github.io/main/Figtree.ttf") format("truetype");}
@@ -13,15 +13,7 @@ body { margin: 0; background: #191818; font-family: figtree, sans-serif;}
 
 #comic-container { max-width: 720px; margin: 0 auto;}
 
-img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; image-rendering: -webkit-optimize-contrast; object-fit: contain; }
-
-.placeholder-slice {
-  width: 100%;
-  max-width: 720px;
-  margin: 0;
-  padding: 0;
-  background: transparent;
-}
+img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; image-rendering: -webkit-optimize-contrast; object-fit: contain;}
 
 /* NAV BUTTONS */
 .nav-buttons { position: fixed; bottom: 20px; left: 20px; display: flex; flex-direction: column; gap: 6; opacity: 1; transition: opacity .15s ease;}
@@ -96,10 +88,20 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
   transform: none;
 }
 
+  /* TELEFONY — zmniejszone guziki reakcji */
 @media (max-width: 600px) {
-  .reaction-btn { max-width: 80px; max-height: 80px; }
-  .reactions-row { gap: 7px; }
-  .reaction-count { font-size: 12px; }
+  .reaction-btn {
+    max-width: 80px;
+    max-height: 80px;
+  }
+
+  .reactions-row {
+    gap: 7px;
+  }
+
+  .reaction-count {
+    font-size: 12px;
+  }
 }
 </style>
 </head>
@@ -194,85 +196,8 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
     catch { return false; }
   })();
 
-  /* HYBRYDA + PLACEHOLDERY */
-  const MAX_SLICES = 40;
-
-  const sliceCache = [];          // { src, height }
-  const slicePlaceholders = [];   // placeholder DIV lub null
-
-  function createSliceImg(src, index) {
-    const img = document.createElement("img");
-    img.className = "comic-page";
-    img.src = src;
-    img.loading = "lazy";
-    img.dataset.sliceIndex = index;
-
-    img.onload = () => {
-      if (!sliceCache[index]) sliceCache[index] = { src, height: img.offsetHeight };
-      else if (!sliceCache[index].height) sliceCache[index].height = img.offsetHeight;
-    };
-
-    return img;
-  }
-
-  function addSliceToDOM(src, index) {
-    const img = createSliceImg(src, index);
-
-    const placeholder = slicePlaceholders[index];
-    if (placeholder && placeholder.parentNode) {
-      placeholder.parentNode.replaceChild(img, placeholder);
-      slicePlaceholders[index] = null;
-    } else {
-      container.appendChild(img);
-    }
-  }
-
-  function enforceHybridLimit() {
-    const imgs = container.querySelectorAll("img.comic-page");
-    if (imgs.length <= MAX_SLICES) return;
-
-    const toRemove = imgs.length - MAX_SLICES;
-
-    for (let i = 0; i < toRemove; i++) {
-      const img = imgs[i];
-      const idx = parseInt(img.dataset.sliceIndex);
-
-      let h = sliceCache[idx]?.height;
-      if (!h || h <= 0) h = img.offsetHeight || 10;
-
-      sliceCache[idx] = { src: img.src, height: h };
-
-      const ph = document.createElement("div");
-      ph.className = "placeholder-slice";
-      ph.style.height = h + "px";
-      ph.dataset.sliceIndex = idx;
-
-      slicePlaceholders[idx] = ph;
-
-      img.parentNode.replaceChild(ph, img);
-    }
-  }
-
-  function restoreSliceIfNeeded(index) {
-    const cache = sliceCache[index];
-    if (!cache) return;
-
-    const alreadyImg = container.querySelector(`img.comic-page[data-slice-index="${index}"]`);
-    if (alreadyImg) return;
-
-    const placeholder = slicePlaceholders[index];
-    const img = createSliceImg(cache.src, index);
-
-    if (placeholder && placeholder.parentNode) {
-      placeholder.parentNode.replaceChild(img, placeholder);
-      slicePlaceholders[index] = null;
-    } else {
-      container.appendChild(img);
-    }
-  }
-
   /* SLICER */
-  async function sliceImage(src, sliceHeight = 800) {
+  async function sliceImage(src, sliceHeight = 800) {   // ★ zmiana 2000 → 800
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = "anonymous";
@@ -313,6 +238,7 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
       };
 
       img.onerror = () => {
+        // ★ retry — bezpieczny, lekki
         setTimeout(() => {
           img.src = src + "?retry=" + Math.random();
         }, 200);
@@ -342,27 +268,20 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
 
   const loadingInfo = document.getElementById("chapter_loading");
 
-  /* Wstawianie obrazów + HYBRYDA + PRELOAD */
-  let globalSliceIndex = 0;
-
-  for (let pageIndex = 0; pageIndex < pages.length; pageIndex++) {
-    const src = pages[pageIndex];
-
+  /* Wstawianie obrazów */
+  for (const src of pages) {
     await new Promise(r => setTimeout(r, 0));
 
-    if (pageIndex + 1 < pages.length) {
-      const preload = new Image();
-      preload.src = pages[pageIndex + 1];
-    }
-
     try {
-      const slices = await sliceImage(src, 800);
+      const slices = await sliceImage(src, 800);   // ★ zmiana 2000 → 800
 
-      for (const url of slices) {
-        addSliceToDOM(url, globalSliceIndex);
-        enforceHybridLimit();
-        globalSliceIndex++;
-      }
+      slices.forEach(url => {
+        const img = document.createElement("img");
+        img.className = "comic-page";
+        img.src = url;
+        img.loading = "lazy";
+        container.appendChild(img);
+      });
 
     } catch {
       container.innerHTML += "<p style='color:red;text-align:center;'>Błąd obrazu.</p>";
@@ -370,27 +289,6 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
   }
 
   if (loadingInfo) loadingInfo.remove();
-
-  /* Przywracanie slice’ów przy scrollu */
-  window.addEventListener("scroll", () => {
-    const placeholders = container.querySelectorAll("div[data-slice-index]");
-    if (placeholders.length === 0) return;
-
-    const viewportTop = window.scrollY;
-    const viewportBottom = viewportTop + window.innerHeight;
-
-    placeholders.forEach(ph => {
-      const rect = ph.getBoundingClientRect();
-      const phTop = rect.top + window.scrollY;
-      const phBottom = phTop + rect.height;
-
-      if (phBottom > viewportTop - 2 * window.innerHeight &&
-          phTop < viewportBottom + 2 * window.innerHeight) {
-        const idx = parseInt(ph.dataset.sliceIndex);
-        restoreSliceIfNeeded(idx);
-      }
-    });
-  });
 
   /* Sortowanie */
   const keys = Object.keys(data.chapters).sort((a, b) => {
@@ -429,7 +327,7 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
   /* PADLET — tylko po kliknięciu */
   let padletLoaded = false;
 
-  const loadPadlet = () => {
+const loadPadlet = () => {
     if (padletLoaded) return;
     padletLoaded = true;
 
@@ -454,7 +352,8 @@ img.comic-page { width: 100%; height: auto; display: block; max-width: 720px; im
 
     box.style.visibility = "visible";
     box.style.opacity = "1";
-  };
+};
+
 
   document.getElementById("comments_title").onclick = loadPadlet;
 
@@ -476,6 +375,29 @@ window.addEventListener("scroll", () => {
   }
   lastScroll = current;
 });
+
+  document.addEventListener("DOMContentLoaded", () => {
+  const imgs = document.querySelectorAll("img");
+
+  imgs.forEach(img => {
+    img.dataset.retry = "0";
+
+    img.addEventListener("error", () => {
+      const tries = parseInt(img.dataset.retry, 10);
+
+      if (tries < 3) {
+        img.dataset.retry = tries + 1;
+        const src = img.src;
+
+        setTimeout(() => {
+          img.src = src + (src.includes("?") ? "&" : "?") + "r=" + Date.now();
+        }, 300);
+      }
+    });
+  });
+});
+
+  
 </script>
   
 <script type="module" src="reactions.js"></script>
