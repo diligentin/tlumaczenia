@@ -3,114 +3,366 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>✦⏖✦ą</title>
+<title>✦⏖✦jg</title>
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
 <style>
-@font-face{font-family:"figtree";src:url("https://tajnachalupka.github.io/main/Figtree.ttf") format("truetype");}
-body{margin:0;background:#191818;font-family:figtree,sans-serif;}
-#comic-container{max-width:720px;margin:0 auto;}
-img.comic-page{width:100%;display:block;max-width:720px;image-rendering:-webkit-optimize-contrast;object-fit:contain;}
+@font-face{
+  font-family:"figtree";
+  src:url("https://tajnachalupka.github.io/main/Figtree.ttf") format("truetype");
+}
+body{
+  margin:0;
+  background:#191818;
+  font-family:figtree,sans-serif;
+}
+#comic-container{
+  max-width:720px;
+  margin:0 auto;
+}
+img.comic-page{
+  width:100%;
+  display:block;
+  max-width:720px;
+  image-rendering:-webkit-optimize-contrast;
+  object-fit:contain;
+}
 
-.nav-buttons{position:fixed;bottom:20px;left:20px;display:flex;flex-direction:column;gap:6;transition:opacity .15s;}
-.nav-buttons.hidden{opacity:0;pointer-events:none;}
-.nav-btn{height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
-.btn-icon{width:30px;height:30px;filter:invert(1);}
+/* NAV BUTTONS */
+.nav-buttons{
+  position:fixed;
+  bottom:20px;
+  left:20px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  transition:opacity .15s;
+}
+.nav-buttons.hidden{
+  opacity:0;
+  pointer-events:none;
+}
+.nav-btn{
+  height:50px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+.btn-icon{
+  width:30px;
+  height:30px;
+  filter:invert(1);
+}
+
+/* HEADER */
+#series-header{
+  position:fixed;
+  top:7px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:9999;
+  transition:opacity .15s;
+}
+#series-img{
+  max-height:23px;
+}
+
+/* REACTIONS */
+#chapter_reactions{
+  margin:40px auto;
+  text-align:center;
+}
+.reactions-row{
+  display:flex;
+  justify-content:center;
+  gap:7px;
+}
+.reaction-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  color:white;
+  font-size:14px;
+}
+.reaction-btn{
+  max-width:85px;
+  max-height:100px;
+  cursor:pointer;
+  transition:transform .15s,opacity .2s;
+}
+.reaction-btn:hover{
+  filter:brightness(.8);
+}
+.reaction-btn.clicked{
+  opacity:.4;
+  cursor:default;
+}
+.reaction-count{
+  margin-top:4px;
+}
+
+@media(max-width:600px){
+  .reaction-btn{
+    max-width:80px;
+    max-height:80px;
+  }
+  .reaction-count{
+    font-size:12px;
+  }
+}
+
+/* PADLET */
+#comments_title{
+  color:white;
+  font-size:18px;
+  text-align:center;
+  margin:40px auto 20px;
+  padding:12px;
+  width:220px;
+  background:#272727;
+  border-radius:6px;
+  cursor:pointer;
+}
+#comments_title:hover{
+  background:#333;
+}
+#padlet_box{
+  padding:10px;
+  background:#191818;
+  visibility:hidden;
+  opacity:0;
+  transition:opacity .1s;
+  margin-top:30px;
+}
 </style>
 </head>
 
 <body>
 
-<div id="comic-container"></div>
-<p id="chapter_loading" style="margin-top:88px;color:white;text-align:center;">Ładuję rozdział...</p>
-
-<div class="nav-buttons" id="nav">
-  <div class="nav-btn" id="nextBtn"><img src="https://tajnachalupka.github.io/main/szczala-next.png" class="btn-icon"></div>
-  <div class="nav-btn" id="prevBtn"><img src="https://tajnachalupka.github.io/main/szczala-prev.png" class="btn-icon"></div>
-  <div class="nav-btn" id="homeBtn"><img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon"></div>
+<!-- HEADER -->
+<div id="series-header">
+  <a id="series-link" href="#">
+    <img id="series-img" src="">
+  </a>
 </div>
+
+<!-- KOMIKS -->
+<div id="comic-container"></div>
+<p id="chapter_loading" style="margin-top:88px;color:white;text-align:center;">
+  Ładuję rozdział...
+</p>
+
+<!-- NAWIGACJA -->
+<div class="nav-buttons" id="nav">
+  <div class="nav-btn" id="nextBtn">
+    <img src="https://tajnachalupka.github.io/main/szczala-next.png" class="btn-icon">
+  </div>
+  <div class="nav-btn" id="prevBtn">
+    <img src="https://tajnachalupka.github.io/main/szczala-prev.png" class="btn-icon">
+  </div>
+  <div class="nav-btn" id="homeBtn">
+    <img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon">
+  </div>
+</div>
+
+<!-- REAKCJE -->
+<div id="chapter_reactions">
+  <div class="reactions-row">
+    <div class="reaction-item">
+      <img class="reaction-btn" data-reaction="0"
+           src="https://tajnachalupka.github.io/main/guziki-reakcji/r1.jpg">
+      <div class="reaction-count">0</div>
+    </div>
+    <div class="reaction-item">
+      <img class="reaction-btn" data-reaction="1"
+           src="https://tajnachalupka.github.io/main/guziki-reakcji/r2.jpg">
+      <div class="reaction-count">0</div>
+    </div>
+    <div class="reaction-item">
+      <img class="reaction-btn" data-reaction="2"
+           src="https://tajnachalupka.github.io/main/guziki-reakcji/r3.jpg">
+      <div class="reaction-count">0</div>
+    </div>
+    <div class="reaction-item">
+      <img class="reaction-btn" data-reaction="3"
+           src="https://tajnachalupka.github.io/main/guziki-reakcji/r4.jpg">
+      <div class="reaction-count">0</div>
+    </div>
+    <div class="reaction-item">
+      <img class="reaction-btn" data-reaction="4"
+           src="https://tajnachalupka.github.io/main/guziki-reakcji/r5.jpg">
+      <div class="reaction-count">0</div>
+    </div>
+  </div>
+</div>
+
+<!-- PADLET -->
+<p id="comments_title">Wyświetl komentarze<br>(uwaga na spoilery)</p>
+<div id="padlet_box"></div>
 
 <script>
 (async function(){
 
-const qs=new URLSearchParams(location.search);
-const comicKey=qs.get("comic");
-const chapter=qs.get("chapter");
-const container=document.getElementById("comic-container");
+  const qs = new URLSearchParams(location.search);
+  const comicKey = qs.get("comic");
+  const chapter = qs.get("chapter");
+  const container = document.getElementById("comic-container");
 
-let data=await (await fetch(`${comicKey}.json`)).json();
-const pages=data.chapters[chapter];
+  if(!comicKey || !chapter){
+    container.innerHTML =
+      "<p style='color:white;text-align:center;padding:50px;'>Brak parametru.</p>";
+    return;
+  }
 
-let index=0;
+  // HOME
+  document.getElementById("homeBtn").onclick = () => {
+    location.href = "https://tajnachalupka.wixsite.com/tlumaczenia";
+  };
 
-async function loadNext(){
-  if(index>=pages.length)return;
+  // JSON
+  let data;
+  try{
+    const res = await fetch(`${comicKey}.json`);
+    data = await res.json();
+  }catch(e){
+    container.innerHTML =
+      "<p style='color:white;text-align:center;padding:50px;'>Błąd JSON.</p>";
+    return;
+  }
 
-  const src=pages[index];
-  index++;
+  // HEADER SERII
+  if(data.series_icon){
+    document.getElementById("series-img").src = data.series_icon;
+    document.getElementById("series-link").href =
+      `series.html?comic=${comicKey}`;
+  }
 
-  const img=document.createElement("img");
-  img.className="comic-page";
-  img.dataset.src=src;
-  img.dataset.retry="0";
-  img.src="";
+  const pages = data.chapters[chapter];
+  if(!pages){
+    container.innerHTML =
+      "<p style='color:white;text-align:center;padding:50px;'>Rozdział nie istnieje.</p>";
+    return;
+  }
 
-  img.onload=()=>document.getElementById("chapter_loading")?.remove();
+  // ZAPIS PRZECZYTANIA
+  localStorage.setItem(`read_${comicKey}_${chapter}`, "1");
 
-  img.onerror=()=>{
-    let t=+img.dataset.retry;
-    if(t<3){
-      img.dataset.retry=t+1;
-      img.src=img.dataset.src+"?r="+Date.now();
+  // DYNAMICZNY LAZY-LOAD: 1 obraz na raz
+  let index = 0;
+
+  async function loadNext(){
+    if(index >= pages.length) return;
+
+    const src = pages[index];
+    index++;
+
+    const img = document.createElement("img");
+    img.className = "comic-page";
+    img.dataset.src = src;
+    img.dataset.retry = "0";
+    img.src = "";
+
+    img.onload = () => {
+      const loading = document.getElementById("chapter_loading");
+      if(loading) loading.remove();
+    };
+
+    img.onerror = () => {
+      let t = +img.dataset.retry;
+      if(t < 3){
+        img.dataset.retry = String(t + 1);
+        img.src = img.dataset.src + "?r=" + Date.now();
+      }
+    };
+
+    container.appendChild(img);
+
+    // ładowanie obrazu gdy wejdzie w viewport
+    const obs = new IntersectionObserver(entries => {
+      if(entries[0].isIntersecting){
+        img.src = img.dataset.src;
+        obs.disconnect();
+      }
+    });
+    obs.observe(img);
+
+    // gdy dojedziemy do końca obrazu → ładuj następny
+    const endObs = new IntersectionObserver(entries => {
+      if(entries[0].isIntersecting){
+        endObs.disconnect();
+        loadNext();
+      }
+    }, { rootMargin:"0px 0px -80% 0px" });
+    endObs.observe(img);
+  }
+
+  loadNext();
+
+  // NAWIGACJA MIĘDZY ROZDZIAŁAMI
+  const keys = Object.keys(data.chapters).sort((a,b)=>{
+    const na = +a, nb = +b;
+    const ha = !isNaN(na), hb = !isNaN(nb);
+    if(ha && hb) return na - nb || a.localeCompare(b);
+    if(ha) return -1;
+    if(hb) return 1;
+    return a.localeCompare(b);
+  });
+
+  const idx = keys.indexOf(chapter);
+
+  document.getElementById("nextBtn").onclick = () => {
+    if(idx < keys.length - 1){
+      const next = keys[idx + 1];
+      location.href =
+        `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(next)}`;
+    }else{
+      location.href = "https://tajnachalupka.wixsite.com/tlumaczenia";
     }
   };
 
-  container.appendChild(img);
+  document.getElementById("prevBtn").onclick = () => {
+    if(idx > 0){
+      const prev = keys[idx - 1];
+      location.href =
+        `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(prev)}`;
+    }else{
+      location.href = "https://tajnachalupka.wixsite.com/tlumaczenia";
+    }
+  };
 
-  const obs=new IntersectionObserver(e=>{
-    if(e[0].isIntersecting){
-      img.src=img.dataset.src;
-      obs.disconnect();
+  // PADLET – prosty toggle (iframe wstawiasz jak chcesz)
+  const commentsTitle = document.getElementById("comments_title");
+  const padletBox = document.getElementById("padlet_box");
+
+  commentsTitle.addEventListener("click", () => {
+    if(padletBox.style.visibility === "visible"){
+      padletBox.style.opacity = "0";
+      setTimeout(()=>{ padletBox.style.visibility = "hidden"; }, 100);
+    }else{
+      if(!padletBox.innerHTML){
+        // tu wstaw swój iframe padleta:
+        padletBox.innerHTML =
+          "<iframe src='TWÓJ_PADLET_URL_TUTAJ' style='width:100%;height:500px;border:none;border-radius:8px;'></iframe>";
+      }
+      padletBox.style.visibility = "visible";
+      padletBox.style.opacity = "1";
     }
   });
-  obs.observe(img);
 
-  const endObs=new IntersectionObserver(e=>{
-    if(e[0].isIntersecting){
-      endObs.disconnect();
-      loadNext();
-    }
-  },{rootMargin:"0px 0px -80% 0px"});
-  endObs.observe(img);
-}
-
-loadNext();
-
-const keys=Object.keys(data.chapters).sort((a,b)=>{
-  const na=+a,nb=+b,ha=!isNaN(na),hb=!isNaN(nb);
-  if(ha&&hb)return na-nb||a.localeCompare(b);
-  if(ha)return -1;
-  if(hb)return 1;
-  return a.localeCompare(b);
-});
-
-const idx=keys.indexOf(chapter);
-
-document.getElementById("nextBtn").onclick=()=>{
-  location.href=idx<keys.length-1
-    ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[idx+1])}`
-    : "https://tajnachalupka.wixsite.com/tlumaczenia";
-};
-
-document.getElementById("prevBtn").onclick=()=>{
-  location.href=idx>0
-    ? `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(keys[idx-1])}`
-    : "https://tajnachalupka.wixsite.com/tlumaczenia";
-};
-
-document.getElementById("homeBtn").onclick=()=>{
-  location.href="https://tajnachalupka.wixsite.com/tlumaczenia";
-};
+  // REAKCJE – lokalne kliknięcia (bez backendu)
+  const reactionButtons = document.querySelectorAll(".reaction-btn");
+  reactionButtons.forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      if(btn.classList.contains("clicked")) return;
+      btn.classList.add("clicked");
+      const countEl = btn.parentElement.querySelector(".reaction-count");
+      const val = parseInt(countEl.textContent || "0", 10);
+      countEl.textContent = String(val + 1);
+      // tu możesz dodać wysyłkę do backendu, jeśli chcesz
+    });
+  });
 
 })();
 </script>
