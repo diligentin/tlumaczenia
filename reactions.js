@@ -142,7 +142,7 @@ buttons.forEach(btn => {
 
     // anulacja po 6 sekundach
     clearTimeout(timeoutId);
-    timeoutId = setTimeout(cancelPending, 6000);
+    timeoutId = setTimeout(cancelPending, 5000);
   });
 });
 
