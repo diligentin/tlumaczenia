@@ -260,23 +260,29 @@ body{
   let index = 0;
   let prefetchImg = null;
 
-  function loadImage(i){
-    return new Promise(resolve => {
-      const img = document.createElement("img");
-      img.className = "comic-page";
-      img.loading = "lazy";  
-      img.src = pages[i];
+ function loadImage(i){
+  return new Promise(resolve => {
 
-      img.onload = () => {
-        img.classList.add("loaded");
-        resolve(img);
-      };
+    const img = document.createElement("img");
+    img.className = "comic-page";
 
-      img.onerror = () => {
-        img.src = pages[i] + "?r=" + Date.now();
-      };
-    });
-  }
+    // 1. ustawiamy onload PRZED src
+    img.onload = () => {
+      img.classList.add("loaded");
+      resolve(img);
+    };
+
+    img.onerror = () => {
+      img.src = pages[i] + "?r=" + Date.now();
+    };
+
+    // 2. dodajemy obraz do DOM zanim ustawimy src
+    container.appendChild(img);
+
+    // 3. dopiero teraz ustawiamy src
+    img.src = pages[i];
+  });
+}
 
   async function loadSequence(){
     // 1) Ładujemy pierwszy obraz
