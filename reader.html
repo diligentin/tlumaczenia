@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>✦⏖✦v</title>
+<title>✦⏖✦</title>
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
 <style>
@@ -257,50 +257,40 @@ body{
   localStorage.setItem(`read_${comicKey}_${chapter}`, "1");
 
   // B+ PREFETCH 1
+  let index = 0;
   let prefetchImg = null;
 
-  /* ⭐ DZIAŁAJĄCY FADE-IN ⭐ */
-function loadImage(i){
-  return new Promise(resolve => {
+  function loadImage(i){
+    return new Promise(resolve => {
+      const img = document.createElement("img");
+      img.className = "comic-page";
+      img.src = pages[i];
 
-    const img = document.createElement("img");
-    img.classList.add("comic-page");
-    img.style.opacity = "0";
-
-    function fadeIn(){
-      requestAnimationFrame(() => {
+      img.onload = () => {
         img.classList.add("loaded");
         resolve(img);
-      });
-    }
+      };
 
-    img.onload = fadeIn;
-
-    img.onerror = () => {
-      img.src = pages[i] + "?r=" + Date.now();
-    };
-
-    // 1) dodajemy do DOM
-    container.appendChild(img);
-
-    // 2) ustawiamy src
-    img.src = pages[i];
-
-    // 3) jeśli obraz był w cache → onload NIE odpali się
-    if (img.complete) {
-      fadeIn();
-    }
-  });
-}
+      img.onerror = () => {
+        img.src = pages[i] + "?r=" + Date.now();
+      };
+    });
+  }
 
   async function loadSequence(){
+    // 1) Ładujemy pierwszy obraz
     const first = await loadImage(0);
+    container.appendChild(first);
+
+    // usuwamy napis dopiero teraz
     document.getElementById("chapter_loading")?.remove();
 
+    // 2) Prefetch obrazu nr 2
     if(pages[1]){
       prefetchImg = loadImage(1);
     }
 
+    // 3) Ładujemy resztę
     for(let i=1;i<pages.length;i++){
       let img;
 
@@ -311,6 +301,9 @@ function loadImage(i){
         img = await loadImage(i);
       }
 
+      container.appendChild(img);
+
+      // prefetch kolejnego
       if(pages[i+1]){
         prefetchImg = loadImage(i+1);
       }
@@ -318,6 +311,14 @@ function loadImage(i){
   }
 
   loadSequence();
+
+  // przywracanie pozycji scrolla
+const saved = localStorage.getItem(`scroll_${comicKey}_${chapter}`);
+if (saved) {
+  setTimeout(() => {
+    window.scrollTo(0, parseInt(saved));
+  }, 50);
+}
 
   // NAWIGACJA MIĘDZY ROZDZIAŁAMI
   const keys = Object.keys(data.chapters).sort((a,b)=>{
@@ -400,8 +401,7 @@ window.addEventListener("scroll", () => {
 });
 </script>
 
-<!-- ⭐ STRZAŁKI KLAWIATURY ⭐ -->
-<script>
+  <script>
 document.addEventListener("keydown", e => {
   if (e.key === "ArrowRight") {
     document.getElementById("nextBtn").click();
@@ -413,6 +413,10 @@ document.addEventListener("keydown", e => {
 </script>
 
 <script type="module" src="reactions.js"></script>
+// zapisywanie pozycji scrolla
+window.addEventListener("scroll", () => {
+  localStorage.setItem(`scroll_${comicKey}_${chapter}`, window.scrollY);
+});
 
 </body>
 </html>
