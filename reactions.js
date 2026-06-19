@@ -24,7 +24,7 @@ const counts = document.querySelectorAll(".reaction-count");
 // ŁADOWANIE LICZNIKÓW
 // ------------------------------
 async function loadCounts() {
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("reactions")
     .select("*")
     .eq("id", reactionId)
@@ -74,6 +74,19 @@ async function sendReaction(index, btn) {
   localStorage.setItem(`${localKey}_${index}`, "1");
   btn.classList.add("clicked");
   btn.style.opacity = ".4";
+
+  /* ⭐ FLASH POTWIERDZENIA (bez powiększania) ⭐ */
+  const flash = document.createElement("div");
+  flash.className = "reaction-flash";
+
+  const rect = btn.getBoundingClientRect();
+  flash.style.left = rect.width / 2 - 13 + "px";
+  flash.style.top = rect.height / 2 - 13 + "px";
+
+  btn.parentElement.style.position = "relative";
+  btn.parentElement.appendChild(flash);
+
+  setTimeout(() => flash.remove(), 300);
 
   loadCounts();
 }
