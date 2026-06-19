@@ -312,7 +312,7 @@ body{
 
   loadSequence();
 
-  // przywracanie pozycji scrolla
+// przywracanie pozycji scrolla
 const saved = localStorage.getItem(`scroll_${comicKey}_${chapter}`);
 if (saved) {
   setTimeout(() => {
@@ -329,6 +329,11 @@ if (saved) {
     if(hb) return 1;
     return a.localeCompare(b);
   });
+
+  // zapisywanie pozycji scrolla
+window.addEventListener("scroll", () => {
+  localStorage.setItem(`scroll_${comicKey}_${chapter}`, window.scrollY);
+});
 
   const idx = keys.indexOf(chapter);
 
