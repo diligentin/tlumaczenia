@@ -260,29 +260,32 @@ body{
   let prefetchImg = null;
 
   /* ⭐ DZIAŁAJĄCY FADE-IN ⭐ */
-  function loadImage(i){
-    return new Promise(resolve => {
+ function loadImage(i){
+  return new Promise(resolve => {
 
-      const img = document.createElement("img");
-      img.className = "comic-page";
-      img.style.opacity = "0"; // fade-in start
+    const img = document.createElement("img");
+    img.className = "comic-page";
+    img.style.opacity = "0"; // fade-in start
 
-      img.onload = () => {
-        requestAnimationFrame(() => {
-          img.classList.add("loaded");
-          resolve(img);
-        });
-      };
+    img.onload = () => {
+      requestAnimationFrame(() => {
+        img.classList.add("loaded"); // fade-in
+        resolve(img);
+      });
+    };
 
-      img.onerror = () => {
-        img.src = pages[i] + "?r=" + Date.now();
-      };
+    img.onerror = () => {
+      img.src = pages[i] + "?r=" + Date.now();
+    };
 
-      // klucz: dodajemy do DOM zanim ustawimy src
-      container.appendChild(img);
-      img.src = pages[i];
-    });
-  }
+    // KLUCZ: dodajemy obraz do DOM zanim ustawimy src
+    container.appendChild(img);
+
+    // dopiero teraz ustawiamy src → fade-in działa ZAWSZE
+    img.src = pages[i];
+  });
+}
+
 
   async function loadSequence(){
     const first = await loadImage(0);
