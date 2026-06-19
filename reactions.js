@@ -1,7 +1,8 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const SUPABASE_URL = "https://ksoqkpzjdjoglnfflfui.supabase.co";
-const SUPABASE_KEY = "sb_publishable_4d_svQaLP_NzQ3KV3Qy20Q_KQzwuL_C";
+/* ⭐ UŻYWAMY STAREJ, DZIAŁAJĄCEJ BAZY ⭐ */
+const SUPABASE_URL = "https://wjspjyqqsepcxnmjbxbp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_snjwsTMDLiTgtwTlI_CD7w_8y5z1Q6_";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -23,7 +24,7 @@ const counts = document.querySelectorAll(".reaction-count");
 // ŁADOWANIE LICZNIKÓW
 // ------------------------------
 async function loadCounts() {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("reactions")
     .select("*")
     .eq("id", reactionId)
@@ -79,7 +80,7 @@ async function sendReaction(index, btn) {
 
 
 // ------------------------------
-// PODWÓJNE KLIKNIĘCIE + „POTWIERDŹ” + ANULACJA
+// PODWÓJNE KLIKNIĘCIE + POTWIERDŹ
 // ------------------------------
 let pending = null;
 let timeoutId = null;
@@ -107,10 +108,9 @@ buttons.forEach(btn => {
 
     if (btn.classList.contains("clicked")) return;
 
-    // ⭐ DRUGIE KLIKNIĘCIE = POTWIERDZENIE
+    // DRUGIE KLIKNIĘCIE = POTWIERDZENIE
     if (confirmMode && pending === index) {
 
-      // natychmiast blokujemy wizualnie
       btn.classList.add("clicked");
       btn.style.opacity = ".4";
 
@@ -119,7 +119,7 @@ buttons.forEach(btn => {
       return;
     }
 
-    // ⭐ PIERWSZE KLIKNIĘCIE
+    // PIERWSZE KLIKNIĘCIE
     pending = index;
     confirmMode = true;
 
@@ -147,7 +147,7 @@ buttons.forEach(btn => {
   });
 });
 
-// ⭐ ANULACJA KLIKNIĘCIEM POZA
+// ANULACJA KLIKNIĘCIEM POZA
 document.addEventListener("click", e => {
   if (!e.target.closest(".reaction-btn")) {
     cancelPending();
