@@ -62,27 +62,6 @@ body{
   height:30px;
   filter:invert(1);
 }
-  #chapter-nav {
-  text-align: center;
-  margin: 40px 0 20px;
-}
-
-.chapter-nav-btn {
-  display: inline-block;
-  padding: 12px 24px;
-  background: #ffffff15;
-  border: 1px solid #ffffff40;
-  border-radius: 8px;
-  color: white;
-  font-size: 18px;
-  text-decoration: none;
-  transition: 0.2s;
-}
-
-.chapter-nav-btn:hover {
-  background: #ffffff25;
-}
-
 
 /* HEADER */
 #series-header{
@@ -195,8 +174,16 @@ body{
   </div>
 </div>
 
-  <div class="next-button-container">
-  <a href="#" id="next-chapter" class="next-button">Next ▶</a>
+   <button id="next_chapter_btn" style="
+    padding:14px 22px;
+    background:#272727;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+  ">
+    <img src="https://tajnachalupka.github.io/main/szczala-next.png"
+         style="width:32px; height:32px;">
+  </button>
 </div>
 
 <!-- REAKCJE -->
@@ -370,6 +357,19 @@ if (nextBtn) {
   nextBtn.href = `reader.html?comic=${comicKey}&chapter=${nextChapter}`;
 }
 
+  // przycisk "następny rozdział" pod obrazami
+if (idx < keys.length - 1) {
+  const next = keys[idx + 1];
+  const box = document.getElementById("next_chapter_bottom");
+  const btn = document.getElementById("next_chapter_btn");
+
+  box.style.display = "block";
+
+  btn.onclick = () => {
+    location.href =
+      `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(next)}`;
+  };
+}
   /* PADLET */
   let padletLoaded = false;
   document.getElementById("comments_title").onclick = () => {
