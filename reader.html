@@ -394,6 +394,16 @@ window.addEventListener("scroll", () => {
 </script>
 
 <script type="module" src="reactions.js"></script>
+<script>
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowRight") {
+    document.getElementById("nextBtn").click();
+  }
+  if (e.key === "ArrowLeft") {
+    document.getElementById("prevBtn").click();
+  }
+});
+</script>
 
 </body>
 </html>
