@@ -1,5 +1,5 @@
 {
-  "slug": "mnbig",
+  "slug": "mnbig2",
   "title": "my new boss is goofy",
   "header_img": "https://tajnachalupka.github.io/main/tagi/mnbig.png",
   "series_icon": "https://tajnachalupka.github.io/main/guzik-gora/mnbig.png",
@@ -10,7 +10,7 @@
   "Tom 2.": { "from": "10", "to": "999" }
 },
  "padlet": "https://padlet.com/vvvvvvvvvvvvvvvvvvvvv/moj-fantazyjny-padlet-f8cr1b86pg2yf4em",
-  "disqus_base": "mnbig",
+  "disqus_base": "mnbig2",
   "chapters": {
     "1": [
       "https://tajnachalupka.github.io/mnbig/v1/mnbig1.jpg"
