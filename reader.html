@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>✦⏖✦ó</title>
+<title>✦⏖✦</title>
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
 <style>
@@ -174,20 +174,6 @@ body{
   </div>
 </div>
 
-<!-- ⭐ TWÓJ GUZIK NEXT POD KOMIKSEM (NAPRAWIONY) ⭐ -->
-<div id="next_chapter_bottom" style="display:none; text-align:center; margin:40px 0;">
-  <button id="next_chapter_btn" style="
-    padding:14px 22px;
-    background:#272727;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-  ">
-    <img src="https://tajnachalupka.github.io/main/szczala-next.png"
-         style="width:32px; height:32px;">
-  </button>
-</div>
-
 <!-- REAKCJE -->
 <div id="chapter_reactions">
   <div class="reactions-row">
@@ -273,6 +259,7 @@ body{
   // PREFETCH
   let prefetchImg = null;
 
+  /* ⭐ DZIAŁAJĄCA FUNKCJA DLA TELEFONÓW ⭐ */
   function loadImage(i){
     return new Promise(resolve => {
 
@@ -351,22 +338,6 @@ body{
     }
   };
 
-  /* ⭐ TWÓJ GUZIK NEXT POD KOMIKSEM — DZIAŁAJĄCY ⭐ */
-  if (idx < keys.length - 1) {
-    const next = keys[idx + 1];
-    const box = document.getElementById("next_chapter_bottom");
-    const btn = document.getElementById("next_chapter_btn");
-
-    if (box) box.style.display = "block";
-
-    if (btn) {
-      btn.onclick = () => {
-        location.href =
-          `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(next)}`;
-      };
-    }
-  }
-
   /* PADLET */
   let padletLoaded = false;
   document.getElementById("comments_title").onclick = () => {
@@ -434,14 +405,12 @@ document.addEventListener("click", e => {
   const h = window.innerHeight;
   const y = e.clientY;
 
-  // Scroll działa TYLKO jeśli kliknięto na obraz komiksu
-  if (!e.target.classList.contains("comic-page")) {
-    return;
-  }
+  if (e.target.closest(".nav-buttons") || e.target.closest("#series-header")) return;
 
-  // Scroll TYLKO w dół
   if (y > h * 0.55) {
-    window.scrollBy({ top: h * 0.9 });
+    window.scrollBy({ top: h * 0.85, behavior: "smooth" });
+  } else if (y < h * 0.45) {
+    window.scrollBy({ top: -h * 0.85, behavior: "smooth" });
   }
 });
 </script>
