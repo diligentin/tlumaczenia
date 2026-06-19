@@ -75,18 +75,19 @@ async function sendReaction(index, btn) {
   btn.classList.add("clicked");
   btn.style.opacity = ".4";
 
-  /* ⭐ FLASH POTWIERDZENIA (bez powiększania) ⭐ */
-  const flash = document.createElement("div");
-  flash.className = "reaction-flash";
+  /* ⭐ CHECKMARK POTWIERDZENIA ⭐ */
+  const check = document.createElement("div");
+  check.className = "reaction-check";
+  check.textContent = "✓";
 
   const rect = btn.getBoundingClientRect();
-  flash.style.left = rect.width / 2 - 13 + "px";
-  flash.style.top = rect.height / 2 - 13 + "px";
+  check.style.left = rect.width / 2 - 8 + "px";
+  check.style.top = rect.height / 2 - 14 + "px";
 
   btn.parentElement.style.position = "relative";
-  btn.parentElement.appendChild(flash);
+  btn.parentElement.appendChild(check);
 
-  setTimeout(() => flash.remove(), 300);
+  setTimeout(() => check.remove(), 350);
 
   loadCounts();
 }
