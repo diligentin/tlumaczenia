@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>✦⏖✦</title>
+<title>✦⏖✦m</title>
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
 <style>
@@ -259,6 +259,7 @@ body{
   // B+ PREFETCH 1
   let prefetchImg = null;
 
+  /* ⭐ DZIAŁAJĄCY FADE-IN ⭐ */
   function loadImage(i){
     return new Promise(resolve => {
 
@@ -277,7 +278,7 @@ body{
         img.src = pages[i] + "?r=" + Date.now();
       };
 
-      // dodajemy do DOM zanim ustawimy src → fade-in działa zawsze
+      // klucz: dodajemy do DOM zanim ustawimy src
       container.appendChild(img);
       img.src = pages[i];
     });
@@ -390,7 +391,7 @@ window.addEventListener("scroll", () => {
 });
 </script>
 
-<!-- STRZAŁKI KLAWIATURY -->
+<!-- ⭐ STRZAŁKI KLAWIATURY ⭐ -->
 <script>
 document.addEventListener("keydown", e => {
   if (e.key === "ArrowRight") {
