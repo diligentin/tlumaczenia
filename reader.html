@@ -260,32 +260,38 @@ body{
   let prefetchImg = null;
 
   /* ⭐ DZIAŁAJĄCY FADE-IN ⭐ */
- function loadImage(i){
+function loadImage(i){
   return new Promise(resolve => {
 
     const img = document.createElement("img");
-    img.className = "comic-page";
-    img.style.opacity = "0"; // fade-in start
+    img.classList.add("comic-page");
+    img.style.opacity = "0";
 
-    img.onload = () => {
+    function fadeIn(){
       requestAnimationFrame(() => {
-        img.classList.add("loaded"); // fade-in
+        img.classList.add("loaded");
         resolve(img);
       });
-    };
+    }
+
+    img.onload = fadeIn;
 
     img.onerror = () => {
       img.src = pages[i] + "?r=" + Date.now();
     };
 
-    // KLUCZ: dodajemy obraz do DOM zanim ustawimy src
+    // 1) dodajemy do DOM
     container.appendChild(img);
 
-    // dopiero teraz ustawiamy src → fade-in działa ZAWSZE
+    // 2) ustawiamy src
     img.src = pages[i];
+
+    // 3) jeśli obraz był w cache → onload NIE odpali się
+    if (img.complete) {
+      fadeIn();
+    }
   });
 }
-
 
   async function loadSequence(){
     const first = await loadImage(0);
