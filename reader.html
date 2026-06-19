@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>✦⏖✦</title>
+<title>✦⏖✦pp</title>
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
 <style>
@@ -271,14 +271,15 @@ body{
     img.dataset.retry = "0";
     img.src = "";
 
-  img.onload = () => {
-  img.classList.add("loaded");
+    img.onload = () => {
+      img.classList.add("loaded");
 
-  const loading = document.getElementById("chapter_loading");
-  if (loading) {
-    setTimeout(() => loading.remove(), 350);
-  }
-};
+      // USUWAMY NAPIS TYLKO GDY ZAŁADOWAŁ SIĘ PIERWSZY OBRAZ Z LISTY
+      if (index === 1) {
+        const loading = document.getElementById("chapter_loading");
+        loading?.remove();
+      }
+    };
 
     img.onerror = () => {
       let t = +img.dataset.retry;
