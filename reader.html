@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>✦⏖✦jg</title>
+<title>✦⏖✦</title>
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
 <style>
@@ -29,7 +29,7 @@ body{
   image-rendering:-webkit-optimize-contrast;
   object-fit:contain;
   opacity:0;
-  transition:opacity .8s ease;
+  transition:opacity .35s ease;
 }
 .comic-page.loaded{
   opacity:1;
@@ -256,14 +256,15 @@ body{
   // ZAPIS PRZECZYTANIA
   localStorage.setItem(`read_${comicKey}_${chapter}`, "1");
 
-  // B+ PREFETCH 1 — FADE-IN FIX
-  let prefetch = null;
+  // B+ PREFETCH 1
+  let prefetchImg = null;
 
   function loadImage(i){
     return new Promise(resolve => {
+
       const img = document.createElement("img");
       img.className = "comic-page";
-      img.style.opacity = "0";
+      img.style.opacity = "0"; // fade-in start
 
       img.onload = () => {
         requestAnimationFrame(() => {
@@ -276,6 +277,7 @@ body{
         img.src = pages[i] + "?r=" + Date.now();
       };
 
+      // dodajemy do DOM zanim ustawimy src → fade-in działa zawsze
       container.appendChild(img);
       img.src = pages[i];
     });
@@ -285,20 +287,22 @@ body{
     const first = await loadImage(0);
     document.getElementById("chapter_loading")?.remove();
 
-    if(pages[1]) prefetch = loadImage(1);
+    if(pages[1]){
+      prefetchImg = loadImage(1);
+    }
 
     for(let i=1;i<pages.length;i++){
       let img;
 
-      if(prefetch){
-        img = await prefetch;
-        prefetch = null;
+      if(prefetchImg){
+        img = await prefetchImg;
+        prefetchImg = null;
       } else {
         img = await loadImage(i);
       }
 
       if(pages[i+1]){
-        prefetch = loadImage(i+1);
+        prefetchImg = loadImage(i+1);
       }
     }
   }
