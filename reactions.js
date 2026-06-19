@@ -23,7 +23,7 @@ const counts = document.querySelectorAll(".reaction-count");
 // ŁADOWANIE LICZNIKÓW
 // ------------------------------
 async function loadCounts() {
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("reactions")
     .select("*")
     .eq("id", reactionId)
@@ -31,10 +31,8 @@ async function loadCounts() {
 
   const arr = data?.counts || [0,0,0,0,0,0];
 
-  // Ustaw liczniki
   counts.forEach((c, i) => c.textContent = arr[i]);
 
-  // Zamroź tylko te guziki, które były kliknięte
   buttons.forEach((btn, i) => {
     if (localStorage.getItem(`${localKey}_${i}`)) {
       btn.classList.add("clicked");
@@ -49,7 +47,6 @@ async function loadCounts() {
 // ------------------------------
 async function sendReaction(index, btn) {
 
-  // Blokada per guzik
   if (localStorage.getItem(`${localKey}_${index}`)) return;
 
   let { data, error } = await supabase
@@ -58,7 +55,6 @@ async function sendReaction(index, btn) {
     .eq("id", reactionId)
     .single();
 
-  // Jeśli brak rekordu → tworzymy
   let arr = data?.counts ? [...data.counts] : [0,0,0,0,0,0];
   arr[index]++;
 
@@ -74,7 +70,6 @@ async function sendReaction(index, btn) {
       .eq("id", reactionId);
   }
 
-  // Zamrożenie tylko tego jednego guzika
   localStorage.setItem(`${localKey}_${index}`, "1");
   btn.classList.add("clicked");
   btn.style.opacity = ".4";
@@ -84,7 +79,7 @@ async function sendReaction(index, btn) {
 
 
 // ------------------------------
-// PODWÓJNE KLIKNIĘCIE + PRZYCIEMNIENIE
+// PODWÓJNE KLIKNIĘCIE + PRZYCIEMNIENIE + „POTWIERDŹ”
 // ------------------------------
 let pending = null;
 let timeoutId = null;
@@ -93,12 +88,15 @@ buttons.forEach(btn => {
   btn.addEventListener("click", () => {
     const index = parseInt(btn.dataset.reaction);
 
-    // Jeśli guzik już kliknięty wcześniej → ignoruj
     if (btn.classList.contains("clicked")) return;
 
     // DRUGIE KLIKNIĘCIE = POTWIERDZENIE
     if (pending === index) {
       clearTimeout(timeoutId);
+
+      // usuń napis
+      const label = btn.parentElement.querySelector(".confirm-label");
+      if (label) label.remove();
 
       // przywróć normalny wygląd
       buttons.forEach(b => {
@@ -107,28 +105,40 @@ buttons.forEach(btn => {
 
       pending = null;
 
-      // wyślij reakcję
       sendReaction(index, btn);
       return;
     }
 
-    // PIERWSZE KLIKNIĘCIE = WYBÓR
+    // PIERWSZE KLIKNIĘCIE
     pending = index;
 
-    // przyciemnij wszystkie inne
+    // usuń stare napisy
+    document.querySelectorAll(".confirm-label").forEach(el => el.remove());
+
+    // przyciemnij inne
     buttons.forEach(b => {
       if (b !== btn && !b.classList.contains("clicked")) {
         b.style.opacity = "0.3";
       }
     });
 
-    // kliknięta ikona zostaje normalna
     btn.style.opacity = "1";
+
+    // dodaj napis „potwierdź”
+    const label = document.createElement("div");
+    label.className = "confirm-label";
+    label.textContent = "potwierdź";
+    label.style.color = "white";
+    label.style.fontSize = "12px";
+    label.style.marginTop = "4px";
+    label.style.opacity = "0.8";
+    btn.parentElement.appendChild(label);
 
     // anulacja po 3 sekundach
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
       pending = null;
+      label.remove();
       buttons.forEach(b => {
         if (!b.classList.contains("clicked")) b.style.opacity = "1";
       });
