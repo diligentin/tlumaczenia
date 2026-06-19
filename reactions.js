@@ -79,32 +79,35 @@ async function sendReaction(index, btn) {
 
 
 // ------------------------------
-// PODWÓJNE KLIKNIĘCIE + PRZYCIEMNIENIE + „POTWIERDŹ”
+// PODWÓJNE KLIKNIĘCIE + PRZYCIEMNIENIE + „POTWIERDŹ” + ANULACJA POZA
 // ------------------------------
 let pending = null;
 let timeoutId = null;
 
+function cancelPending() {
+  pending = null;
+  clearTimeout(timeoutId);
+
+  // usuń napis
+  document.querySelectorAll(".confirm-label").forEach(el => el.remove());
+
+  // przywróć normalny wygląd
+  buttons.forEach(b => {
+    if (!b.classList.contains("clicked")) b.style.opacity = "1";
+  });
+}
+
 buttons.forEach(btn => {
-  btn.addEventListener("click", () => {
+  btn.addEventListener("click", e => {
+    e.stopPropagation(); // kliknięcie na reakcję NIE anuluje
+
     const index = parseInt(btn.dataset.reaction);
 
     if (btn.classList.contains("clicked")) return;
 
     // DRUGIE KLIKNIĘCIE = POTWIERDZENIE
     if (pending === index) {
-      clearTimeout(timeoutId);
-
-      // usuń napis
-      const label = btn.parentElement.querySelector(".confirm-label");
-      if (label) label.remove();
-
-      // przywróć normalny wygląd
-      buttons.forEach(b => {
-        if (!b.classList.contains("clicked")) b.style.opacity = "1";
-      });
-
-      pending = null;
-
+      cancelPending();
       sendReaction(index, btn);
       return;
     }
@@ -129,21 +132,22 @@ buttons.forEach(btn => {
     label.className = "confirm-label";
     label.textContent = "potwierdź";
     label.style.color = "white";
-    label.style.fontSize = "12px";
+    label.style.fontSize = "13px";
     label.style.marginTop = "4px";
     label.style.opacity = "0.8";
     btn.parentElement.appendChild(label);
 
-    // anulacja po 3 sekundach
+    // anulacja po 6 sekundach
     clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      pending = null;
-      label.remove();
-      buttons.forEach(b => {
-        if (!b.classList.contains("clicked")) b.style.opacity = "1";
-      });
-    }, 3000);
+    timeoutId = setTimeout(cancelPending, 6000);
   });
+});
+
+// ANULACJA KLIKNIĘCIEM POZA REAKCJAMI
+document.addEventListener("click", e => {
+  if (!e.target.closest(".reaction-btn")) {
+    cancelPending();
+  }
 });
 
 
