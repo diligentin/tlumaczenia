@@ -38,6 +38,7 @@ async function loadCounts() {
   buttons.forEach((btn, i) => {
     if (localStorage.getItem(`${localKey}_${i}`)) {
       btn.classList.add("clicked");
+      btn.style.opacity = ".4";
     }
   });
 }
@@ -76,18 +77,62 @@ async function sendReaction(index, btn) {
   // Zamrożenie tylko tego jednego guzika
   localStorage.setItem(`${localKey}_${index}`, "1");
   btn.classList.add("clicked");
+  btn.style.opacity = ".4";
 
   loadCounts();
 }
 
 
 // ------------------------------
-// OBSŁUGA KLIKNIĘĆ
+// PODWÓJNE KLIKNIĘCIE + PRZYCIEMNIENIE
 // ------------------------------
+let pending = null;
+let timeoutId = null;
+
 buttons.forEach(btn => {
   btn.addEventListener("click", () => {
     const index = parseInt(btn.dataset.reaction);
-    sendReaction(index, btn);
+
+    // Jeśli guzik już kliknięty wcześniej → ignoruj
+    if (btn.classList.contains("clicked")) return;
+
+    // DRUGIE KLIKNIĘCIE = POTWIERDZENIE
+    if (pending === index) {
+      clearTimeout(timeoutId);
+
+      // przywróć normalny wygląd
+      buttons.forEach(b => {
+        if (!b.classList.contains("clicked")) b.style.opacity = "1";
+      });
+
+      pending = null;
+
+      // wyślij reakcję
+      sendReaction(index, btn);
+      return;
+    }
+
+    // PIERWSZE KLIKNIĘCIE = WYBÓR
+    pending = index;
+
+    // przyciemnij wszystkie inne
+    buttons.forEach(b => {
+      if (b !== btn && !b.classList.contains("clicked")) {
+        b.style.opacity = "0.3";
+      }
+    });
+
+    // kliknięta ikona zostaje normalna
+    btn.style.opacity = "1";
+
+    // anulacja po 3 sekundach
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      pending = null;
+      buttons.forEach(b => {
+        if (!b.classList.contains("clicked")) b.style.opacity = "1";
+      });
+    }, 3000);
   });
 });
 
