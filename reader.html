@@ -174,7 +174,9 @@ body{
   </div>
 </div>
 
-   <button id="next_chapter_btn" style="
+<!-- ⭐ TWÓJ GUZIK NEXT POD KOMIKSEM (NAPRAWIONY) ⭐ -->
+<div id="next_chapter_bottom" style="display:none; text-align:center; margin:40px 0;">
+  <button id="next_chapter_btn" style="
     padding:14px 22px;
     background:#272727;
     border:none;
@@ -271,7 +273,6 @@ body{
   // PREFETCH
   let prefetchImg = null;
 
-  /* ⭐ DZIAŁAJĄCA FUNKCJA DLA TELEFONÓW ⭐ */
   function loadImage(i){
     return new Promise(resolve => {
 
@@ -350,26 +351,22 @@ body{
     }
   };
 
-  const nextBtn = document.getElementById("next-chapter");
+  /* ⭐ TWÓJ GUZIK NEXT POD KOMIKSEM — DZIAŁAJĄCY ⭐ */
+  if (idx < keys.length - 1) {
+    const next = keys[idx + 1];
+    const box = document.getElementById("next_chapter_bottom");
+    const btn = document.getElementById("next_chapter_btn");
 
-if (nextBtn) {
-  const nextChapter = parseInt(chapter) + 1;
-  nextBtn.href = `reader.html?comic=${comicKey}&chapter=${nextChapter}`;
-}
+    if (box) box.style.display = "block";
 
-  // przycisk "następny rozdział" pod obrazami
-if (idx < keys.length - 1) {
-  const next = keys[idx + 1];
-  const box = document.getElementById("next_chapter_bottom");
-  const btn = document.getElementById("next_chapter_btn");
+    if (btn) {
+      btn.onclick = () => {
+        location.href =
+          `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(next)}`;
+      };
+    }
+  }
 
-  box.style.display = "block";
-
-  btn.onclick = () => {
-    location.href =
-      `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(next)}`;
-  };
-}
   /* PADLET */
   let padletLoaded = false;
   document.getElementById("comments_title").onclick = () => {
@@ -444,10 +441,9 @@ document.addEventListener("click", e => {
 
   // Scroll TYLKO w dół
   if (y > h * 0.55) {
-    window.scrollBy({ top: h * 0.9,});
+    window.scrollBy({ top: h * 0.9 });
   }
 });
-
 </script>
 
 <script type="module" src="reactions.js"></script>
