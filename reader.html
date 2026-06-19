@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>✦⏖✦i</title>
+<title>✦⏖✦</title>
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
 <style>
@@ -59,7 +59,7 @@ body{
 }
 .btn-icon{
   width:30px;
-  height:30px;  
+  height:30px;
   filter:invert(1);
 }
 
@@ -172,23 +172,6 @@ body{
   <div class="nav-btn" id="homeBtn">
     <img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon">
   </div>
-</div>
-
-  <div id="next_chapter_bottom" style="
-  text-align:center;
-  margin:40px 0 20px;
-  display:none;
-">
-  <button id="next_chapter_btn" style="
-    padding:14px 22px;
-    background:#272727;
-    border:none;
-    border-radius:10px;
-    cursor:pointer;
-  ">
-    <img src="https://tajnachalupka.github.io/main/szczala-next.png"
-         style="width:32px; height:32px;">
-  </button>
 </div>
 
 <!-- REAKCJE -->
@@ -334,20 +317,6 @@ body{
   });
 
   const idx = keys.indexOf(chapter);
-  
-// przycisk "następny rozdział" pod obrazami
-if (idx < keys.length - 1) {
-  const next = keys[idx + 1];
-  const box = document.getElementById("next_chapter_bottom");
-  const btn = document.getElementById("next_chapter_btn");
-
-  box.style.display = "block";
-
-  btn.onclick = () => {
-    location.href =
-      `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(next)}`;
-  };
-}
 
   document.getElementById("nextBtn").onclick = () => {
     if(idx < keys.length - 1){
@@ -436,14 +405,17 @@ document.addEventListener("click", e => {
   const h = window.innerHeight;
   const y = e.clientY;
 
-  if (e.target.closest(".nav-buttons") || e.target.closest("#series-header")) return;
+  // Scroll działa TYLKO jeśli kliknięto na obraz komiksu
+  if (!e.target.classList.contains("comic-page")) {
+    return;
+  }
 
+  // Scroll TYLKO w dół
   if (y > h * 0.55) {
     window.scrollBy({ top: h * 0.8, behavior: "smooth" });
-  } else if (y < h * 0.45) {
-    window.scrollBy({ top: -h * 0.8, behavior: "smooth" });
   }
 });
+
 </script>
 
 <script type="module" src="reactions.js"></script>
