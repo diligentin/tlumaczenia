@@ -143,22 +143,30 @@ body{
   transition:opacity .1s;
   margin-top:30px;
 }
-
-.reaction-flash {
+.reaction-check {
   position: absolute;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: white;
-  opacity: 0.7;
-  animation: flashEffect 0.28s ease-out forwards;
+  font-size: 22px;
+  color: white;
+  opacity: 0;
+  animation: checkPop 0.35s ease-out forwards;
   pointer-events: none;
 }
 
-@keyframes flashEffect {
-  0% { opacity: 0.7; }
-  100% { opacity: 0; }
+@keyframes checkPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
 }
+
 
 </style>
 </head>
