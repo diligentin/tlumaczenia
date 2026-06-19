@@ -407,7 +407,7 @@ document.addEventListener("click", e => {
 
   if (e.target.closest(".nav-buttons") || e.target.closest("#series-header")) return;
 
-  if (y > h * 0.55) {
+  if (y > h * 0.95) {
     window.scrollBy({ top: h * 0.85, behavior: "smooth" });
   } else if (y < h * 0.45) {
     window.scrollBy({ top: -h * 0.85, behavior: "smooth" });
