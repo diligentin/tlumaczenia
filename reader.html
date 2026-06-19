@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>✦⏖✦jg</title>
+<title>✦⏖✦</title>
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
 <style>
@@ -256,66 +256,61 @@ body{
   // ZAPIS PRZECZYTANIA
   localStorage.setItem(`read_${comicKey}_${chapter}`, "1");
 
-  // NOWY SYSTEM OBRAZÓW — dynamiczny, bez slicera
+  // B+ PREFETCH 1
   let index = 0;
+  let prefetchImg = null;
 
-  async function loadNext(){
-    if(index >= pages.length) return;
+  function loadImage(i){
+    return new Promise(resolve => {
+      const img = document.createElement("img");
+      img.className = "comic-page";
+      img.src = pages[i];
 
-    const src = pages[index];
-    index++;
+      img.onload = () => {
+        img.classList.add("loaded");
+        resolve(img);
+      };
 
-    const img = document.createElement("img");
-    img.className = "comic-page";
-    img.dataset.src = src;
-    img.dataset.retry = "0";
-    img.src = "";
-
-    // ZAPAMIĘTUJEMY PIERWSZY OBRAZ Z LISTY
-    if (index === 1) {
-      window.firstRealImage = img;
-    }
-
-    img.onload = () => {
-      img.classList.add("loaded");
-
-      // USUWAMY NAPIS TYLKO GDY ZAŁADOWAŁ SIĘ PIERWSZY OBRAZ
-      if (img === window.firstRealImage) {
-        const loading = document.getElementById("chapter_loading");
-        loading?.remove();
-      }
-    };
-
-    img.onerror = () => {
-      let t = +img.dataset.retry;
-      if(t < 3){
-        img.dataset.retry = String(t + 1);
-        img.src = img.dataset.src + "?r=" + Date.now();
-      }
-    };
-
-    container.appendChild(img);
-
-    // lazy-load
-    const obs = new IntersectionObserver(entries => {
-      if(entries[0].isIntersecting){
-        img.src = img.dataset.src;
-        obs.disconnect();
-      }
+      img.onerror = () => {
+        img.src = pages[i] + "?r=" + Date.now();
+      };
     });
-    obs.observe(img);
-
-    // auto-load next
-    const endObs = new IntersectionObserver(entries => {
-      if(entries[0].isIntersecting){
-        endObs.disconnect();
-        loadNext();
-      }
-    }, { rootMargin:"0px 0px -80% 0px" });
-    endObs.observe(img);
   }
 
-  loadNext();
+  async function loadSequence(){
+    // 1) Ładujemy pierwszy obraz
+    const first = await loadImage(0);
+    container.appendChild(first);
+
+    // usuwamy napis dopiero teraz
+    document.getElementById("chapter_loading")?.remove();
+
+    // 2) Prefetch obrazu nr 2
+    if(pages[1]){
+      prefetchImg = loadImage(1);
+    }
+
+    // 3) Ładujemy resztę
+    for(let i=1;i<pages.length;i++){
+      let img;
+
+      if(prefetchImg){
+        img = await prefetchImg;
+        prefetchImg = null;
+      } else {
+        img = await loadImage(i);
+      }
+
+      container.appendChild(img);
+
+      // prefetch kolejnego
+      if(pages[i+1]){
+        prefetchImg = loadImage(i+1);
+      }
+    }
+  }
+
+  loadSequence();
 
   // NAWIGACJA MIĘDZY ROZDZIAŁAMI
   const keys = Object.keys(data.chapters).sort((a,b)=>{
@@ -349,7 +344,7 @@ body{
     }
   };
 
-  /* PADLET — TWÓJ DZIAŁAJĄCY SYSTEM */
+  /* PADLET */
   let padletLoaded = false;
   document.getElementById("comments_title").onclick = () => {
     if (padletLoaded) return;
