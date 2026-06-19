@@ -83,9 +83,11 @@ async function sendReaction(index, btn) {
 // ------------------------------
 let pending = null;
 let timeoutId = null;
+let confirmMode = false; // ⭐ NOWE — czy jesteśmy w trybie potwierdzania
 
 function cancelPending() {
   pending = null;
+  confirmMode = false; // ⭐ reset trybu potwierdzania
   clearTimeout(timeoutId);
 
   // usuń napis
@@ -99,21 +101,22 @@ function cancelPending() {
 
 buttons.forEach(btn => {
   btn.addEventListener("click", e => {
-    e.stopPropagation(); // kliknięcie na reakcję NIE anuluje
+    e.stopPropagation();
 
     const index = parseInt(btn.dataset.reaction);
 
     if (btn.classList.contains("clicked")) return;
 
-    // DRUGIE KLIKNIĘCIE = POTWIERDZENIE
-    if (pending === index) {
+    // ⭐ DRUGIE KLIKNIĘCIE TYLKO JEŚLI confirmMode = true
+    if (confirmMode && pending === index) {
       cancelPending();
       sendReaction(index, btn);
       return;
     }
 
-    // PIERWSZE KLIKNIĘCIE
+    // ⭐ PIERWSZE KLIKNIĘCIE
     pending = index;
+    confirmMode = true;
 
     // usuń stare napisy
     document.querySelectorAll(".confirm-label").forEach(el => el.remove());
@@ -132,7 +135,7 @@ buttons.forEach(btn => {
     label.className = "confirm-label";
     label.textContent = "potwierdź";
     label.style.color = "white";
-    label.style.fontSize = "13px";
+    label.style.fontSize = "12px";
     label.style.marginTop = "4px";
     label.style.opacity = "0.8";
     btn.parentElement.appendChild(label);
@@ -149,9 +152,3 @@ document.addEventListener("click", e => {
     cancelPending();
   }
 });
-
-
-// ------------------------------
-// START
-// ------------------------------
-loadCounts();
