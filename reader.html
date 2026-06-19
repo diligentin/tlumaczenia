@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>✦⏖✦c</title>
+<title>✦⏖✦</title>
 <link rel="icon" type="image/png" href="https://tajnachalupka.github.io/main/favicon.png">
 
 <style>
@@ -264,6 +264,7 @@ body{
     return new Promise(resolve => {
       const img = document.createElement("img");
       img.className = "comic-page";
+      img.loading = "lazy";  
       img.src = pages[i];
 
       img.onload = () => {
@@ -312,14 +313,6 @@ body{
 
   loadSequence();
 
-// przywracanie pozycji scrolla
-const saved = localStorage.getItem(`scroll_${comicKey}_${chapter}`);
-if (saved) {
-  setTimeout(() => {
-    window.scrollTo(0, parseInt(saved));
-  }, 50);
-}
-
   // NAWIGACJA MIĘDZY ROZDZIAŁAMI
   const keys = Object.keys(data.chapters).sort((a,b)=>{
     const na = +a, nb = +b;
@@ -329,11 +322,6 @@ if (saved) {
     if(hb) return 1;
     return a.localeCompare(b);
   });
-
-  // zapisywanie pozycji scrolla
-window.addEventListener("scroll", () => {
-  localStorage.setItem(`scroll_${comicKey}_${chapter}`, window.scrollY);
-});
 
   const idx = keys.indexOf(chapter);
 
@@ -418,9 +406,19 @@ document.addEventListener("keydown", e => {
 </script>
 
 <script type="module" src="reactions.js"></script>
-// zapisywanie pozycji scrolla
-window.addEventListener("scroll", () => {
-  localStorage.setItem(`scroll_${comicKey}_${chapter}`, window.scrollY);
+
+  document.addEventListener("click", e => {
+  const h = window.innerHeight;
+  const y = e.clientY;
+
+  // ignorujemy kliknięcia w UI
+  if (e.target.closest(".nav-buttons") || e.target.closest("#series-header")) return;
+
+  if (y > h * 0.55) {
+    window.scrollBy({ top: h * 0.7, behavior: "smooth" });
+  } else if (y < h * 0.45) {
+    window.scrollBy({ top: -h * 0.7, behavior: "smooth" });
+  }
 });
 
 </body>
