@@ -266,26 +266,31 @@ body{
     return img;
   }
 
-  function loadImage(i){
-    return new Promise(resolve => {
-      const img = createImageElement();
+function loadImage(i){
+  return new Promise(resolve => {
+    const img = document.createElement("img");
+    img.className = "comic-page";
+    img.style.opacity = "0"; // start fade-in
 
-      img.onload = () => {
-        requestAnimationFrame(() => {
-          img.classList.add("loaded");
-          resolve(img);
-        });
-      };
+    img.onload = () => {
+      requestAnimationFrame(() => {
+        img.classList.add("loaded"); // fade-in
+        resolve(img);
+      });
+    };
 
-      img.onerror = () => {
-        img.src = pages[i] + "?r=" + Date.now();
-      };
+    img.onerror = () => {
+      img.src = pages[i] + "?r=" + Date.now();
+    };
 
-      // dodajemy do DOM zanim ustawimy src → fade-in działa zawsze
-      container.appendChild(img);
-      img.src = pages[i];
-    });
-  }
+    // dodajemy do DOM zanim ustawimy src
+    container.appendChild(img);
+
+    // dopiero teraz ustawiamy src
+    img.src = pages[i];
+  });
+}
+
 
   async function loadSequence(){
     // 1) pierwszy obraz
