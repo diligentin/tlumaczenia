@@ -62,6 +62,27 @@ body{
   height:30px;
   filter:invert(1);
 }
+  #chapter-nav {
+  text-align: center;
+  margin: 40px 0 20px;
+}
+
+.chapter-nav-btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background: #ffffff15;
+  border: 1px solid #ffffff40;
+  border-radius: 8px;
+  color: white;
+  font-size: 18px;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.chapter-nav-btn:hover {
+  background: #ffffff25;
+}
+
 
 /* HEADER */
 #series-header{
@@ -172,6 +193,10 @@ body{
   <div class="nav-btn" id="homeBtn">
     <img src="https://tajnachalupka.github.io/main/domek.png" class="btn-icon">
   </div>
+</div>
+
+  <div class="next-button-container">
+  <a href="#" id="next-chapter" class="next-button">Next ▶</a>
 </div>
 
 <!-- REAKCJE -->
@@ -337,6 +362,13 @@ body{
       location.href = "https://tajnachalupka.wixsite.com/tlumaczenia";
     }
   };
+
+  const nextBtn = document.getElementById("next-chapter");
+
+if (nextBtn) {
+  const nextChapter = parseInt(chapter) + 1;
+  nextBtn.href = `reader.html?comic=${comicKey}&chapter=${nextChapter}`;
+}
 
   /* PADLET */
   let padletLoaded = false;
