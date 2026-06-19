@@ -261,21 +261,28 @@ body{
   let prefetchImg = null;
 
   function loadImage(i){
-    return new Promise(resolve => {
-      const img = document.createElement("img");
-      img.className = "comic-page";
-      img.src = pages[i];
+  return new Promise(resolve => {
+    const img = document.createElement("img");
+    img.className = "comic-page";
+    img.style.opacity = "0"; // start niewidoczny
 
-      img.onload = () => {
-        img.classList.add("loaded");
+    img.onload = () => {
+      requestAnimationFrame(() => {
+        img.classList.add("loaded"); // fade-in zawsze działa
         resolve(img);
-      };
+      });
+    };
 
-      img.onerror = () => {
-        img.src = pages[i] + "?r=" + Date.now();
-      };
-    });
-  }
+    img.onerror = () => {
+      img.src = pages[i] + "?r=" + Date.now();
+    };
+
+    // dopiero teraz ustawiamy src (po dodaniu do DOM)
+    img.dataset.src = pages[i];
+    resolve(img);
+  });
+}
+
 
   async function loadSequence(){
     // 1) Ładujemy pierwszy obraz
@@ -301,7 +308,9 @@ body{
         img = await loadImage(i);
       }
 
-      container.appendChild(img);
+    container.appendChild(img);
+img.src = img.dataset.src;
+
 
       // prefetch kolejnego
       if(pages[i+1]){
