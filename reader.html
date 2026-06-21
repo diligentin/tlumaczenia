@@ -333,15 +333,9 @@ body{
 
   loadSequence();
 
-  // NAWIGACJA
-  const keys = Object.keys(data.chapters).sort((a,b)=>{
-    const na = +a, nb = +b;
-    const ha = !isNaN(na), hb = !isNaN(nb);
-    if(ha && hb) return na - nb || a.localeCompare(b);
-    if(ha) return -1;
-    if(hb) return 1;
-    return a.localeCompare(b);
-  });
+// ⭐ Zachowujemy dokładnie kolejność z JSON — tak jak w series.html ⭐
+const keys = Object.keys(data.chapters);
+
 
   const idx = keys.indexOf(chapter);
 
