@@ -333,8 +333,17 @@ body{
 
   loadSequence();
 
-// ⭐ Zachowujemy dokładnie kolejność z JSON — tak jak w series.html ⭐
-const keys = Object.keys(data.chapters);
+// Pobieramy kolejność kluczy dokładnie tak, jak w JSON
+const rawJson = await fetch(`${comicKey}.json`).then(r => r.text());
+const parsed = JSON.parse(rawJson, (key, value) => value);
+
+// Wyciągamy kolejność kluczy z surowego tekstu JSON
+const keys = [];
+rawJson.replace(/"chapters"\s*:\s*{([\s\S]*?)}/, (match, inner) => {
+  inner.replace(/"([^"]+)"\s*:/g, (_, key) => {
+    keys.push(key);
+  });
+});
 
 
   const idx = keys.indexOf(chapter);
