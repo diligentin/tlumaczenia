@@ -1,1 +1,27 @@
 
+{
+  "slug": "wf",
+  "title": "winterfield",
+  "header_img": "https://tajnachalupka.github.io/main/tagi/wf.png",
+  "series_icon": "https://tajnachalupka.github.io/main/guzik-gora/wf.png",
+  "cover": "https://tajnachalupka.github.io/main/covers/wf.png",
+  "desc": "Bang Woori nie chciała zostać nauczycielką. To droga, którą wybrała z konieczności, gdy porzuciła własne marzenia. Jej rutynowe życie zmienia się nie do poznania, kiedy poznaje Ha Raejuna, aroganckiego ucznia obdarzonego nadzwyczajnym talentem do tańca. Relacja, która zaczyna się od prowokacyjnego 'może ognia?', z czasem wystawi na próbę ich role, granice i przekonania.",
+  "padlet": "https://padlet.com/vvvvvvvvvvvvvvvvv/moze-ognia-cx6d1o9objsqbrey",
+  "disqus_base": "wf",
+  "chapters": {
+    "1": [
+      "https://tajnachalupka.github.io/wf/01/1.jpg",
+      "https://tajnachalupka.github.io/wf/01/2.jpg",
+      "https://tajnachalupka.github.io/wf/01/3.jpg",
+      "https://tajnachalupka.github.io/wf/01/4.jpg",
+      "https://tajnachalupka.github.io/wf/01/5.jpg",
+      "https://tajnachalupka.github.io/wf/mo-coins.jpg"
+    ],
+    "2": [
+      "https://tajnachalupka.github.io/mo/02/1.jpg",
+      "https://tajnachalupka.github.io/mo/02/2.jpg",
+      "https://tajnachalupka.github.io/mo/02/3.jpg",
+      "https://tajnachalupka.github.io/mo/mo-coins.jpg"   
+    ]
+  }
+}
