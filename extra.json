@@ -1,0 +1,24 @@
+{
+  "slug": "extra",
+  "title": "extra",
+  "header_img": "https://tajnachalupka.github.io/main/tagi/mo.png",
+  "series_icon": "https://tajnachalupka.github.io/main/guzik-gora/mo.png",
+  "cover": "https://tajnachalupka.github.io/main/covers/mo.png",
+  "desc": "dodatkowe",
+  "padlet": "https://padlet.com/vvvvvvvvvvvvvvvvv/moze-ognia-cx6d1o9objsqbrey",
+  "disqus_base": "inne",
+   "chapters": {
+    "afos": [
+      "https://tajnachalupka.github.io/inne/1-tapas.jpg",
+      "https://tajnachalupka.github.io/inne/1-tapas.jpg"
+    ],
+     "at": [
+      "https://tajnachalupka.github.io/inne/1-tapas.jpg",
+      "https://tajnachalupka.github.io/inne/1-tapas.jpg",
+      "https://tajnachalupka.github.io/inne/1-tapas.jpg"
+    ],
+     "bn": [
+      "https://tajnachalupka.github.io/inne/1-tapas.jpg"
+    ]
+  }
+}
