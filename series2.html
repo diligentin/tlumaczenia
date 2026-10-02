@@ -80,6 +80,20 @@ a { color: white; text-decoration: none; }
   <div id="chapters-container"></div>
 </div>
 
+   ${
+      series.extra_button
+        ? `
+          <a href="${series.extra_button.link}" class="extra-button">
+            <img 
+              src="${series.extra_button.image}" 
+              alt="${series.extra_button.alt || "Materiały dodatkowe"}"
+            >
+          </a>
+        `
+        : ""
+    }
+  </div>
+`;
 <script>
 (async function () {
 
@@ -201,27 +215,7 @@ a { color: white; text-decoration: none; }
 
     container.appendChild(grid);
   }
- ${
-        series.extra_button
-          ? `
-            <a 
-              class="extra-button"
-              href="${series.extra_button.link}"
-            >
-              ${series.extra_button.text}
-            </a>
-          `
-          : ""
-      }
-    `;
 
-    container.appendChild(seriesElement);
-  });
-}
-
-loadSeries();
-}
-})();
 </script>
 
 </body>
