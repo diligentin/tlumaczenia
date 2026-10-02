@@ -229,41 +229,31 @@ a { color: white; text-decoration: none; }
 
 <script>
 (async function () {
-  const comicKey =
-    new URLSearchParams(location.search).get("comic");
+  const comicKey = new URLSearchParams(location.search).get("comic");
 
   if (!comicKey) return;
 
-  try {
-    const extraData =
-      await fetch("extra.json").then(response => response.json());
+  const extraData = await fetch("extra.json").then(response => response.json());
+  const extra = extraData[comicKey];
 
-    const extraSeries = extraData.series?.[comicKey];
+  if (!extra) return;
 
-    if (!extraSeries?.button || !extraSeries?.pages?.length) {
-      return;
-    }
+  const container = document.getElementById("extra-button");
 
-    const extraButton = document.getElementById("extra-button");
+  const link = document.createElement("a");
+  link.href = extra.link;
 
-    const link = document.createElement("a");
+  const image = document.createElement("img");
+  image.src = extra.button;
+  image.alt = "Extra";
+  image.style.width = "100px";
+  image.style.cursor = "pointer";
 
-    link.href =
-      `reader.html?comic=extra&series=${encodeURIComponent(comicKey)}&chapter=extra`;
-
-    const image = document.createElement("img");
-
-    image.src = extraSeries.button;
-    image.alt = "Extra";
-
-    link.appendChild(image);
-    extraButton.appendChild(link);
-
-  } catch (error) {
-    console.error("Błąd extra.json:", error);
-  }
+  link.appendChild(image);
+  container.appendChild(link);
 })();
 </script>
+
 
   
 </body>
