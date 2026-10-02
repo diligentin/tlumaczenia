@@ -8,17 +8,14 @@
     "at": {
       "button": "https://tajnachalupka.github.io/main/trus.png",
       "link": "reader2.html?comic=extra-ch&chapter=at"
-      ]
     },
     "afos": {
        "button": "https://tajnachalupka.github.io/main/trus.png",
        "link": "reader2.html?comic=extra-ch&chapter=afos"
-      ]
        },
     "bn": {
        "button": "https://tajnachalupka.github.io/main/trus.png",
        "link": "reader2.html?comic=extra-ch&chapter=bn"
-      ]
     }
   }
 }
