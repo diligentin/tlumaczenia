@@ -7,7 +7,10 @@
   "cover": "https://tajnachalupka.github.io/main/covers/wf.png",
   "desc": "Rensley Mallosen, nieślubny książę Kornii, zostaje odesłany w lodowate krainy Oldenlandt, przebrany za księżniczkę, by poślubić budzącego grozę wielkiego księcia Zvendarda. Planując ucieczkę jeszcze przed ceremonią zaślubin, milczy i ukrywa swoją twarz. Jednak gdy wielki książę odkrywa podstęp, składa całkowicie nieoczekiwaną propozycję - udawane małżeństwo, by uchronić Rensleya przed grożącym mu niebezpieczeństwem. Z czasem Rensley poznaje prawdziwie łagodną naturę wielkiego księcia i coraz trudniej mu ukrywać narastające uczucia. Czy ich udawany związek może przerodzić się w coś prawdziwego, zanim mroczne siły spróbują rozdzielić ich na zawsze?",
   "padlet": "https://padlet.com/vvvvvvvvvvvvvvvvv/moze-ognia-cx6d1o9objsqbrey",
-  "disqus_base": "wf",
+ "extra_button": {
+    "image": "https://tajnachalupka.github.io/main/extra/wf.png",
+    "link": "https://tajnachalupka.wixsite.com/tlumaczenia/pytania"
+  },
   "chapters": {
     "1": [
       "https://diligentin.github.io/wf/01/1.jpg",
