@@ -2,20 +2,20 @@
   "slug": "extra",
   "title": "Extra",
   "desc": "Dodatkowe",
-  "padlet": "https://padlet.com/twoj-link",
+  "padlet": "https://padlet.com/vvvvvvvvvvvvvvvvvvvvv/moj-fantazyjny-padlet-f8cr1b86pg2yf4em",
 
   "series": {
     "at": {
       "title": "AT Extra",
       "pages": [
-        "https://example.com/at/extra/01.jpg",
-        "https://example.com/at/extra/02.jpg"
+        "https://tajnachalupka.github.io/at/at-coins.jpg",
+        "https://tajnachalupka.github.io/sah/sah-coins.jpg"
       ]
     },
     "afos": {
       "title": "AFOS Extra",
       "pages": [
-        "https://example.com/afos/extra/01.jpg"
+        "https://tajnachalupka.github.io/afos/00afos-coins.jpg"
       ]
     }
   }
