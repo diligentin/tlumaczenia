@@ -118,7 +118,8 @@ a { color: white; text-decoration: none; }
 
   /* USTAWIENIA */
   document.getElementById("page-title").textContent = data.title || comicKey;
-  document.getElementById("extra").src = data.extra;
+  document.getElementById("extra").src = data.extra_img;
+   document.getElementById("extra").src = data.extra;
   document.getElementById("cover").src = data.cover;
   cover.onload = () => cover.style.display = "block";
   document.getElementById("header-img").src = data.header_img;
