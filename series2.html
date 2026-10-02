@@ -24,6 +24,26 @@ a { color: white; text-decoration: none; }
 .back:hover { opacity: 1; }
 .back img { width: 40px; }
 
+ /* extra BUTTON */
+  .extra-button {
+  display: inline-block;
+  margin: 15px;
+}
+
+.extra-button img {
+  display: block;
+  max-width: 220px;
+  height: auto;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.extra-button img:hover {
+  transform: scale(1.05);
+  opacity: 0.85;
+}
+
+
 /* LAYOUT */
 .comic-layout {
   display: flex; gap: 32px; padding: 40px;
