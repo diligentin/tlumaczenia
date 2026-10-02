@@ -6,14 +6,14 @@
 
   "series": {
     "at": {
-      "title": "AT Extra",
+      "button": "https://tajnachalupka.github.io/main/trus.png",
       "pages": [
         "https://tajnachalupka.github.io/at/at-coins.jpg",
         "https://tajnachalupka.github.io/sah/sah-coins.jpg"
       ]
     },
     "afos": {
-      "title": "AFOS Extra",
+       "button": "https://tajnachalupka.github.io/main/trus.png",
       "pages": [
         "https://tajnachalupka.github.io/afos/00afos-coins.jpg"
       ]
