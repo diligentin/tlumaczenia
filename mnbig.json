@@ -13,11 +13,7 @@
  "padlet": "https://padlet.com/ruoye/padlet-45oy18gsbn20wlhe",
   "disqus_base": "mnbig",
   "chapters": {
-    "0": [
-       "https://tajnachalupka.github.io/osd/osd-coins.jpg"
-         ],
-
-    "1": [
+      "1": [
       "https://tajnachalupka.github.io/mnbig/v1/mnbig1.jpg"
     ],
     "2": [
@@ -103,6 +99,9 @@
       ],
     "ć": [
      "https://tajnachalupka.github.io/mnbig/v2/mnbig17.jpg"
-     ]
+        ], 
+    "0": [
+       "https://tajnachalupka.github.io/osd/osd-coins.jpg"
+    ]
   }
 }
