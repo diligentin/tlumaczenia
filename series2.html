@@ -80,20 +80,6 @@ a { color: white; text-decoration: none; }
   <div id="chapters-container"></div>
 </div>
 
-   ${
-      series.extra_button
-        ? `
-          <a href="${series.extra_button.link}" class="extra-button">
-            <img 
-              src="${series.extra_button.image}" 
-              alt="${series.extra_button.alt || "Materiały dodatkowe"}"
-            >
-          </a>
-        `
-        : ""
-    }
-  </div>
-`;
 <script>
 (async function () {
 
