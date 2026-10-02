@@ -98,6 +98,12 @@ a { color: white; text-decoration: none; }
 </div>
 
   
+  
+
+<div id="extra-button-container"></div>
+
+
+  
 <script>
 (async function () {
 
@@ -148,23 +154,7 @@ a { color: white; text-decoration: none; }
 
   desc.innerHTML = (data.desc || "").replace(/\n/g, "<br>");
 
-  /* DODATKOWY GUZIK */
-  if (data.extra_button) {
-    const button = document.createElement("a");
-
-    button.href = data.extra_button.link;
-    button.className = "extra-button";
-
-    button.innerHTML = `
-      <img
-        src="${data.extra_button.image}"
-        alt="${data.extra_button.alt || "Materiały dodatkowe"}"
-      >
-    `;
-
-    desc.after(button);
-  }
-
+ 
   /* ROZDZIAŁY */
   const chapters = data.chapters || {};
 
@@ -285,14 +275,26 @@ a { color: white; text-decoration: none; }
 
     container.appendChild(grid);
   }
+/* DODATKOWY GUZIK — NA DOLE STRONY */
+if (data.extra_button) {
+  const button = document.createElement("a");
 
-})();
-</script>
+  button.href = data.extra_button.link;
+  button.className = "extra-button";
+
+  button.innerHTML = `
+    <img
+      src="${data.extra_button.image}"
+      alt="${data.extra_button.alt || "Materiały dodatkowe"}"
+    >
+  `;
+
+  document.body.appendChild(button);
+}
 
   
-
-<div id="extra-button-container"></div>
-
+})();
+</script>
 
   
 </body>
