@@ -64,7 +64,7 @@ body{
 }
 
 /* HEADER */
-#series-header{
+#series2-header{
   position:fixed;
   top:7px;
   left:50%;
@@ -72,7 +72,7 @@ body{
   z-index:9999;
   transition:opacity .15s;
 }
-#series-img{
+#series2-img{
   max-height:23px;
 }
 
@@ -165,9 +165,9 @@ body{
 <body>
 
 <!-- HEADER -->
-<div id="series-header">
-  <a id="series-link" href="#">
-    <img id="series-img" src="">
+<div id="series2-header">
+  <a id="series2-link" href="#">
+    <img id="series2-img" src="">
   </a>
 </div>
 
@@ -258,10 +258,10 @@ body{
   const data = JSON.parse(rawJson);
 
   // HEADER SERII
-  if(data.series_icon){
-    document.getElementById("series-img").src = data.series_icon;
-    document.getElementById("series-link").href =
-      `series.html?comic=${comicKey}`;
+  if(data.series2_icon){
+    document.getElementById("series-img").src = data.series2_icon;
+    document.getElementById("series2-link").href =
+      `series2.html?comic=${comicKey}`;
   }
 
   const pages = data.chapters[chapterDecoded];
@@ -387,7 +387,7 @@ body{
 <script>
 let lastScroll = 0;
 const nav = document.getElementById("nav");
-const header = document.getElementById("series-header");
+const header = document.getElementById("series2-header");
 
 window.addEventListener("scroll", () => {
   const y = window.scrollY;
