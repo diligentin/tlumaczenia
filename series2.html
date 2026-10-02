@@ -81,6 +81,19 @@ a {
   opacity: 1;
 }
 
+  .extra-button-image {
+  display: block;
+  width: 100px;
+  height: auto;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+
+.extra-button-image:hover {
+  opacity: .8;
+}
+
+
 /* LAYOUT */
 
 .comic-layout {
@@ -296,16 +309,22 @@ a {
       chapter=extra
     */
 
-    if (extraSeries && extraSeries.pages?.length > 0) {
-      const extraLink = document.createElement("a");
+   if (extraSeries?.button && extraSeries.pages?.length > 0) {
+  const extraLink = document.createElement("a");
 
-      extraLink.className = "extra-button";
-      extraLink.textContent = extraSeries.title || "Extra";
-      extraLink.href =
-        `reader.html?comic=extra&series=${encodeURIComponent(comicKey)}&chapter=extra`;
+  extraLink.href =
+    `reader.html?comic=extra&series=${encodeURIComponent(comicKey)}&chapter=extra`;
 
-      extraButtons.appendChild(extraLink);
-    }
+  const extraImage = document.createElement("img");
+
+  extraImage.src = extraSeries.button;
+  extraImage.alt = extraSeries.title || "Extra";
+  extraImage.className = "extra-button-image";
+
+  extraLink.appendChild(extraImage);
+  extraButtons.appendChild(extraLink);
+}
+
 
       Brak extra.json nie zatrzymuje strony.
     */
