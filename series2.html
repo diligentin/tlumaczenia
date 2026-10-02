@@ -18,13 +18,13 @@ a { color: white; text-decoration: none; }
 
 /* HOME BUTTON */
 .back {
-  position: fixed; top: 15px; left: 15px;
+  position: fixed; top: 12px; left: 12px;
   opacity: .9; transition: opacity .2s;
 }
 .back:hover { opacity: 1; }
 .back img { width: 40px; }
 
-  /* extra BUTTON */
+    /* extra BUTTON */
 .extra {
   position: bottom: 15px; right: 15px;
   opacity: .9; transition: opacity .2s;
@@ -84,10 +84,8 @@ a { color: white; text-decoration: none; }
 </div>
 
 <div class="section">
-  <h2>niusiki</h2>
+  <h2>Rozdziały</h2>
   <div id="chapters-container"></div>
-
-
 </div>
 
 <script>
@@ -109,16 +107,6 @@ a { color: white; text-decoration: none; }
     return;
   }
 
-  /* extra */
-  if (series.extra_img) {
-  html += `
-    <a href="reader2.html?series=${series2.id}&extra=true">
-      <a class="extra">
-     <img id="extra_img" class="extra">
-    </a>
-  `;
-}
-  
   /* USTAWIENIA */
   document.getElementById("page-title").textContent = data.title || comicKey;
   document.getElementById("cover").src = data.cover;
@@ -147,7 +135,7 @@ a { color: white; text-decoration: none; }
   /* FUNKCJA TWORZENIA PRZYCISKU */
   function makeBtn(num) {
     const a = document.createElement("a");
-    a.href = `reader2.html?comic=${comicKey}&chapter=${encodeURIComponent(num)}`;
+    a.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(num)}`;
 
     const btn = document.createElement("div");
     btn.className = "chapter-btn";
