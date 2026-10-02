@@ -37,11 +37,9 @@ a { color: white; text-decoration: none; }
 
 .extra-button img {
   display: block;
-  width: 158px;
-  height: auto;
-  cursor: pointer;
-
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  width: auto;
+  height: 158px;
+  opacity: 0.9; transition: opacity .2s;
 }
 
 .extra-button img:hover {  opacity: 1;}
@@ -80,7 +78,7 @@ a { color: white; text-decoration: none; }
 @media (max-width: 600px) {
   body { zoom: .9; }
   .comic-header-img { width: 120%; transform: translateX(-10%); }
-  .extra-button img {  width: 100px;}
+  .extra-button img { height: 100px;}
 }
 </style>
 </head>
