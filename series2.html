@@ -202,6 +202,23 @@ a { color: white; text-decoration: none; }
     container.appendChild(grid);
   }
 
+  if (series.extra_button) {
+  const extraButton = document.createElement("a");
+
+  extraButton.href = series.extra_button.link;
+  extraButton.className = "extra-button";
+
+  extraButton.innerHTML = `
+    <img 
+      src="${series.extra_button.image}"
+      alt="${series.extra_button.alt || "Materiały dodatkowe"}"
+    >
+  `;
+
+  titlePage.appendChild(extraButton);
+}
+
+  
 </script>
 
 </body>
