@@ -196,17 +196,15 @@ a { color: white; text-decoration: none; }
   }
 
   /* BEZ SEZONÓW */
-  if (!data.seasons) {
-    const grid = document.createElement("div");
-    grid.className = "chapter-grid";
+ if (!data.seasons) {
+  const grid = document.createElement("div");
+  grid.className = "chapter-grid";
 
-    sorted.forEach(num => {
-      grid.appendChild(makeBtn(num));
-    });
+  sorted.forEach(num => {
+    grid.appendChild(makeBtn(num));
+  });
 
-    container.appendChild(grid);
-    return;
-  }
+  container.appendChild(grid);
 
   /* Z SEZONAMI */
   for (const [seasonName, range] of Object.entries(data.seasons)) {
