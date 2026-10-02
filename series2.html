@@ -222,12 +222,12 @@ a { color: white; text-decoration: none; }
     container.appendChild(grid);
   }
 
- if (series.extra_button) {
+ if (comic.extra_button) {
   titlePage.innerHTML += `
-    <a href="${series.extra_button.link}" class="extra-button">
+    <a href="${comic.extra_button.link}" class="extra-button">
       <img 
-        src="${series.extra_button.image}" 
-        alt="${series.extra_button.alt || "Materiały dodatkowe"}"
+        src="${comic.extra_button.image}" 
+        alt="${comic.extra_button.alt || "Materiały dodatkowe"}"
       >
     </a>
   `;
