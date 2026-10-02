@@ -25,14 +25,18 @@ a { color: white; text-decoration: none; }
 .back img { width: 40px; }
 
  /* extra BUTTON */
-  .extra-button {
+#extra-button-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.extra-button {
   display: inline-block;
-  margin: 15px;
 }
 
 .extra-button img {
   display: block;
-  max-width: 220px;
+  width: 220px;
   height: auto;
   cursor: pointer;
   transition: transform 0.2s ease, opacity 0.2s ease;
@@ -244,16 +248,6 @@ const container = document.getElementById("chapters-container");
     container.appendChild(grid);
   }
 
- if (comic.extra_button) {
-  titlePage.innerHTML += `
-    <a href="${comic.extra_button.link}" class="extra-button">
-      <img 
-        src="${comic.extra_button.image}" 
-        alt="${comic.extra_button.alt || "Materiały dodatkowe"}"
-      >
-    </a>
-  `;
-}
 
   
 </script>
