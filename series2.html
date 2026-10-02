@@ -100,6 +100,9 @@ a { color: white; text-decoration: none; }
   <div id="chapters-container"></div>
 </div>
 
+  <div id="extra-button-container"></div>
+
+
 <script>
 (async function () {
 
@@ -124,9 +127,28 @@ a { color: white; text-decoration: none; }
   document.getElementById("cover").src = data.cover;
   cover.onload = () => cover.style.display = "block";
   document.getElementById("header-img").src = data.header_img;
-  document.getElementById("desc").innerHTML = data.desc.replace(/\n/g, "<br>");
+  document.getElementById("desc").innerHTML =
+  (data.desc || "").replace(/\n/g, "<br>");
 
-  const container = document.getElementById("chapters-container");
+/* DODATKOWY GUZIK — POKAŻ TYLKO, JEŚLI JEST W JSON */
+if (data.extra_button) {
+  const buttonContainer = document.getElementById("extra-button-container");
+
+  buttonContainer.innerHTML = `
+    <a 
+      href="${data.extra_button.link}" 
+      class="extra-button"
+    >
+      <img
+        src="${data.extra_button.image}"
+        alt="${data.extra_button.alt || "Materiały dodatkowe"}"
+      >
+    </a>
+  `;
+}
+
+const container = document.getElementById("chapters-container");
+
 
   /* ⭐ PRZYWRÓCONE STARE SORTOWANIE ⭐ */
   const sorted = Object.keys(data.chapters).sort((a,b)=>{
