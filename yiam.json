@@ -9,7 +9,10 @@
   "Część 1. Jang Baekhee": { "from": "1", "to": "∞" }
 },
 "padlet": "https://padlet.com/vvvvvvvvvvvvvvvvvvv/yang-ilwoo-and-me-7r525d9si7ca6l7c",
-  "disqus_base": "yiam",
+ "extra_button": {
+    "image": "https://tajnachalupka.github.io/main/extra/yiam.png",
+    "link": "https://tajnachalupka.wixsite.com/tlumaczenia/pytania"
+  },
   "chapters": {
     "1": [
       "https://tajnachalupka.github.io/yiam/01/0.jpg",
