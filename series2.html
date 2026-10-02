@@ -114,10 +114,18 @@ a { color: white; text-decoration: none; }
     return;
   }
 
+  /* extra */
+  if (series.extra_img) {
+  html += `
+    <a href="reader2.html?series=${series2.id}&extra=true">
+      <a class="extra">
+     <img id="extra_img" class="extra">
+    </a>
+  `;
+}
+  
   /* USTAWIENIA */
   document.getElementById("page-title").textContent = data.title || comicKey;
-  document.getElementById("extra").src = data.extra_img;
-   document.getElementById("extra").src = data.extra;
   document.getElementById("cover").src = data.cover;
   cover.onload = () => cover.style.display = "block";
   document.getElementById("header-img").src = data.header_img;
