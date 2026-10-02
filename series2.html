@@ -18,7 +18,15 @@ a { color: white; text-decoration: none; }
 
 /* HOME BUTTON */
 .back {
-  position: fixed; top: 12px; left: 12px;
+  position: fixed; top: 15px; left: 15px;
+  opacity: .9; transition: opacity .2s;
+}
+.back:hover { opacity: 1; }
+.back img { width: 40px; }
+
+  /* extra BUTTON */
+.back {
+  position: fixed; top: 15px; right: 15px;
   opacity: .9; transition: opacity .2s;
 }
 .back:hover { opacity: 1; }
@@ -65,6 +73,10 @@ a { color: white; text-decoration: none; }
 
 <a class="back" href="https://diligentin.wixsite.com/tlumaczenia">
   <img src="https://diligentin.github.io/main/domek.png">
+</a>
+
+  <a class="extra" href="reader2.html?comic=at&chapter=2">
+  <img src="https://diligentin.github.io/main/trus.png">
 </a>
 
 <div class="comic-layout">
