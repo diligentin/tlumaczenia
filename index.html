@@ -16,7 +16,7 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 .hero img { width:160px; }
 
 .section-block { width:min(100%,1000px); margin:0 auto;  padding:0 9px; box-sizing:border-box;}
-  .section-block2 { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap:9px; margin-bottom:11px;}
+  .section-block2 { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; padding:9px;}
 
 .section-title-img { display:block; width:100%; max-width:200px; margin:35px 0 20px 0;}
 
@@ -26,7 +26,7 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 .auto-grid2 { display:grid; grid-template-columns:repeat(2,1fr); gap:9px; padding:9px; margin-bottom:5px; }
   
 .card { text-decoration:none; color:white; text-align:center; }
-.card img { transition: filter .25s ease;}
+.card img { transition: filter .25s ease; cursor: heart}
 .card:hover img { transform: none; filter: brightness(0.8);}
 
 
@@ -41,6 +41,8 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
   .auto-grid1 { grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:13px; }
   .auto-grid1a { grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:13px; }
   .auto-grid2 { grid-template-columns:repeat(2,1fr); gap:58px; margin-bottom:13px; }
+  .card.square img { max-width:113px;}
+  .card.tall img { max-width:113px;}
   .section-title-img { width:58%; }
 }
 </style>
