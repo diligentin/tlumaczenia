@@ -196,7 +196,7 @@ a { color: white; text-decoration: none; }
   }
 
   /* BEZ SEZONÓW */
- if (!data.seasons) {
+if (!data.seasons) {
   const grid = document.createElement("div");
   grid.className = "chapter-grid";
 
@@ -206,6 +206,7 @@ a { color: white; text-decoration: none; }
 
   container.appendChild(grid);
 
+} else {
   /* Z SEZONAMI */
   for (const [seasonName, range] of Object.entries(data.seasons)) {
 
@@ -238,7 +239,6 @@ a { color: white; text-decoration: none; }
     sorted.forEach(num => {
       let fits = false;
 
-      /* Numery w zakresie */
       if (typeof from === "number" && typeof to === "number") {
         const n = parseInt(num);
 
@@ -247,12 +247,10 @@ a { color: white; text-decoration: none; }
         }
       }
 
-      /* from jako tekst */
       if (typeof from === "string" && num === from) {
         fits = true;
       }
 
-      /* Wszystko od określonego numeru */
       if (to === Infinity && typeof from === "number") {
         const n = parseInt(num);
 
@@ -261,7 +259,6 @@ a { color: white; text-decoration: none; }
         }
       }
 
-      /* Rozdziały z emoji lub tekstem */
       if (isNaN(parseInt(num))) {
         fits = true;
       }
@@ -273,6 +270,8 @@ a { color: white; text-decoration: none; }
 
     container.appendChild(grid);
   }
+}
+
 /* DODATKOWY GUZIK — NA DOLE STRONY */
 if (data.extra_button) {
   const button = document.createElement("a");
