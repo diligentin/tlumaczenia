@@ -1,44 +1,21 @@
-
 {
   "slug": "extra",
   "title": "Extra",
-  "desc": "Dodatkowe materiały",
-  "padlet": "https://padlet.com/vvvvvvvvvvvvvvvvv/moze-ognia-cx6d1o9objsqbrey",
+  "desc": "Dodatkowe",
+  "padlet": "https://padlet.com/twoj-link",
 
   "series": {
     "at": {
       "title": "AT Extra",
       "pages": [
         "https://example.com/at/extra/01.jpg",
-        "https://example.com/at/extra/02.jpg",
-        "https://example.com/at/extra/03.jpg"
+        "https://example.com/at/extra/02.jpg"
       ]
     },
-
     "afos": {
       "title": "AFOS Extra",
       "pages": [
-        "https://example.com/afos/extra/01.jpg",
-        "https://example.com/afos/extra/02.jpg",
-        "https://example.com/afos/extra/03.jpg"
-      ]
-    },
-
-    "bn": {
-      "title": "BN Extra",
-      "pages": [
-        "https://example.com/bn/extra/01.jpg",
-        "https://example.com/bn/extra/02.jpg"
-      ]
-    },
-
-    "mp": {
-      "title": "MP Extra",
-      "pages": [
-        "https://example.com/mp/extra/01.jpg",
-        "https://example.com/mp/extra/02.jpg",
-        "https://example.com/mp/extra/03.jpg",
-        "https://example.com/mp/extra/04.jpg"
+        "https://example.com/afos/extra/01.jpg"
       ]
     }
   }
