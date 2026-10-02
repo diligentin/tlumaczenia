@@ -7,11 +7,14 @@
   "desc": "Zmuszony do zmiany pracy po tym, jak nabawił się wrzodów przez poprzedniego szefa, 26-letni Kentarou Momose z niepokojem spogląda w przyszłość. A co, jeśli nowy przełożony okaże się równie okrutny? Jednak obawy Momose szybko znikają, gdy na jego drodze staje Yuusei Shirosaki - beznamiętny, ale kompetentny szef, który nie jest ani trochę straszny. I tak naprawdę... jest totalnie zakręcony!",
   "seasons": {
   "Tom 1.": { "from": "1", "to": "9.3" },
-  "Tom 2.": { "from": "10", "to": "∞" }
+  "Tom 2.": { "from": "10", "to": "∞" },
+  "extra": { "🍆" }
 },
  "padlet": "https://padlet.com/ruoye/padlet-45oy18gsbn20wlhe",
   "disqus_base": "mnbig",
   "chapters": {
+    "🍆": [
+       "https://tajnachalupka.github.io/osd/osd-coins.jpg"
     "1": [
       "https://tajnachalupka.github.io/mnbig/v1/mnbig1.jpg"
     ],
