@@ -17,6 +17,9 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 
 .section-title-img { display:block; width:100%; max-width:200px; margin:35px 0 20px 0;}
 
+.container { overflow: auto; display: flex; scroll-snap-type: x mandatory;} 
+.container .item {flex-shrink:0; scroll-snap-align: start;}
+  
 .auto-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:3px; margin-bottom:0px; }
   
 .card { text-decoration:none; color:white; text-align:center; }
@@ -38,7 +41,7 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 
 <body>
 
-<!-- hero -->
+<!-- title -->
 
   <div id="titles-grid-1" class="auto-grid">
 
@@ -57,7 +60,7 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 <div class="section-block">
   <img class="section-title-img" src="https://tajnachalupka.github.io/main/nowy.png">
 
-  <div id="titles-grid" class="section-block2">
+  <div id="titles-grid" class="container">
 
     <a class="card square" href="reader.html?comic=1rta&chapter=2">
       <img src="https://tajnachalupka.github.io/main/nowy-ch-300x300/1rta42.png">
