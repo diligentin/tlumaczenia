@@ -307,26 +307,6 @@ a {
       extraButtons.appendChild(extraLink);
     }
 
-    /*
-      Przycisk Padlet.
-
-      target="_blank" otwiera Padleta w nowej karcie.
-    */
-
-    if (extraData.padlet) {
-      const padletLink = document.createElement("a");
-
-      padletLink.className = "extra-button";
-      padletLink.textContent = "Padlet";
-      padletLink.href = extraData.padlet;
-      padletLink.target = "_blank";
-      padletLink.rel = "noopener noreferrer";
-
-      extraButtons.appendChild(padletLink);
-    }
-
-  } catch (error) {
-    /*
       Brak extra.json nie zatrzymuje strony.
     */
 
