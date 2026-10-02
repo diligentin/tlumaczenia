@@ -75,7 +75,7 @@ a { color: white; text-decoration: none; }
   <img src="https://diligentin.github.io/main/domek.png">
 </a>
 
-  <a class="extra" href="reader2.html?comic=at&chapter=2">
+  <a class="extra">
   <img src="https://tajnachalupka.github.io/main/trus.png">
 </a>
 
@@ -113,6 +113,7 @@ a { color: white; text-decoration: none; }
 
   /* USTAWIENIA */
   document.getElementById("page-title").textContent = data.title || comicKey;
+  document.getElementById("extra").src = data.extra;
   document.getElementById("cover").src = data.cover;
   cover.onload = () => cover.style.display = "block";
   document.getElementById("header-img").src = data.header_img;
