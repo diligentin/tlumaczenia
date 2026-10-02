@@ -4,217 +4,97 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" type="image/png" href="https://diligentin.github.io/main/favicon.png">
-
 <title id="page-title">loading...</title>
 
 <style>
-@font-face {
-  font-family: "figtree";
-  src: url("https://diligentin.github.io/main/Figtree.ttf");
-}
-
-@font-face {
-  font-family: "piekos";
-  src: url("https://diligentin.github.io/main/Piekos.otf");
-  font-weight: 300;
-}
+@font-face { font-family: "figtree"; src: url("https://diligentin.github.io/main/Figtree.ttf"); }
+@font-face { font-family: "piekos"; src: url("https://diligentin.github.io/main/Piekos.otf"); font-weight: 300; }
 
 body {
-  margin: 0;
-  background: #191818;
-  color: white;
+  margin: 0; background: #191818; color: white;
   font-family: figtree, sans-serif;
 }
-
-a {
-  color: white;
-  text-decoration: none;
-}
+a { color: white; text-decoration: none; }
 
 /* HOME BUTTON */
-
 .back {
-  position: fixed;
-  top: 12px;
-  left: 12px;
-  z-index: 10;
-  opacity: .9;
-  transition: opacity .2s;
+  position: fixed; top: 12px; left: 12px;
+  opacity: .9; transition: opacity .2s;
+}
+.back:hover { opacity: 1; }
+.back img { width: 40px; }
+
+  /* extra BUTTON */
+  #extra-button {
+  text-align: center;
+  margin: 20px 0;
 }
 
-.back:hover {
-  opacity: 1;
-}
-
-.back img {
-  width: 40px;
-}
-
-/* EXTRA / PADLET BUTTONS */
-
-.extra-buttons {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  margin: 0 auto 28px;
-  flex-wrap: wrap;
-}
-
-.extra-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 90px;
-  min-height: 40px;
-  padding: 0 16px;
-  box-sizing: border-box;
-  background: #272727;
-  border-radius: 2px;
-  color: white;
-  font-size: 16px;
-  transition: background .2s, opacity .2s;
-}
-
-.extra-button:hover {
-  background: #353535;
-  opacity: 1;
-}
-
-  .extra-button-image {
-  display: block;
+#extra-button img {
   width: 100px;
   height: auto;
   cursor: pointer;
-  transition: opacity .2s;
 }
 
-.extra-button-image:hover {
+#extra-button img:hover {
   opacity: .8;
 }
 
 
 /* LAYOUT */
-
 .comic-layout {
-  display: flex;
-  gap: 32px;
-  padding: 40px;
-  justify-content: center;
-  flex-wrap: wrap;
+  display: flex; gap: 32px; padding: 40px;
+  justify-content: center; flex-wrap: wrap;
 }
-
-.cover {
-  width: 100%;
-  max-width: 299px;
-  height: auto;
-  object-fit: contain;
-  border-radius: 2px;
-  display: none;
-}
-
-.comic-info {
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  text-align: center;
-}
-
-.comic-header-img {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto 13px;
-}
+.cover { width: 100%; max-width: 299px; height: auto; object-fit: contain; border-radius: 2px; display: none; }
+.comic-info { max-width: 600px; display: flex; flex-direction: column; gap: 16px; text-align: center; }
+.comic-header-img { width: 100%; max-width: 600px; margin: 0 auto 13px; }
 
 /* OPIS */
-
-.comic-desc {
-  font-size: 17px;
-  color: #e0e0e0;
-  line-height: 1.3;
-  text-align: justify;
-}
+.comic-desc { font-size: 17px; color: #e0e0e0; line-height: 1.3; text-align: justify; }
 
 /* SEKCJA */
-
-.section {
-  padding: 24px 16px;
-}
-
-.section h2 {
-  font-size: 26px;
-  font-weight: 100;
-  text-align: center;
-  margin-bottom: 30px;
-}
+.section { padding: 24px 16px; }
+.section h2 { font-size: 26px; font-weight: 100; text-align: center; margin-bottom: 30px; }
 
 /* ROZDZIAŁY */
-
 .chapter-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, 45px);
-  gap: 11px;
-  justify-content: center;
-  max-width: 600px;
-  margin: 0 auto 40px;
+  display: grid; grid-template-columns: repeat(auto-fit, 45px);
+  gap: 11px; justify-content: center;
+  max-width: 600px; margin: 0 auto 40px;
 }
-
 .chapter-btn {
-  width: 45px;
-  height: 45px;
-  background: #272727;
-  border-radius: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: 200;
-  transition: .2s;
+  width: 45px; height: 45px; background: #272727;
+  border-radius: 2px; display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 200; transition: .2s;
 }
-
-.chapter-btn:hover {
-  background: #2a2a2a;
-}
-
-.chapter-btn.visited {
-  color: #8394F4;
-}
+.chapter-btn:hover { background: #2a2a2a; }
+.chapter-btn.visited { color: #8394F4; }
 
 @media (max-width: 600px) {
-  body {
-    zoom: .9;
-  }
-
-  .comic-header-img {
-    width: 120%;
-    transform: translateX(-10%);
-  }
+  body { zoom: .9; }
+  .comic-header-img { width: 120%; transform: translateX(-10%); }
 }
 </style>
 </head>
 
 <body>
 
-<a class="back" href="https://diligentin.github.io/tlumaczenia">
-  <img
-    src="https://diligentin.github.io/main/domek.png"
-    alt="Strona główna"
-  >
+<a class="back" href="https://diligentin.wixsite.com/tlumaczenia">
+  <img src="https://diligentin.github.io/main/domek.png">
 </a>
 
+    
+<div id="extra-button"></div>
+  
 <div class="comic-layout">
-  <img id="cover" class="cover" alt="">
-
+  <img id="cover" class="cover">
   <div class="comic-info">
-    <img id="header-img" class="comic-header-img" alt="">
+    <img id="header-img" class="comic-header-img">
     <p id="desc" class="comic-desc"></p>
   </div>
 </div>
 
-<!-- Przyciski Extra i Padlet pojawią się tutaj automatycznie -->
-
-<div id="extra-buttons" class="extra-buttons"></div>
 
 <div class="section">
   <h2>Rozdziały</h2>
@@ -226,243 +106,118 @@ a {
 
   /* PARAMETR ?comic= */
   const comicKey = new URLSearchParams(location.search).get("comic");
-
   if (!comicKey) {
-    document.body.innerHTML =
-      "<p style='padding:40px;text-align:center;'>Brak parametru ?comic=</p>";
+    document.body.innerHTML = "<p style='padding:40px;text-align:center;'>Brak parametru ?comic=</p>";
     return;
   }
 
-  /* JSON DANEJ SERII */
+  /* JSON */
   let data;
-
   try {
-    data = await fetch(`${comicKey}.json`).then(response => {
-      if (!response.ok) {
-        throw new Error("Nie znaleziono JSON-a serii.");
-      }
-
-      return response.json();
-    });
-  } catch (error) {
-    document.body.innerHTML =
-      "<p style='padding:40px;text-align:center;'>Błąd JSON serii</p>";
-
-    console.error(error);
+    data = await fetch(`${comicKey}.json`).then(r => r.json());
+  } catch {
+    document.body.innerHTML = "<p style='padding:40px;text-align:center;'>Błąd JSON</p>";
     return;
   }
 
-  /* USTAWIENIA SERII */
-
-  document.getElementById("page-title").textContent =
-    data.title || comicKey;
-
-  const cover = document.getElementById("cover");
-
-  if (data.cover) {
-    cover.src = data.cover;
-
-    cover.onload = () => {
-      cover.style.display = "block";
-    };
-  }
-
-  const headerImg = document.getElementById("header-img");
-
-  if (data.header_img) {
-    headerImg.src = data.header_img;
-  } else {
-    headerImg.style.display = "none";
-  }
-
-  const desc = document.getElementById("desc");
-
-  if (data.desc) {
-    desc.innerHTML = data.desc.replace(/\n/g, "<br>");
-  }
-
-  /*
-    EXTRA.JSON
-
-    Jeśli extra.json nie istnieje albo nie ma wpisu
-    dla danej serii, strona nadal będzie działać.
-  */
-
-  try {
-    const extraData = await fetch("extra.json").then(response => {
-      if (!response.ok) {
-        throw new Error("Nie znaleziono extra.json");
-      }
-
-      return response.json();
-    });
-
-    const extraSeries = extraData.series?.[comicKey];
-    const extraButtons = document.getElementById("extra-buttons");
-
-    /*
-      Przycisk Extra prowadzi do readera.
-
-      Przekazujemy:
-      comic=extra
-      series=at
-      chapter=extra
-    */
-
-   if (extraSeries?.button && extraSeries.pages?.length > 0) {
-  const extraLink = document.createElement("a");
-
-  extraLink.href =
-    `reader.html?comic=extra&series=${encodeURIComponent(comicKey)}&chapter=extra`;
-
-  const extraImage = document.createElement("img");
-
-  extraImage.src = extraSeries.button;
-  extraImage.alt = extraSeries.title || "Extra";
-  extraImage.className = "extra-button-image";
-
-  extraLink.appendChild(extraImage);
-  extraButtons.appendChild(extraLink);
-}
-
-
-      Brak extra.json nie zatrzymuje strony.
-    */
-
-    console.log("Brak danych extra:", error.message);
-  }
+  /* USTAWIENIA */
+  document.getElementById("page-title").textContent = data.title || comicKey;
+  document.getElementById("cover").src = data.cover;
+  cover.onload = () => cover.style.display = "block";
+  document.getElementById("header-img").src = data.header_img;
+  document.getElementById("desc").innerHTML = data.desc.replace(/\n/g, "<br>");
 
   const container = document.getElementById("chapters-container");
 
-  /* SORTOWANIE ROZDZIAŁÓW */
+  /* ⭐ PRZYWRÓCONE STARE SORTOWANIE ⭐ */
+  const sorted = Object.keys(data.chapters).sort((a,b)=>{
+      const na = parseInt(a);
+      const nb = parseInt(b);
+      const ha = !isNaN(na);
+      const hb = !isNaN(nb);
 
-  const sorted = Object.keys(data.chapters).sort((a, b) => {
-    const na = parseInt(a);
-    const nb = parseInt(b);
-
-    const ha = !isNaN(na);
-    const hb = !isNaN(nb);
-
-    if (ha && hb) {
-      if (na !== nb) return na - nb;
+      if (ha && hb) {
+        if (na !== nb) return na - nb;
+        return a.localeCompare(b);
+      }
+      if (ha) return -1;
+      if (hb) return 1;
       return a.localeCompare(b);
-    }
-
-    if (ha) return -1;
-    if (hb) return 1;
-
-    return a.localeCompare(b);
   });
 
-  /* FUNKCJA TWORZENIA PRZYCISKU ROZDZIAŁU */
-
+  /* FUNKCJA TWORZENIA PRZYCISKU */
   function makeBtn(num) {
     const a = document.createElement("a");
-
-    a.href =
-      `reader.html?comic=${encodeURIComponent(comicKey)}&chapter=${encodeURIComponent(num)}`;
+    a.href = `reader.html?comic=${comicKey}&chapter=${encodeURIComponent(num)}`;
 
     const btn = document.createElement("div");
-
     btn.className = "chapter-btn";
     btn.textContent = num;
 
-    if (localStorage.getItem(`read_${comicKey}_${num}`) === "1") {
+    if (localStorage.getItem(`read_${comicKey}_${num}`) === "1")
       btn.classList.add("visited");
-    }
 
     a.appendChild(btn);
-
     return a;
   }
 
   /* BEZ SEZONÓW */
-
   if (!data.seasons) {
     const grid = document.createElement("div");
-
     grid.className = "chapter-grid";
-
-    sorted.forEach(num => {
-      grid.appendChild(makeBtn(num));
-    });
-
+    sorted.forEach(num => grid.appendChild(makeBtn(num)));
     container.appendChild(grid);
-
     return;
   }
 
-  /* Z SEZONAMI */
-
+  /* ⭐ Z SEZONAMI — DZIAŁA JAK STARY KOD ⭐ */
   for (const [seasonName, range] of Object.entries(data.seasons)) {
 
-    const from =
-      range.from === "∞"
-        ? Infinity
-        : isNaN(parseInt(range.from))
-          ? range.from
-          : parseInt(range.from);
+    const from = range.from === "∞" ? Infinity :
+                 isNaN(parseInt(range.from)) ? range.from : parseInt(range.from);
 
-    const to =
-      range.to === "∞"
-        ? Infinity
-        : isNaN(parseInt(range.to))
-          ? range.to
-          : parseInt(range.to);
+    const to   = range.to === "∞" ? Infinity :
+                 isNaN(parseInt(range.to)) ? range.to : parseInt(range.to);
 
     const h = document.createElement("h3");
-
     h.style.textAlign = "center";
     h.style.fontWeight = "50";
     h.style.fontSize = "20px";
     h.style.marginTop = "10px";
     h.textContent = seasonName;
-
     container.appendChild(h);
 
     const grid = document.createElement("div");
-
     grid.className = "chapter-grid";
 
     sorted.forEach(num => {
 
       let fits = false;
 
-      /* NUMERYCZNE W ZAKRESIE */
-
+      /* 1) numeryczne w zakresie */
       if (typeof from === "number" && typeof to === "number") {
         const n = parseInt(num);
-
-        if (!isNaN(n) && n >= from && n <= to) {
-          fits = true;
-        }
+        if (!isNaN(n) && n >= from && n <= to) fits = true;
       }
 
-      /* FROM JAKO TEKST */
-
+      /* 2) from jako string → dopasowanie dokładne */
       if (typeof from === "string" && num === from) {
         fits = true;
       }
 
-      /* TO = NIESKOŃCZONOŚĆ */
-
+      /* 3) to = Infinity → wszystko od from */
       if (to === Infinity && typeof from === "number") {
         const n = parseInt(num);
-
-        if (!isNaN(n) && n >= from) {
-          fits = true;
-        }
+        if (!isNaN(n) && n >= from) fits = true;
       }
 
-      /* ROZDZIAŁY TEKSTOWE / EMOJI */
-
+      /* ⭐ 4) ROZDZIAŁY Z EMOJI — STARY KOD TEŻ JE WPUSZCZAŁ DO SEZONU
+            jeśli sortowanie ustawiło je między numerami */
       if (isNaN(parseInt(num))) {
         fits = true;
       }
 
-      if (fits) {
-        grid.appendChild(makeBtn(num));
-      }
+      if (fits) grid.appendChild(makeBtn(num));
     });
 
     container.appendChild(grid);
@@ -471,5 +226,44 @@ a {
 })();
 </script>
 
+<script>
+(async function () {
+  const comicKey =
+    new URLSearchParams(location.search).get("comic");
+
+  if (!comicKey) return;
+
+  try {
+    const extraData =
+      await fetch("extra.json").then(response => response.json());
+
+    const extraSeries = extraData.series?.[comicKey];
+
+    if (!extraSeries?.button || !extraSeries?.pages?.length) {
+      return;
+    }
+
+    const extraButton = document.getElementById("extra-button");
+
+    const link = document.createElement("a");
+
+    link.href =
+      `reader.html?comic=extra&series=${encodeURIComponent(comicKey)}&chapter=extra`;
+
+    const image = document.createElement("img");
+
+    image.src = extraSeries.button;
+    image.alt = "Extra";
+
+    link.appendChild(image);
+    extraButton.appendChild(link);
+
+  } catch (error) {
+    console.error("Błąd extra.json:", error);
+  }
+})();
+</script>
+
+  
 </body>
 </html>
