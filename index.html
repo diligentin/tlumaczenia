@@ -16,7 +16,7 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 .hero img { width:160px; }
 
 .section-block { width:min(100%,1000px); margin:0 auto;  padding:0 9px; box-sizing:border-box;}
-  .section-block2 { width:min(100%,1000px); margin:0 auto; gap:11px; justify-content:center; align-items:center; padding:9px; box-sizing:border-box;}
+  .section-block2 { display: flex; justify-content: center; align-items: center; flex-wrap: wrap;}
 
 .section-title-img { display:block; width:100%; max-width:200px; margin:35px 0 20px 0;}
 
@@ -30,11 +30,11 @@ body { margin:0; background:#191818; color:white; font-family: figtree, sans-ser
 .card:hover img { transform: none; filter: brightness(0.8);}
 
 
-.card.square img { width:100%; max-width:150px; border-radius:2px; aspect-ratio:1/1; object-fit:cover;}
+.card.square img { width:100%; max-width:150px; border-radius:2px; aspect-ratio:1/1; object-fit:cover; cursor: heart; }
 
-.card.tall img { width:100%; max-width:150px; aspect-ratio:5/9; object-fit:cover;}
+.card.tall img { width:100%; max-width:150px; aspect-ratio:5/9; object-fit:cover; cursor: heart; }
 
-.card.title img { width: 100%; max-width: 222px; height: auto; object-fit: contain;}
+.card.title img { width: 100%; max-width: 222px; height: auto; object-fit: contain; cursor: heart; }
 
 @media(max-width:600px){
   .auto-grid { grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:5px; }
