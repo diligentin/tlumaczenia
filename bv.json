@@ -1,0 +1,19 @@
+{
+  "slug": "bv",
+  "title": "benevolent violence",
+  "header_img": "https://tajnachalupka.github.io/main/tagi/sb.png",
+  "series_icon": "https://tajnachalupka.github.io/main/guzik-gora/sb.png",
+  "cover": "https://tajnachalupka.github.io/main/covers/sb.png",
+  "desc": "Bopiiiiis",
+  "padlet": "https://padlet.com/vvvvvvvvvvvvvvvvvv/one-room-ta-i4dpk9rl9n62kku4",
+  "disqus_base": "bv",
+  "chapters": {
+    "1": [
+      "https://diligentin.github.io/bv/01/1.jpg",
+      "https://diligentin.github.io/bv/01/2.jpg",
+      "https://diligentin.github.io/bv/01/3.jpg",
+      "https://diligentin.github.io/bv/01/4.jpg",
+      "https://diligentin.github.io/bv/bv-coins.jpg"
+  ]
+  }
+}
